@@ -1,6 +1,5 @@
-package me.turingteam.turingoss.common;
+package io.github.franzli347.toss.common;
 
-import  me.turingteam.turingoss.common.ResultCode;
 import lombok.*;
 
 @Data
@@ -12,5 +11,4 @@ public class Result<T> {
     int code;
     T data;
     String msg;
-
 }

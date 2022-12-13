@@ -1,5 +1,19 @@
+## server post config
 server:
   port: 80
+
+## spring config
 spring:
   banner:
     location: banner
+  redis:
+    host: localhost
+    password: root
+## global id config
+Snowflake:
+  workerId: 1
+  datacenterId: 1
+## log4f config
+logging:
+  level:
+    web: debug

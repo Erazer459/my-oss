@@ -1,4 +1,4 @@
-package me.turingteam.turingoss.utils;
+package io.github.franzli347.toss.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.csource.common.MyException;
