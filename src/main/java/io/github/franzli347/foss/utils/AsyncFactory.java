@@ -1,4 +1,4 @@
-package io.github.franzli347.toss.utils;
+package io.github.franzli347.foss.utils;
 
 /**
  * 异步任务工厂

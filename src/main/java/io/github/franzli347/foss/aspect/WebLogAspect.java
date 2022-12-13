@@ -1,4 +1,4 @@
-package io.github.franzli347.toss.aspect;
+package io.github.franzli347.foss.aspect;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import java.util.Optional;
 public class WebLogAspect {
     ThreadLocal<Long> startTime = new ThreadLocal<>();
 
-    @Pointcut("execution(public * io.github.franzli347.toss.controller.*.*(..))")
+    @Pointcut("execution(public * io.github.franzli347.foss.controller.*.*(..))")
     public void webLog() {
     }
 

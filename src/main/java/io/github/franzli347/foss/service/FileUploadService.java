@@ -1,7 +1,7 @@
-package io.github.franzli347.toss.service;
+package io.github.franzli347.foss.service;
 
-import io.github.franzli347.toss.common.FileUploadParam;
-import io.github.franzli347.toss.common.Result;
+import io.github.franzli347.foss.common.FileUploadParam;
+import io.github.franzli347.foss.common.Result;
 
 public interface FileUploadService {
 

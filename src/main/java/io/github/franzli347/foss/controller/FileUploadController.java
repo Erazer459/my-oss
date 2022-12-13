@@ -1,8 +1,8 @@
-package io.github.franzli347.toss.controller;
+package io.github.franzli347.foss.controller;
 
-import io.github.franzli347.toss.common.FileUploadParam;
-import io.github.franzli347.toss.common.Result;
-import io.github.franzli347.toss.service.FileUploadService;
+import io.github.franzli347.foss.common.FileUploadParam;
+import io.github.franzli347.foss.common.Result;
+import io.github.franzli347.foss.service.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

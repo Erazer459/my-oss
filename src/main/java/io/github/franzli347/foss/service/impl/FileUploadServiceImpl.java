@@ -1,17 +1,24 @@
-package io.github.franzli347.toss.service.impl;
+package io.github.franzli347.foss.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.franzli347.toss.common.FileUploadParam;
-import io.github.franzli347.toss.common.RedisConstant;
-import io.github.franzli347.toss.common.Result;
-import io.github.franzli347.toss.service.FileUploadService;
-import io.github.franzli347.toss.utils.SnowflakeDistributeId;
+import io.github.franzli347.foss.common.FileUploadParam;
+import io.github.franzli347.foss.common.RedisConstant;
+import io.github.franzli347.foss.common.Result;
+import io.github.franzli347.foss.service.FileUploadService;
+import io.github.franzli347.foss.utils.AsyncTaskManager;
+import io.github.franzli347.foss.utils.FileUtil;
+import io.github.franzli347.foss.utils.SnowflakeDistributeId;
 import lombok.SneakyThrows;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
+import java.util.TimerTask;
+import java.util.stream.Stream;
 
 @Service
 public class FileUploadServiceImpl implements FileUploadService {
@@ -20,6 +27,9 @@ public class FileUploadServiceImpl implements FileUploadService {
     private final StringRedisTemplate stringRedisTemplate;
 
     private final ObjectMapper objectMapper;
+
+    private final String filePath = "E:\\ceodes\\f-oss\\src\\main\\resources\\fileStore\\";
+
 
     public FileUploadServiceImpl(SnowflakeDistributeId snowflakeDistributeId, StringRedisTemplate stringRedisTemplate, ObjectMapper objectMapper) {
         this.snowflakeDistributeId = snowflakeDistributeId;
@@ -84,11 +94,50 @@ public class FileUploadServiceImpl implements FileUploadService {
         Optional.ofNullable(param).orElseThrow(() -> new RuntimeException("task is not exist"));
         // 获取当前上传分块
         int chunk = param.getChunk();
+        String fileName = param.getName();
         // 异步保存文件分块到本地
         MultipartFile file = param.getFile();
-        file.transferTo(Path.of("E:\\ceodes\\f-oss\\src\\main\\resources\\fileStore" + file.getOriginalFilename() + chunk));
+        // TODO : CP
+        file.transferTo(
+                Path.of(filePath
+                        + FileUtil.getNameWithoutExtra(fileName) + "."
+                        + chunk + ".chunk")
+        );
         // 添加上传块数列表
-        stringRedisTemplate.opsForSet().add(RedisConstant.FILE_CHUNK_LIST + param.getId(), String.valueOf(chunk));
+        stringRedisTemplate.opsForSet().add(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId(),String.valueOf(chunk));
+        Long size = stringRedisTemplate.opsForSet().size(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId());
+
+        size = Optional.ofNullable(size).orElse(0L);
+        //所有块都上传完成
+        if(size == param.getChunks() + 1){
+            // 异步删除redis信息
+            AsyncTaskManager.me().execute(
+                    new TimerTask() {
+                        @Override
+                        public void run() {
+                            stringRedisTemplate.delete(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId());
+                            stringRedisTemplate.delete(param.getId());
+                        }
+                    }
+            );
+            //异步merge文件
+            AsyncTaskManager.me().execute(new TimerTask() {
+                @Override
+                @SneakyThrows
+                public void run() {
+                    try(Stream<Path> walk = Files.walk(Path.of(filePath),1)){
+                        List<String> collect = walk.
+                                map(Path::toString).
+                                filter(p ->
+                                        p.contains(FileUtil.getNameWithoutExtra(fileName))
+                                ).toList();
+                        FileUtil.mergeFiles(collect.toArray(new String[0]), filePath + "test.txt");
+                    }
+                }
+            });
+            //保存文件信息
+            //返回信息
+        }
         return Result.builder().code(200).msg("upload " + file.getName() + " chunk" +chunk + " success").build();
     }
 }

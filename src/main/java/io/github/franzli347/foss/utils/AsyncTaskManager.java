@@ -1,4 +1,4 @@
-package io.github.franzli347.toss.utils;
+package io.github.franzli347.foss.utils;
 
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;

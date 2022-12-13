@@ -1,4 +1,4 @@
-package io.github.franzli347.toss;
+package io.github.franzli347.foss;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

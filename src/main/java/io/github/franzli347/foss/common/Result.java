@@ -1,4 +1,4 @@
-package io.github.franzli347.toss.common;
+package io.github.franzli347.foss.common;
 
 import lombok.*;
 

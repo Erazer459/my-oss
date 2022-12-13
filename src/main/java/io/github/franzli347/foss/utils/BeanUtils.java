@@ -1,4 +1,4 @@
-package io.github.franzli347.toss.utils;
+package io.github.franzli347.foss.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;

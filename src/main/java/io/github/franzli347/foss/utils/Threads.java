@@ -1,4 +1,4 @@
-package io.github.franzli347.toss.utils;
+package io.github.franzli347.foss.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

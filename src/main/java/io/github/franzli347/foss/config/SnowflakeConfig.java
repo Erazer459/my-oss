@@ -1,6 +1,6 @@
-package io.github.franzli347.toss.config;
+package io.github.franzli347.foss.config;
 
-import io.github.franzli347.toss.utils.SnowflakeDistributeId;
+import io.github.franzli347.foss.utils.SnowflakeDistributeId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
