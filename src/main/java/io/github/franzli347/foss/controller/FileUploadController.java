@@ -36,9 +36,10 @@ public class FileUploadController {
             @Parameter(name = "uid", description = "用户id",required = true),
             @Parameter(name = "name", description = "文件名",required = true),
             @Parameter(name = "chunks", description = "分片数量",required = true),
-            @Parameter(name = "size", description = "文件大小",required = true),
             @Parameter(name = "md5", description = "文件md5",required = true),
-/*            @Parameter(name = "chunk", description = "当前分片"),
+/*
+            @Parameter(name = "size", description = "文件大小"),
+            @Parameter(name = "chunk", description = "当前分片"),
             @Parameter(name = "file", description = "分片对象"),
             @Parameter(name = "id", description = "任务id"),*/
     })
@@ -61,7 +62,7 @@ public class FileUploadController {
             @Parameter(name = "file", description = "分片对象",required = true, schema = @Schema(type = "file")),
     })
     @PostMapping("/uploadChunk")
-    public Result uploadChunk(@RequestPart("param")FileUploadParam param) {
+    public Result uploadChunk(FileUploadParam param) {
         return fileUploadService.uploadChunk(param);
     }
 
