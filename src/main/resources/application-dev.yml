@@ -9,6 +9,10 @@ spring:
   redis:
     host: localhost
     password: root
+  mvc:
+    pathmatch:
+      # 配置策略
+      matching-strategy: ant-path-matcher
 ## global id config
 Snowflake:
   workerId: 1
@@ -17,3 +21,12 @@ Snowflake:
 logging:
   level:
     web: debug
+
+## 存储路径映射
+pathReflect:
+  source:
+    - D:\test\source
+    - D:\test\source2
+  target:
+    - D:\test\target
+    - D:\test\target2

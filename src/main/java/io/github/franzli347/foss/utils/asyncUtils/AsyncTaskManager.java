@@ -1,4 +1,6 @@
-package io.github.franzli347.foss.utils;
+package io.github.franzli347.foss.utils.asyncUtils;
+
+import io.github.franzli347.foss.utils.BeanUtils;
 
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;

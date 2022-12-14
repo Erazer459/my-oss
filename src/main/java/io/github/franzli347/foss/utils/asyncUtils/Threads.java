@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.utils;
+package io.github.franzli347.foss.utils.asyncUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

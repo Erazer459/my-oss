@@ -11,4 +11,6 @@ public class RedisConstant {
      * 文件已上传块数
      */
     public final static String FILE_CHUNK_LIST = "FILE_CHUNK_LIST";
+
+    public final static String FILE_TASK = "FILE_TASK";
 }

@@ -1,6 +1,6 @@
 package io.github.franzli347.foss.config;
 
-import io.github.franzli347.foss.utils.Threads;
+import io.github.franzli347.foss.utils.asyncUtils.Threads;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
