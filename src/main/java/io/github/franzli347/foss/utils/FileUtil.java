@@ -33,7 +33,6 @@ public class FileUtil {
             return new File(filePath[0]).renameTo(new File(resultPath));
         }
         File[] files = new File[filePath.length];
-
         for (int i = 0; i < filePath.length; i ++) {
             files[i] = new File(filePath[i]);
             if (Strings.isEmpty(filePath[i]) || !files[i].exists() || !files[i].isFile()) {

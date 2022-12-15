@@ -59,6 +59,7 @@ public class FileUploadController {
             @Parameter(name = "name", description = "文件名",required = true),
             @Parameter(name = "chunks", description = "分片数量",required = true),
             @Parameter(name = "chunk", description = "当前分片",required = true),
+            @Parameter(name = "size",description = "当前分块大小",required = true),
             @Parameter(name = "file", description = "分片对象",required = true, schema = @Schema(type = "file")),
     })
     @PostMapping("/uploadChunk")
