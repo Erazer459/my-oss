@@ -39,5 +39,7 @@ public class Files implements Serializable {
     @NotNull(message = "[]不能为空")
     private Integer bid;
 
+    private String md5;
+
 
 }

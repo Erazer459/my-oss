@@ -2,13 +2,16 @@ package io.github.franzli347.foss.common;
 
 import lombok.*;
 
+/**
+ * @author FranzLi
+ */
 @Data
 @Builder
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class Result<T> {
+public class Result {
     int code;
-    T data;
+    Object data;
     String msg;
 }

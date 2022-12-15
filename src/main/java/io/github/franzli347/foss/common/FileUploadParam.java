@@ -27,6 +27,8 @@ public class FileUploadParam {
     //当前分片大小
     @Schema(description = "当前分片大小")
     private long size = 0L;
+    @Schema(description = "bucket")
+    private Integer bid;
 
     //文件名
     @Schema(description = "文件名")

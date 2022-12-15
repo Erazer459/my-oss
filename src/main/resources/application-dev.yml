@@ -34,9 +34,10 @@ logging:
 
 ## 存储路径映射
 pathMap:
-  source: F:\files
+  source: F:\files\
 mybatis-plus:
   global-config:
     db-config:
       table-prefix: tb_
       id-type: auto
+    banner: false
