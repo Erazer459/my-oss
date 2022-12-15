@@ -9,8 +9,9 @@ import java.util.List;
 public abstract class FileUploadPostProcessorRegister {
     private final List<FileUploadPostProcessor> fileUploadPostProcessors = new ArrayList<>();
 
-    public void register(FileUploadPostProcessor fileUploadPostProcessor) {
+    public FileUploadPostProcessorRegister register(FileUploadPostProcessor fileUploadPostProcessor) {
         fileUploadPostProcessors.add(fileUploadPostProcessor);
+        return this;
     }
 
     public List<FileUploadPostProcessor> getFileUploadPostProcessors() {
