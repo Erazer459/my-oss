@@ -12,6 +12,7 @@ import io.github.franzli347.foss.utils.FileUtil;
 import io.github.franzli347.foss.utils.SnowflakeDistributeId;
 import io.github.franzli347.foss.utils.asyncUtils.AsyncTaskManager;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,8 +38,8 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private final ChunkPathResolver chunkPathResolver;
 
-    private final String filePath = "E:\\ceodes\\f-oss\\src\\main\\resources\\fileStore\\";
-
+    @Value("${pathMap.source}")
+    private String filePath;
 
     public FileUploadServiceImpl(SnowflakeDistributeId snowflakeDistributeId,
                                  StringRedisTemplate stringRedisTemplate,
@@ -75,7 +76,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 序列化任务到redis
         stringRedisTemplate.opsForValue().set(RedisConstant.FILE_TASK+ "_" +param.getId(), objectMapper.writeValueAsString(param));
         // 添加上传块数列表（redis set为空时会被自动删除
-        stringRedisTemplate.opsForSet().add(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId(),"" );
+        stringRedisTemplate.opsForSet().add(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId(),"");
         // 返回任务id
         return Result.builder().data(param.getId()).code(200).build();
     }
@@ -143,6 +144,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             // fix : 更改合并逻辑到主线程，防止合并失败无法返回错误信息
             List<String> collect = chunkPathResolver.getChunkPaths(id,param.getChunks());
             boolean merge = FileUtil.mergeFiles(collect.toArray(new String[0]), filePath + fileName);
+            //TODO : 压缩
             if(!merge){
                 throw new RuntimeException("merge file error");
             }
