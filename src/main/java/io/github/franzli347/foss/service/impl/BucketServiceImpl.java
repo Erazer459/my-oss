@@ -6,6 +6,8 @@ import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.mapper.BucketMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
 * @author FranzLi
 * @description 针对表【tb_bucket】的数据库操作Service实现
@@ -15,6 +17,10 @@ import org.springframework.stereotype.Service;
 public class BucketServiceImpl extends ServiceImpl<BucketMapper, Bucket>
     implements BucketService{
 
+    @Override
+    public List<Bucket> getBucketsByUserIdWithPage(int userId, int page, int size) {
+      return baseMapper.getBucketsByUserIdWithPage(userId,page,size);
+    }
 }
 
 

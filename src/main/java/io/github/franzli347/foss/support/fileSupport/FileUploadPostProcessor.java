@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.support;
+package io.github.franzli347.foss.support.fileSupport;
 
 import io.github.franzli347.foss.common.FileUploadParam;
 

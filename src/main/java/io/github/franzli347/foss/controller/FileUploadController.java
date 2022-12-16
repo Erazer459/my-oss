@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-// check -> initMultipartUpload
 @RestController
 @RequestMapping("/fileUpload")
 @Slf4j
@@ -37,11 +36,12 @@ public class FileUploadController {
             @Parameter(name = "name", description = "文件名",required = true),
             @Parameter(name = "chunks", description = "分片数量",required = true),
             @Parameter(name = "md5", description = "整个文件md5",required = true),
-/*
             @Parameter(name = "size", description = "文件大小"),
+/*
             @Parameter(name = "chunk", description = "当前分片"),
             @Parameter(name = "file", description = "分片对象"),
-            @Parameter(name = "id", description = "任务id"),*/
+            @Parameter(name = "id", description = "任务id"),
+*/
     })
     public Result initMultipartUpload(@RequestBody FileUploadParam param) {
         return fileUploadService.initMultipartUpload(param);

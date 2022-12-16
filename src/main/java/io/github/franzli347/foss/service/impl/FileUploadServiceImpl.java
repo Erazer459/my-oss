@@ -5,7 +5,7 @@ import io.github.franzli347.foss.common.FileUploadParam;
 import io.github.franzli347.foss.common.RedisConstant;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.service.FileUploadService;
-import io.github.franzli347.foss.support.*;
+import io.github.franzli347.foss.support.fileSupport.*;
 import io.github.franzli347.foss.utils.FileUtil;
 import io.github.franzli347.foss.utils.SnowflakeDistributeId;
 import io.github.franzli347.foss.utils.asyncUtils.AsyncTaskManager;
@@ -118,15 +118,15 @@ public class FileUploadServiceImpl implements FileUploadService {
     @SneakyThrows
     public Result check(FileUploadParam param) {
         // 查询任务是否存在
-        objectMapper
-                .readValue(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + param.getId()),FileUploadParam.class);
+        objectMapper.readValue(Optional
+                        .ofNullable(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + param.getId()))
+                        .orElseThrow(() -> new RuntimeException("task is not exist"))
+                        ,FileUploadParam.class);
         // 如果存在任务，返回已上传分片,不存在直接抛出异常
         return Result.builder()
-                .data(
-                        Objects.requireNonNull(stringRedisTemplate.opsForSet().members(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId()))
+                .data(Objects.requireNonNull(stringRedisTemplate.opsForSet().members(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId()))
                                 .stream().filter(s -> !s.isBlank())
-                                .collect(Collectors.toSet())
-                        )
+                                .collect(Collectors.toSet()))
                 .code(200)
                 .build();
     }

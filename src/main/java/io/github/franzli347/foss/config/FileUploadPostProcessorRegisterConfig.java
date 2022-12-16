@@ -1,8 +1,8 @@
 package io.github.franzli347.foss.config;
 
 import io.github.franzli347.foss.service.FilesService;
-import io.github.franzli347.foss.support.DBFileUploadPostprocessor;
-import io.github.franzli347.foss.support.FileUploadPostProcessorRegister;
+import io.github.franzli347.foss.support.fileSupport.DBFileUploadPostprocessor;
+import io.github.franzli347.foss.support.fileSupport.FileUploadPostProcessorRegister;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

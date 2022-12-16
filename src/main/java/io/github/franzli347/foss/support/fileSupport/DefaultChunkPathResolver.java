@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.support;
+package io.github.franzli347.foss.support.fileSupport;
 
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
