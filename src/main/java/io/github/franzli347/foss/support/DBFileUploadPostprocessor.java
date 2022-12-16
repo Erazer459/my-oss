@@ -31,6 +31,7 @@ public class DBFileUploadPostprocessor implements FileUploadPostProcessor{
                 .bid(param.getBid())
                 .fileName(param.getName())
                 .path(filePath)
+                .md5(param.getMd5())
                 .fileSize((double) java.nio.file.Files.size(Path.of(filePath)))
                 .build()
         );
