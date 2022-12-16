@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.support;
+package io.github.franzli347.foss.support.fileSupport;
 
 import io.github.franzli347.foss.common.FileUploadParam;
 import io.github.franzli347.foss.entity.Files;
@@ -31,6 +31,7 @@ public class DBFileUploadPostprocessor implements FileUploadPostProcessor{
                 .bid(param.getBid())
                 .fileName(param.getName())
                 .path(filePath)
+                .md5(param.getMd5())
                 .fileSize((double) java.nio.file.Files.size(Path.of(filePath)))
                 .build()
         );

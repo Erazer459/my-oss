@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.support;
+package io.github.franzli347.foss.support.fileSupport;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.github.franzli347.foss.entity.Files;
