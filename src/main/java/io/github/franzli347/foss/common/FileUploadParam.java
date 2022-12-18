@@ -1,16 +1,16 @@
 package io.github.franzli347.foss.common;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Builder
 public class FileUploadParam {
     // 用户id
     @Schema(description = "用户id")
@@ -27,6 +27,8 @@ public class FileUploadParam {
     //当前分片大小
     @Schema(description = "当前分片大小")
     private long size = 0L;
+    @Schema(description = "bucket")
+    private Integer bid;
 
     //文件名
     @Schema(description = "文件名")
@@ -37,5 +39,7 @@ public class FileUploadParam {
     // MD5
     @Schema(description = "文件MD5")
     private String md5;
+
+    private LocalDateTime createTime;
 
 }
