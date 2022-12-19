@@ -7,6 +7,7 @@ import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.service.FileUploadService;
 import io.github.franzli347.foss.support.fileSupport.*;
 import io.github.franzli347.foss.utils.FileUtil;
+import io.github.franzli347.foss.utils.FileZipUtil;
 import io.github.franzli347.foss.utils.SnowflakeDistributeId;
 import io.github.franzli347.foss.utils.asyncUtils.AsyncTaskManager;
 import lombok.SneakyThrows;
@@ -175,7 +176,10 @@ public class FileUploadServiceImpl implements FileUploadService {
             if (!merge) {
                 throw new RuntimeException("merge file error");
             }
-            //TODO : 压缩
+            boolean compress= FileZipUtil.compress(resultPath);
+            if(!compress){
+                throw new RuntimeException("compress file error");
+            }
             // 保存文件信息
             List<FileUploadPostProcessor> fileUploadPostProcessors = fileUploadPostProcessorRegister.getFileUploadPostProcessors();
             for (FileUploadPostProcessor fileUploadPostProcessor : fileUploadPostProcessors) {
