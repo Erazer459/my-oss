@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/f-oss-master/f-oss.iml" filepath="$PROJECT_DIR$/f-oss-master/f-oss.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/foss.iml" filepath="$PROJECT_DIR$/.idea/foss.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,43 @@
+## server post config
+server:
+  port: 80
+
+## spring config
+spring:
+  banner:
+    location: banner
+  redis:
+    host: localhost
+    password: root
+  mvc:
+    pathmatch:
+      # 配置策略
+      matching-strategy: ant-path-matcher
+  ## mysql 配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/turingoss?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  ## jackson 配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+## global id config
+Snowflake:
+  workerId: 1
+  datacenterId: 1
+## log4f config
+logging:
+  level:
+    web: debug
+
+## 存储路径映射
+pathMap:
+  source: F:\files\
+mybatis-plus:
+  global-config:
+    db-config:
+      table-prefix: tb_
+      id-type: auto
+    banner: false
