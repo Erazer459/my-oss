@@ -6,6 +6,9 @@ package io.github.franzli347.foss.common;
  */
 public class RedisConstant {
 
+    private RedisConstant() {
+    }
+
     /**
      * 已上传文件md5前缀
      */

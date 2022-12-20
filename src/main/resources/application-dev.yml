@@ -1,7 +1,6 @@
 ## server post config
 server:
   port: 80
-
 ## spring config
 spring:
   banner:
@@ -31,10 +30,10 @@ Snowflake:
 logging:
   level:
     web: debug
-
 ## 存储路径映射
 pathMap:
   source: F:\files\
+## mbp
 mybatis-plus:
   global-config:
     db-config:

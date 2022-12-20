@@ -116,15 +116,15 @@ public class FileUploadServiceImpl implements FileUploadService {
      */
     @Override
     @SneakyThrows
-    public Result check(FileUploadParam param) {
+    public Result check(String id) {
         // 查询任务是否存在
         objectMapper.readValue(Optional
-                        .ofNullable(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + param.getId()))
+                        .ofNullable(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + id))
                         .orElseThrow(() -> new RuntimeException("task is not exist"))
                         ,FileUploadParam.class);
         // 如果存在任务，返回已上传分片,不存在直接抛出异常
         return Result.builder()
-                .data(Objects.requireNonNull(stringRedisTemplate.opsForSet().members(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId()))
+                .data(Objects.requireNonNull(stringRedisTemplate.opsForSet().members(RedisConstant.FILE_CHUNK_LIST + "_" + id))
                                 .stream().filter(s -> !s.isBlank())
                                 .collect(Collectors.toSet()))
                 .code(200)
@@ -142,8 +142,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     public Result uploadChunk(FileUploadParam param) {
         String id = Optional.ofNullable(param.getId()).orElseThrow(() -> new RuntimeException("id is null"));
         // 检查任务id
-        objectMapper
-                .readValue(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + param.getId()),FileUploadParam.class);
+        objectMapper.readValue(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + param.getId()),FileUploadParam.class);
         // 获取当前上传分块
         int chunk = param.getChunk();
         String fileName = param.getName();

@@ -7,7 +7,7 @@ public interface FileUploadService {
 
     Result initMultipartUpload(FileUploadParam param);
 
-    Result check(FileUploadParam param);
+    Result check(String id);
 
     Result uploadChunk(FileUploadParam param);
 }

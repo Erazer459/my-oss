@@ -15,16 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    /**
-     * 处理其他异常
-     * @param req
-     * @param e
-     * @return
-     */
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Result exceptionHandler(HttpServletRequest req, Exception e){
-        log.error("exception occur reason {}",e.getMessage());
+        log.error("exception occur reason {} on request method {}",e.getMessage(),req.getMethod());
         e.printStackTrace();
         return Result.builder().code(500).msg(e.getMessage()).build();
     }
