@@ -28,7 +28,7 @@ public class FileUploadPostProcessorRegisterConfig {
         .register((filePath, param) -> {
             System.out.println("filePath = " + filePath);
             return true;
-        }).compressRegister(fileCompressPostProcessor)
+        }).register(fileCompressPostProcessor)
                 .register(dbFileUploadPostprocessor);
     }
 

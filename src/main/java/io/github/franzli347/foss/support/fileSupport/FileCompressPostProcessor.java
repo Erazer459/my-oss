@@ -1,6 +1,7 @@
 package io.github.franzli347.foss.support.fileSupport;
 
 import io.github.franzli347.foss.common.FileUploadParam;
+import io.github.franzli347.foss.utils.FileZipUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZOutputStream;
@@ -22,23 +23,6 @@ import java.nio.file.Path;
 public class FileCompressPostProcessor implements FileUploadPostProcessor {
     @Override
     public boolean process(String filePath, FileUploadParam param) {
-        Path p = Path.of(filePath);
-        if (Files.isDirectory(p) || Files.exists(p) || p == null || Strings.isEmpty(filePath)) {
-            return false;
-        }
-        File blkFile = new File(filePath);
-        try {
-            byte[] bFile = Files.readAllBytes(blkFile.toPath());
-            ByteArrayOutputStream xzOutput = new ByteArrayOutputStream();
-            XZOutputStream xzStream = new XZOutputStream(xzOutput, new LZMA2Options(LZMA2Options.PRESET_MAX));
-            xzStream.write(bFile);
-            xzStream.close();
-            FileChannel result = new FileOutputStream(blkFile, false).getChannel();
-            result.transferFrom((ReadableByteChannel) xzOutput, 0, xzOutput.size());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+        return FileZipUtil.compress(filePath);
     }
 }
