@@ -176,7 +176,6 @@ public class FileUploadServiceImpl implements FileUploadService {
             if (!merge) {
                 throw new RuntimeException("merge file error");
             }
-            boolean compress= FileZipUtil.compress(resultPath);
             // 保存文件信息
             List<FileUploadPostProcessor> fileUploadPostProcessors = fileUploadPostProcessorRegister.getFileUploadPostProcessors();
             for (FileUploadPostProcessor fileUploadPostProcessor : fileUploadPostProcessors) {
