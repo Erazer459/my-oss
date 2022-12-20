@@ -1,5 +1,6 @@
 package io.github.franzli347.foss.utils;
 
+import lombok.SneakyThrows;
 import org.apache.logging.log4j.util.Strings;
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
@@ -25,13 +26,13 @@ public class FileZipUtil {
      * @Date 18:09 2022/12/19
      * @Param [filepath]
      **/
+    @SneakyThrows
     public static boolean compress(String filepath) {
         Path p = Path.of(filepath);
         if (Files.isDirectory(p) || Files.exists(p) || p == null || Strings.isEmpty(filepath)) {
             return false;
         }
         File blkFile = new File(filepath);
-        try {
             byte[] bFile = Files.readAllBytes(blkFile.toPath());
             ByteArrayOutputStream xzOutput = new ByteArrayOutputStream();
             XZOutputStream xzStream = new XZOutputStream(xzOutput, new LZMA2Options(LZMA2Options.PRESET_MAX));
@@ -39,10 +40,6 @@ public class FileZipUtil {
             xzStream.close();
             FileChannel result = new FileOutputStream(blkFile, false).getChannel();
             result.transferFrom((ReadableByteChannel) xzOutput, 0, xzOutput.size());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
         return true;
     }
 
@@ -54,12 +51,12 @@ public class FileZipUtil {
      * @Param [filepath]
      **/
     //TODO 注册decompress方法（下载时）
+    @SneakyThrows
     public static boolean decompress(String filepath) {
         Path p = Path.of(filepath);
         if (Files.isDirectory(p) || Files.exists(p) || p == null || Strings.isEmpty(filepath)) {
             return false;
         }
-        try {
             byte[] bFile = Files.readAllBytes(p);
             XZInputStream xzInputStream = new XZInputStream(new ByteArrayInputStream(bFile));
             byte firstByte = (byte) xzInputStream.read();
@@ -68,9 +65,6 @@ public class FileZipUtil {
             xzInputStream.read(buffer, 1, buffer.length - 2);
             xzInputStream.close();
             Files.write(p, buffer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         return true;
     }
 }

@@ -13,7 +13,7 @@ public abstract class FileUploadPostProcessorRegister {
         fileUploadPostProcessors.add(fileUploadPostProcessor);
         return this;
     }
-    public FileUploadPostProcessorRegister compressRegister(FileCompressPostProcessor fileCompressPostProcessor){
+    public FileUploadPostProcessorRegister register(FileCompressPostProcessor fileCompressPostProcessor){
         fileUploadPostProcessors.add(fileCompressPostProcessor);
         return this;
     }
