@@ -34,7 +34,7 @@ public class FileUploadParam {
     @Schema(description = "文件名")
     private String name;
     //分片对象
-    @Schema(description = "分片对象")
+    @Schema(description = "分片对象",type = "file")
     private MultipartFile file;
     // MD5
     @Schema(description = "文件MD5")

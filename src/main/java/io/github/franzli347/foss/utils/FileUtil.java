@@ -15,6 +15,9 @@ import java.nio.file.Path;
  * @author FranzLi
  */
 public class FileUtil {
+
+    private FileUtil() {
+    }
     public static String getExtraName(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
@@ -23,7 +26,7 @@ public class FileUtil {
         return fileName.substring(0, fileName.lastIndexOf("."));
     }
 
-    public static boolean mergeFiles(String[] filePath, String resultPath) {
+    public static boolean mergeFiles(String[] filePath, String resultPath) throws IOException {
         Path p = Path.of(resultPath);
         if (Files.isDirectory(p) || Files.exists(p) || filePath == null || filePath.length < 1 || Strings.isEmpty(resultPath)) {
             return false;
@@ -54,7 +57,7 @@ public class FileUtil {
         }
 
         for (int i = 0; i < filePath.length; i ++) {
-            files[i].delete();
+            Files.delete(Path.of(filePath[i]));
         }
 
         return true;

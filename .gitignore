@@ -24,9 +24,6 @@ target/
 mvnw
 mvnw.cmd
 
-## test ##
-src/test
-
 ## compiler ##
 target
 

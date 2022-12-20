@@ -34,6 +34,7 @@ public class WebLogAspect {
         startTime.set(System.currentTimeMillis());
         // 接收到请求，记录请求内容
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        attributes = Optional.ofNullable(attributes).orElseThrow(() -> new RuntimeException("attributes is null"));
         HttpServletRequest request = attributes.getRequest();
         // 打印请求信息
         log.info("REQUEST URL : {} {} ", request.getMethod(), request.getRequestURL().toString());

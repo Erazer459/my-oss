@@ -23,9 +23,10 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("turing-oss-API")
+                        .title("\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75")
                         .version("1.0")
-                        .description( "turing-oss-API"));
+                        .description( "turing-oss-API")
+                );
                         /*.termsOfService("http://doc.xiaominfo.com")
                         .license(new License().name("Apache 2.0")*/
                                 /*.url("http://doc.xiaominfo.com")))*/
