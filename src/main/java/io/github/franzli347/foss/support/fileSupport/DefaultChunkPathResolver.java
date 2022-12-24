@@ -21,10 +21,8 @@ public class DefaultChunkPathResolver implements ChunkPathResolver{
     public List<String> getChunkPaths(String id,int chunks) {
         // init capacity
         List<String> chunkPaths = new ArrayList<>(chunks);
-        for (int i = 1; i <= chunks; i++) {
-            chunkPaths.add(filePath
-                    + id + "."
-                    + i + ".chunk");
+        for (int chunk = 1; chunk <= chunks; chunk++) {
+            chunkPaths.add(filePath + "tmp\\" + id + "." + chunk + ".chunk");
         }
         return chunkPaths;
     }

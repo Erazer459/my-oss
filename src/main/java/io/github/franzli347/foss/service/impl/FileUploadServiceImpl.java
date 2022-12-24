@@ -7,7 +7,6 @@ import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.service.FileUploadService;
 import io.github.franzli347.foss.support.fileSupport.*;
 import io.github.franzli347.foss.utils.FileUtil;
-import io.github.franzli347.foss.utils.FileZipUtil;
 import io.github.franzli347.foss.utils.SnowflakeDistributeId;
 import io.github.franzli347.foss.utils.asyncUtils.AsyncTaskManager;
 import lombok.SneakyThrows;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -150,7 +150,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         // 异步保存文件分块到本地
         MultipartFile file = param.getFile();
         // 转存分片
-        fileTransferResolver.transferFile(file, filePath + id + "." + chunk + ".chunk");
+        fileTransferResolver.transferFile(file, filePath + "tmp\\" + id + "." + chunk + ".chunk");
         // 添加上传块数列表
         stringRedisTemplate.opsForSet().add(RedisConstant.FILE_CHUNK_LIST + "_" + id, String.valueOf(chunk));
         Long upLoadChunks = stringRedisTemplate.opsForSet().size(RedisConstant.FILE_CHUNK_LIST + "_" + id);
@@ -169,11 +169,11 @@ public class FileUploadServiceImpl implements FileUploadService {
             });
             ///TODO :修改寻块逻辑(没想到啥好方法，先拼接字符串写着,后面直接注入新的ChunkPathResolver代替即可)
             // fix : 更改合并逻辑到主线程，防止合并失败无法返回错误信息
-            String resultPath = filePath + fileName;
+            String resultPath = "%s%d\\%s".formatted(filePath, param.getBid(), fileName);
             List<String> collect = chunkPathResolver.getChunkPaths(id, param.getChunks());
             boolean merge = FileUtil.mergeFiles(collect.toArray(new String[0]), resultPath);
             if (!merge) {
-                throw new RuntimeException("merge file error");
+                throw new IOException("merge file error");
             }
             // 保存文件信息
             List<FileUploadPostProcessor> fileUploadPostProcessors = fileUploadPostProcessorRegister.getFileUploadPostProcessors();

@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/fileUpload")
+@RequestMapping("/upload")
 @Slf4j
 @Tag(name = "文件上传模块")
 public class FileUploadController {
@@ -33,11 +33,6 @@ public class FileUploadController {
     @Parameter(name = "chunks", description = "分片数量",required = true)
     @Parameter(name = "md5", description = "整个文件md5",required = true)
     @Parameter(name = "size", description = "文件大小")*/
-/*
-            @Parameter(name = "chunk", description = "当前分片"),
-            @Parameter(name = "file", description = "分片对象"),
-            @Parameter(name = "id", description = "任务id"),
-*/
     public Result initMultipartUpload(@RequestBody FileUploadParam param) {
         return fileUploadService.initMultipartUpload(param);
     }

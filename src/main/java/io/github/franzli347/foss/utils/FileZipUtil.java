@@ -19,6 +19,9 @@ import java.nio.file.Path;
  * @return
  **/
 public class FileZipUtil {
+
+    private FileZipUtil(){};
+
     /**
      * @return
      * @Author AlanC
