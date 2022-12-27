@@ -1,13 +1,27 @@
 package io.github.franzli347.foss.service;
 
-import io.github.franzli347.foss.common.FileUploadParam;
-import io.github.franzli347.foss.common.Result;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Set;
 
 public interface FileUploadService {
 
-    Result initMultipartUpload(FileUploadParam param);
+    String initMultipartUpload(int uid,
+                               int bid,
+                               String name,
+                               int chunks,
+                               String md5,
+                               long size);
 
-    Result check(String id);
+    Set<String> check(String id);
 
-    Result uploadChunk(FileUploadParam param);
+    String uploadChunk(String id,
+                       int uid,
+                       int bid,
+                       String name,
+                       int chunks,
+                       int chunk,
+                       Long size,
+                       String md5,
+                       MultipartFile file);
 }

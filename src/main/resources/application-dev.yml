@@ -33,6 +33,9 @@ logging:
 ## 存储路径映射
 pathMap:
   source: F:\files\
+## 临时文件格式
+tmpFilePattern: '%stmp\%s.%d.chunk'
+downloadAddr: http://localhost
 ## mbp
 mybatis-plus:
   global-config:

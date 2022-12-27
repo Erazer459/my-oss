@@ -1,6 +1,5 @@
 package io.github.franzli347.foss.utils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ws.schild.jave.EncoderException;
 import ws.schild.jave.MultimediaObject;
@@ -285,7 +284,6 @@ public class FfmpegUtil {
      * @param url
      * @return
      */
-    @SneakyThrows()
     public static MultimediaInfo getVideoInfo(URL url) {
         try {
             MultimediaObject multimediaObject = new MultimediaObject(url);

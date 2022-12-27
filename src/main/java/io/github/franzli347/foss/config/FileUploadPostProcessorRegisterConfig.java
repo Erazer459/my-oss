@@ -30,8 +30,8 @@ public class FileUploadPostProcessorRegisterConfig {
         .register((filePath, param) -> {
             log.info("filePath = " + filePath);
             return true;
-        }).register(fileCompressPostProcessor)
-                .register(dbFileUploadPostprocessor);
+        })
+        .register(dbFileUploadPostprocessor);
     }
 
 

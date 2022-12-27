@@ -1,6 +1,6 @@
 package io.github.franzli347.foss.support.fileSupport;
 
-import io.github.franzli347.foss.common.FileUploadParam;
+import io.github.franzli347.foss.dto.FileUploadParam;
 import io.github.franzli347.foss.entity.Files;
 import io.github.franzli347.foss.service.FilesService;
 import lombok.SneakyThrows;

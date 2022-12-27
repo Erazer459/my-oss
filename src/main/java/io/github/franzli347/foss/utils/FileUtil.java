@@ -31,7 +31,11 @@ public class FileUtil {
         if (Files.isDirectory(p) || Files.exists(p) || filePath == null || filePath.length < 1 || Strings.isEmpty(resultPath)) {
             return false;
         }
-
+        Path pwn = Path.of(getFilePathWithoutName(resultPath));
+        // 文件夹不存在创建文件夹
+        if(!Files.exists(pwn)){
+            Files.createDirectories(pwn);
+        }
         if (filePath.length == 1) {
             return new File(filePath[0]).renameTo(new File(resultPath));
         }
@@ -61,6 +65,10 @@ public class FileUtil {
         }
 
         return true;
+    }
+
+    public static String getFilePathWithoutName(String filePath){
+        return filePath.substring(0, filePath.lastIndexOf("\\"));
     }
 
 }

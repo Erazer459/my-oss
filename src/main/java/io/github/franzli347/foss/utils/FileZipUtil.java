@@ -20,7 +20,7 @@ import java.nio.file.Path;
  **/
 public class FileZipUtil {
 
-    private FileZipUtil(){};
+    private FileZipUtil(){}
 
     /**
      * @return
@@ -36,13 +36,13 @@ public class FileZipUtil {
             return false;
         }
         File blkFile = new File(filepath);
-            byte[] bFile = Files.readAllBytes(blkFile.toPath());
-            ByteArrayOutputStream xzOutput = new ByteArrayOutputStream();
-            XZOutputStream xzStream = new XZOutputStream(xzOutput, new LZMA2Options(LZMA2Options.PRESET_MAX));
-            xzStream.write(bFile);
-            xzStream.close();
-            FileChannel result = new FileOutputStream(blkFile, false).getChannel();
-            result.transferFrom((ReadableByteChannel) xzOutput, 0, xzOutput.size());
+        byte[] bFile = Files.readAllBytes(blkFile.toPath());
+        ByteArrayOutputStream xzOutput = new ByteArrayOutputStream();
+        XZOutputStream xzStream = new XZOutputStream(xzOutput, new LZMA2Options(LZMA2Options.PRESET_MAX));
+        xzStream.write(bFile);
+        xzStream.close();
+        FileChannel result = new FileOutputStream(blkFile, false).getChannel();
+        result.transferFrom((ReadableByteChannel) xzOutput, 0, xzOutput.size());
         return true;
     }
 
@@ -53,7 +53,6 @@ public class FileZipUtil {
      * @Date 18:08 2022/12/19
      * @Param [filepath]
      **/
-    //TODO 注册decompress方法（下载时）
     @SneakyThrows
     public static boolean decompress(String filepath) {
         Path p = Path.of(filepath);
