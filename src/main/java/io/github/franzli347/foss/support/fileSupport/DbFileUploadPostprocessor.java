@@ -13,24 +13,23 @@ import java.nio.file.Path;
  * @author FranzLi
  */
 
-public class DBFileUploadPostprocessor implements FileUploadPostProcessor{
+public class DbFileUploadPostprocessor implements FileUploadPostProcessor{
 
     private final FilesService filesService;
 
-    public DBFileUploadPostprocessor(FilesService filesService) {
+    public DbFileUploadPostprocessor(FilesService filesService) {
         this.filesService = filesService;
     }
 
     @SneakyThrows
     @Override
     public boolean process(String filePath, FileUploadParam param) {
-
         return filesService.save(
                 Files
                 .builder()
                 .bid(param.getBid())
                 .fileName(param.getName())
-                .path(filePath)
+                .path(param.getBid() + "/" + param.getName())
                 .md5(param.getMd5())
                 .fileSize((double) java.nio.file.Files.size(Path.of(filePath)))
                 .build()

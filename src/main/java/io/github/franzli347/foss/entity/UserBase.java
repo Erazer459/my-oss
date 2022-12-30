@@ -9,7 +9,11 @@ import lombok.*;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class AbstractUser {
+/**
+ * @author FranzLi
+ * @description 用户基类
+ */
+public class UserBase {
         private int id;
 
         private String username;

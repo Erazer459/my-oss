@@ -1,8 +1,8 @@
 package io.github.franzli347.foss.support.userSupport;
 
-import io.github.franzli347.foss.entity.AbstractUser;
+import io.github.franzli347.foss.entity.UserBase;
 
 public interface LoginUserProvider {
 
-    AbstractUser getLoginUser();
+    UserBase getLoginUser();
 }

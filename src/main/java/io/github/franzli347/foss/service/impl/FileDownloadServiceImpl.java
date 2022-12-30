@@ -50,7 +50,6 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 Files files = Optional.ofNullable(filesService.getById(id))
                         .orElseThrow(() -> new RuntimeException("文件不存在"));
                 File file = new File(files.getPath());
-                // 别问为什么不close
                 InputStream inputStream = new FileInputStream(file);
                 StreamingResponseBody stream = outputStream -> {
                     int nRead;
