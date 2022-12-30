@@ -28,4 +28,8 @@ public class RedisConstant {
      * 文件上传任务过期时间
      */
     public final static long FILE_TASK_EXPIRE = 3600 * 14;
+    /**
+     * 压缩任务前缀
+     **/
+    public final static String COMPRESS_TASK="COMPRESS_TASK";
 }

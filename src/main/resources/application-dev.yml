@@ -7,7 +7,7 @@ spring:
     location: banner
   redis:
     host: localhost
-    password: root
+    password: 82995363epc
   mvc:
     pathmatch:
       # 配置策略
@@ -17,7 +17,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/turingoss?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: root
+    password: 82995363epc
   ## jackson 配置
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -32,7 +32,7 @@ logging:
     web: debug
 ## 存储路径映射
 pathMap:
-  source: F:\files\
+  source: E:\files\
 ## mbp
 mybatis-plus:
   global-config:

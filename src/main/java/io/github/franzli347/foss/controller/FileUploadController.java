@@ -3,10 +3,14 @@ package io.github.franzli347.foss.controller;
 import io.github.franzli347.foss.common.FileUploadParam;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.service.FileUploadService;
+import io.github.franzli347.foss.utils.FileZipUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -66,6 +70,5 @@ public class FileUploadController {
     public Result check(@PathVariable String id) {
         return fileUploadService.check(id);
     }
-
 
 }

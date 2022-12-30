@@ -1,27 +1,29 @@
 package io.github.franzli347.foss.utils;
 
+import io.github.franzli347.foss.common.ProcessInfo;
+import io.github.franzli347.foss.common.VideoCompressArgs;
+import io.github.franzli347.foss.entity.MyVideo;
+import io.github.franzli347.foss.exception.AsyncException;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
-import org.tukaani.xz.LZMA2Options;
-import org.tukaani.xz.XZInputStream;
-import org.tukaani.xz.XZOutputStream;
+import org.springframework.scheduling.annotation.Async;
+import ws.schild.jave.info.VideoInfo;
 
-import java.io.*;
+import java.beans.PropertyChangeListener;
 import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
  * @Author AlanC
- * @Description 文件压缩工具类, LZMA2算法
+ * @Description 文件压缩工具类
  * @Date 17:28 2022/12/19
  * @return
  **/
+@Slf4j
 public class FileZipUtil {
-
     private FileZipUtil(){};
-
     /**
      * @return
      * @Author AlanC
@@ -30,44 +32,23 @@ public class FileZipUtil {
      * @Param [filepath]
      **/
     @SneakyThrows
-    public static boolean compress(String filepath) {
+    public static boolean videoCompress(String filepath, VideoCompressArgs compressArgs, ProcessInfo info, PropertyChangeListener listener) {
         Path p = Path.of(filepath);
-        if (Files.isDirectory(p) || Files.exists(p) || p == null || Strings.isEmpty(filepath)) {
+        if (Files.isDirectory(p) || !Files.exists(p)|| Strings.isEmpty(filepath)||!FileUtil.isVideo(filepath)) {
+            log.info("文件不存在或不为视频类型");
             return false;
         }
-        File blkFile = new File(filepath);
-            byte[] bFile = Files.readAllBytes(blkFile.toPath());
-            ByteArrayOutputStream xzOutput = new ByteArrayOutputStream();
-            XZOutputStream xzStream = new XZOutputStream(xzOutput, new LZMA2Options(LZMA2Options.PRESET_MAX));
-            xzStream.write(bFile);
-            xzStream.close();
-            FileChannel result = new FileOutputStream(blkFile, false).getChannel();
-            result.transferFrom((ReadableByteChannel) xzOutput, 0, xzOutput.size());
-        return true;
+        return FfmpegUtil.videoCompress(filepath,compressArgs,info,listener);
     }
 
-    /**
-     * @return boolean
-     * @Author AlanC
-     * @Description 文件解压
-     * @Date 18:08 2022/12/19
-     * @Param [filepath]
-     **/
-    //TODO 注册decompress方法（下载时）
     @SneakyThrows
-    public static boolean decompress(String filepath) {
+    public static boolean imageCompress(String filepath,ProcessInfo info,PropertyChangeListener listener){
         Path p = Path.of(filepath);
-        if (Files.isDirectory(p) || Files.exists(p) || p == null || Strings.isEmpty(filepath)) {
-            return false;
+        if (Files.isDirectory(p) || !Files.exists(p)|| Strings.isEmpty(filepath)||!FileUtil.isPic(filepath)) {
+            log.info("文件不存在或不为图片类型");
+            throw new RuntimeException("文件不存在或不为图片类型");
         }
-            byte[] bFile = Files.readAllBytes(p);
-            XZInputStream xzInputStream = new XZInputStream(new ByteArrayInputStream(bFile));
-            byte firstByte = (byte) xzInputStream.read();
-            byte[] buffer = new byte[xzInputStream.available()];
-            buffer[0] = firstByte;
-            xzInputStream.read(buffer, 1, buffer.length - 2);
-            xzInputStream.close();
-            Files.write(p, buffer);
-        return true;
+        return FfmpegUtil.imageCompress(filepath,info,listener);
     }
+
 }
