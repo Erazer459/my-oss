@@ -1,5 +1,6 @@
 package io.github.franzli347.foss.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.franzli347.foss.common.RedisConstant;
@@ -8,7 +9,6 @@ import io.github.franzli347.foss.exception.FileException;
 import io.github.franzli347.foss.service.FileUploadService;
 import io.github.franzli347.foss.support.fileSupport.*;
 import io.github.franzli347.foss.utils.FileUtil;
-import io.github.franzli347.foss.utils.SnowflakeDistributeId;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class FileUploadServiceImpl implements FileUploadService {
-    private final SnowflakeDistributeId snowflakeDistributeId;
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -54,14 +53,12 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Value("${downloadAddr}")
     String downloadAddr;
 
-    public FileUploadServiceImpl(SnowflakeDistributeId snowflakeDistributeId,
-                                 StringRedisTemplate stringRedisTemplate,
+    public FileUploadServiceImpl(StringRedisTemplate stringRedisTemplate,
                                  ObjectMapper objectMapper,
                                  FilePathResolver filePathResolver,
                                  FileTransferResolver fileTransferResolver,
                                  ChunkPathResolver chunkPathResolver,
                                  FileUploadPostProcessorRegister fileUploadPostProcessorRegister) {
-        this.snowflakeDistributeId = snowflakeDistributeId;
         this.stringRedisTemplate = stringRedisTemplate;
         this.objectMapper = objectMapper;
         this.filePathResolver = filePathResolver;
@@ -89,7 +86,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             return filePathResolver.getFilePath(md5);
         }
         // 生成任务id
-        String taskId = String.valueOf(snowflakeDistributeId.nextId());
+        String taskId = String.valueOf(IdUtil.getSnowflake());
 
         FileUploadParam saveRedisData = new FileUploadParam(uid,
                 taskId,

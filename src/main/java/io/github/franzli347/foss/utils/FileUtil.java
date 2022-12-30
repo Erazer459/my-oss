@@ -18,13 +18,6 @@ public class FileUtil {
 
     private FileUtil() {
     }
-    public static String getExtraName(String fileName) {
-        return fileName.substring(fileName.lastIndexOf("."));
-    }
-
-    public static String getNameWithoutExtra(String fileName) {
-        return fileName.substring(0, fileName.lastIndexOf("."));
-    }
 
     public static boolean mergeFiles(String[] filePath, String resultPath) throws IOException {
         Path p = Path.of(resultPath);
@@ -49,7 +42,7 @@ public class FileUtil {
 
         File resultFile = new File(resultPath);
 
-        try(FileChannel resultFileChannel = new FileOutputStream(resultFile, true).getChannel();) {
+        try(FileChannel resultFileChannel = new FileOutputStream(resultFile, true).getChannel()) {
             for (int i = 0; i < filePath.length; i ++) {
                 try(FileChannel blk = new FileInputStream(files[i]).getChannel()){
                     resultFileChannel.transferFrom(blk, resultFileChannel.size(), blk.size());
@@ -60,8 +53,8 @@ public class FileUtil {
             return false;
         }
 
-        for (int i = 0; i < filePath.length; i ++) {
-            Files.delete(Path.of(filePath[i]));
+        for (String s : filePath) {
+            Files.delete(Path.of(s));
         }
 
         return true;

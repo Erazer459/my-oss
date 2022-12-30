@@ -53,7 +53,7 @@ public class ImageHistogram {
     }
 
     private float getBinIndex(int binCount, int color, int colorMaxValue) {
-        float binIndex = (((float) color) / ((float) colorMaxValue)) * ((float) binCount);
+        float binIndex = (((float) color) / ((float) colorMaxValue)) * (binCount);
         if (binIndex >= binCount){
             binIndex = binCount - 1;
         }

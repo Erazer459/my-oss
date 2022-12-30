@@ -2,7 +2,6 @@ package io.github.franzli347.foss.config;
 
 import io.github.franzli347.foss.service.FilesService;
 import io.github.franzli347.foss.support.fileSupport.DbFileUploadPostprocessor;
-import io.github.franzli347.foss.support.fileSupport.FileCompressPostProcessor;
 import io.github.franzli347.foss.support.fileSupport.FileUploadPostProcessorRegister;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +18,6 @@ public class FileUploadPostProcessorRegisterConfig {
     @Bean
     public DbFileUploadPostprocessor dbFileUploadPostprocessor(FilesService filesService){
         return new DbFileUploadPostprocessor(filesService);
-    }
-    @Bean
-    public FileCompressPostProcessor fileCompressPostProcessor(){
-        return new FileCompressPostProcessor();
     }
     @Bean
     public FileUploadPostProcessorRegister fileUploadPostProcessorRegister(DbFileUploadPostprocessor dbFileUploadPostprocessor) {

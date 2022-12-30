@@ -22,5 +22,6 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
+        throw new UnsupportedOperationException();
     }
 }

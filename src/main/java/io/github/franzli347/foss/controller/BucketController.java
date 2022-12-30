@@ -54,7 +54,7 @@ public class BucketController {
         return Result
                 .builder()
                 .code(200)
-                .data(bucketService.removeById(id) ? "SUCCESS" : "FAIL")
+                .data(bucketService.removeById(id))
                 .build();
     }
 
@@ -69,7 +69,7 @@ public class BucketController {
         return Result
                 .builder()
                 .code(200)
-                .data(bucketService.save(bucket) ? "SUCCESS" : "FAIL")
+                .data(bucketService.save(bucket))
                 .build();
     }
 
@@ -80,7 +80,7 @@ public class BucketController {
         return Result
                 .builder()
                 .code(200)
-                .data(bucketService.save(bucket) ? "SUCCESS" : "FAIL")
+                .data(bucketService.save(bucket))
                 .build();
     }
 
@@ -92,7 +92,7 @@ public class BucketController {
         return Result
                 .builder()
                 .code(200)
-                .data(bucketService.updateById(bucket) ? "SUCCESS" : "FAIL")
+                .data(bucketService.updateById(bucket))
                 .build();
     }
 

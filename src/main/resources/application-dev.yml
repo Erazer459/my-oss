@@ -22,10 +22,6 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
-## global id config
-Snowflake:
-  workerId: 1
-  datacenterId: 1
 ## log4f config
 logging:
   level:
