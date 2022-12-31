@@ -101,32 +101,32 @@ class FileUploadServiceTest {
 //        Assertions.assertEquals("turing team",s);
 //        Files.delete(Path.of(path + "tt.txt"));
 //    }
-    @ParameterizedTest
-    @ValueSource(strings = "E:\\videoCompress\\God Knows[4K_FLAC_ASS].mkv")
-    @Order(3)
-    @DisplayName(displayName)
-    //@Rollback(value = true)
-    public void testCompress(String filePath){
-        File file = new File(filePath);
-        long old=file.length();
-        log.info("sourceObject:{}",old);
-        ProcessInfo info = ProcessInfo.builder().id(114514).build();
-        boolean compress=FileZipUtil.videoCompress(filePath, VideoCompressArgs.builder().frameRate(25).bitRate(500000).videoSize(new VideoSize(1920,1080)).build(), info, new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {//持续监听压缩进度
-                log.info("完成:{}", ((ProcessInfo) evt.getSource()).isDone());
-                log.info("百分比:{}",((ProcessInfo) evt.getSource()).getPercentage());
-            }
-        });
-        long newOne=file.length();
-        log.info("compress success:{}",compress);
-        log.info("compressed size:{}",newOne);
-    }
 //    @ParameterizedTest
-//    @ValueSource(strings = "E:\\imageCompress\\fcf03fa03464ec195addb43eff9a074.png")
+//    @ValueSource(strings = "E:\\videoCompress\\God Knows[4K_FLAC_ASS].mkv")
 //    @Order(3)
 //    @DisplayName(displayName)
-//    public void imageCompress(String imagePath){
+//    //@Rollback(value = true)
+//    public void testCompress(String filePath){
+//        File file = new File(filePath);
+//        long old=file.length();
+//        log.info("sourceObject:{}",old);
+//        ProcessInfo info = ProcessInfo.builder().id(114514).build();
+//        boolean compress=FileZipUtil.videoCompress(filePath, VideoCompressArgs.builder().frameRate(25).bitRate(500000).videoSize(new VideoSize(1920,1080)).build(), info, new PropertyChangeListener() {
+//            @Override
+//            public void propertyChange(PropertyChangeEvent evt) {//持续监听压缩进度
+//                log.info("完成:{}", ((ProcessInfo) evt.getSource()).isDone());
+//                log.info("百分比:{}",((ProcessInfo) evt.getSource()).getPercentage());
+//            }
+//        });
+//        long newOne=file.length();
+//        log.info("compress success:{}",compress);
+//        log.info("compressed size:{}",newOne);
+//    }
+//    @ParameterizedTest
+//    @ValueSource(strings = "E:\\imageCompress\\eso1242a.tif")
+//    @Order(3)
+//    @DisplayName(displayName)
+//    public void imageCompress(String imagePath) throws IOException {
 //        File file = new File(imagePath);
 //        log.info("source:{}",file.length());
 //        boolean flag=FileZipUtil.imageCompress(imagePath);

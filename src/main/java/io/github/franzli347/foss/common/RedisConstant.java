@@ -32,4 +32,8 @@ public class RedisConstant {
      * 压缩任务前缀
      **/
     public final static String COMPRESS_TASK="COMPRESS_TASK";
+    /**
+     * WebSocket连接session
+     **/
+    public final static String WS_SESSION="WS_SESSION";
 }

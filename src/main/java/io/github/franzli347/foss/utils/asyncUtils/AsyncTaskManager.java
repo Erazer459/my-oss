@@ -1,7 +1,10 @@
 package io.github.franzli347.foss.utils.asyncUtils;
 
+import io.github.franzli347.foss.asyncTask.MyAsyncTask;
+import io.github.franzli347.foss.exception.AsyncException;
 import io.github.franzli347.foss.utils.BeanUtils;
 
+import java.io.IOException;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -37,9 +40,14 @@ public class AsyncTaskManager {
      *
      * @param task 任务
      */
+
     public void execute(TimerTask task)
     {
         executor.schedule(task, OPERATE_DELAY_TIME, TimeUnit.MILLISECONDS);
+    }
+
+    public void execute(MyAsyncTask compressTask) throws AsyncException {
+            compressTask.run();
     }
 
     /**

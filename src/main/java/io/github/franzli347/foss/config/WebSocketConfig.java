@@ -30,7 +30,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry
-                .addHandler(httpAuthHandler, "/websocket")
+                .addHandler(httpAuthHandler, "/websocket")//前端new websocket的url
                 .addInterceptors(myInterceptor)
                 .setAllowedOrigins("*");
 

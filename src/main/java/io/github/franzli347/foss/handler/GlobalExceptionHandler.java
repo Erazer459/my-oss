@@ -1,7 +1,6 @@
 package io.github.franzli347.foss.handler;
 
 import io.github.franzli347.foss.common.Result;
-import io.github.franzli347.foss.exception.AsyncException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,12 +22,6 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         return Result.builder().code(500).msg(e.getMessage()).build();
     }
-    @ExceptionHandler(value = AsyncException.class)
-    @ResponseBody
-    public Result AsyncExceptionHandler(HttpServletRequest req,AsyncException asyncException){
-        log.error("AsyncException occur reason{} on request method{}",asyncException.getErrorMessage(),req.getMethod());
-        asyncException.printStackTrace();
-        return Result.builder().code(500).msg(asyncException.getMessage()).build();
-    }
+
 }
 

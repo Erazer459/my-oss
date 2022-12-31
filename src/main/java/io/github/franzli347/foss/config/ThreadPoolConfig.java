@@ -1,13 +1,16 @@
 package io.github.franzli347.foss.config;
 
+import io.github.franzli347.foss.handler.AsyncExceptionHandler;
 import io.github.franzli347.foss.utils.asyncUtils.Threads;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -17,7 +20,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author FranzLi
  */
 @Configuration
-public class ThreadPoolConfig
+@EnableAsync
+public class ThreadPoolConfig implements AsyncConfigurer
 {
     /**
      * 核心线程池大小
@@ -68,6 +72,12 @@ public class ThreadPoolConfig
             }
         };
     }
-
-
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return new AsyncExceptionHandler();
+    }
+    @Override
+    public Executor getAsyncExecutor() {//@Async 注解默认使用自定义executor
+        return threadPoolTaskExecutor();
+    }
 }

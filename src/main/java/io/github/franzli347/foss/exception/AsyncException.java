@@ -1,5 +1,6 @@
 package io.github.franzli347.foss.exception;
 
+import io.github.franzli347.foss.common.Result;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import lombok.Data;
  **/
 @Data
 @AllArgsConstructor
-public class AsyncException extends Exception {
-    private String errorMessage;
+public class AsyncException extends RuntimeException {
+    private Result result;
+    private String webSocketParamId;//获取websocketSession所需要的id
 }

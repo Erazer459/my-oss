@@ -33,11 +33,11 @@ public class MyhandshakeInterceptor implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         log.info("握手开始");
         // 获得请求参数
-        String token = request.getHeaders().get("token").toString();//TODO 完成鉴权后在redis中确认token是否存在
-        if (StringUtils.isNotBlank(token)) {
+        String userId = request.getHeaders().get("token").toString();//TODO 完成鉴权后将token转为userid
+        if (StringUtils.isNotBlank(userId)) {
             // 放入属性域
-            attributes.put("token", token);
-            log.info("用户 token:{} 握手成功！",token);
+            attributes.put("id",userId);
+            log.info("用户 token:{} 握手成功！",userId);
             return true;
         }
         log.info("用户验证失败");
