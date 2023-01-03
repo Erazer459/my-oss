@@ -1,6 +1,5 @@
 # java 环境
-FROM java:17
-
+FROM openjdk:17-jdk-slim
 # 定义工作目录
 WORKDIR /app
 # 把项目中的所有东西复制到工作目录(app)下面
