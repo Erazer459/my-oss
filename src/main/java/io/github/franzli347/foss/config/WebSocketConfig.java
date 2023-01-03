@@ -1,15 +1,11 @@
 package io.github.franzli347.foss.config;
+
 import io.github.franzli347.foss.Interceptor.MyhandshakeInterceptor;
 import io.github.franzli347.foss.handler.WebSocketHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.standard.ServerEndpointExporter;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * @ClassName WebSocketConfig
@@ -18,21 +14,20 @@ import java.beans.PropertyChangeListener;
  * @Description websocket配置类
  **/
 @Configuration
+@EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-    private final WebSocketHandler httpAuthHandler;
+    private final WebSocketHandler webSocketHandler;
     private final MyhandshakeInterceptor myInterceptor;
 
-    public WebSocketConfig(MyhandshakeInterceptor myInterceptor, WebSocketHandler httpAuthHandler) {
+    public WebSocketConfig(MyhandshakeInterceptor myInterceptor, WebSocketHandler webSocketHandler) {
         this.myInterceptor = myInterceptor;
-        this.httpAuthHandler = httpAuthHandler;
+        this.webSocketHandler = webSocketHandler;
     }
-
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry
-                .addHandler(httpAuthHandler, "/websocket")//前端new websocket的url
+                .addHandler(webSocketHandler, "ws")//ws url
                 .addInterceptors(myInterceptor)
                 .setAllowedOrigins("*");
-
     }
 }

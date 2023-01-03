@@ -2,7 +2,6 @@ package io.github.franzli347.foss.controller;
 
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.VideoCompressArgs;
-import io.github.franzli347.foss.exception.AsyncException;
 import io.github.franzli347.foss.service.FileZipService;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,9 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @ClassName FileZipController
@@ -30,6 +26,7 @@ import java.util.List;
 public class FileZipController {
     private final FileZipService fileZipService;
     private final LoginUserProvider loginUserProvider;
+
     public FileZipController(FileZipService fileZipService, LoginUserProvider loginUserProvider) {
         this.fileZipService = fileZipService;
         this.loginUserProvider = loginUserProvider;
@@ -44,11 +41,12 @@ public class FileZipController {
      **/
     @SneakyThrows
     @Operation(summary = "视频压缩")
-    @PostMapping("/compress/video/{vid}")
+    @PostMapping("/video/{vid}")
     @Parameter(name = "vid",description = "视频文件id",required = true)
     @Parameter(name = "compressArgs",description = "视频压缩参数",required = false)
-    public Result videoCompress(@PathVariable int vid, @RequestBody VideoCompressArgs compressArgs,LoginUserProvider loginUserProvider){
-        return fileZipService.videoCompress(vid,compressArgs, String.valueOf(loginUserProvider.getLoginUser().getId()));//TODO 完成鉴权后从拦截器获取principal的id
+    public Result videoCompress(@PathVariable int vid, @RequestBody VideoCompressArgs compressArgs){
+        fileZipService.videoCompress(vid,compressArgs, String.valueOf(loginUserProvider.getLoginUser().getId()));//TODO 完成鉴权后从拦截器获取principal的id
+        return Result.builder().code(200).msg("压缩任务创建完毕").data(vid).data(compressArgs).build();
     }
     /**
      * @Author AlanC
@@ -57,11 +55,12 @@ public class FileZipController {
      * @Param [iList]
      * @return
      **/
-    @Operation(summary = "图片批量压缩")
-    @PostMapping("/compress/image")
-    @Parameter(name = "iList",description = "图片id集合",required = true)
-    public Result imageCompress(@RequestBody List<Integer> iList,LoginUserProvider loginUserProvider){
-        return fileZipService.imageCompress(iList,String.valueOf(loginUserProvider.getLoginUser().getId()));
+    @Operation(summary = "图片压缩")
+    @PostMapping("/image/{imageId}")
+    @Parameter(name = "imageId",description = "图片id",required = true)
+    public Result imageCompress(@PathVariable int imageId){
+        fileZipService.imageCompress(imageId,String.valueOf(loginUserProvider.getLoginUser().getId()));
+        return Result.builder().code(200).msg("图片压缩任务创建完毕").data(imageId).build();
     }
 
 }

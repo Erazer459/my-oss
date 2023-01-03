@@ -11,7 +11,7 @@ import lombok.Data;
  **/
 @Data
 @AllArgsConstructor
-public class AsyncException extends RuntimeException {
+public class AsyncException extends RuntimeException {//异步异常由AsyncExceptionHandler处理
     private Result result;
-    private String webSocketParamId;//获取websocketSession所需要的id
+    private String userId;//获取websocketSession所需要的id
 }

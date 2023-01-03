@@ -15,15 +15,19 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import java.lang.reflect.Method;
 
 @Slf4j
-public class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {
+public class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {//异步异常handler
+
     WebSocketHandler webSocketHandler;
+    public AsyncExceptionHandler(WebSocketHandler webSocketHandler) {
+        this.webSocketHandler = webSocketHandler;
+    }
     @Override
     public void handleUncaughtException(Throwable ex, Method method, Object... params) {
         log.info("Async method: {} has uncaught exception,params:{}", method.getName(), JSON.toJSONString(params));
         if (ex instanceof AsyncException) {
             AsyncException asyncException = (AsyncException) ex;
-            log.info("asyncException:{}",asyncException.getMessage());
-            webSocketHandler.sendResultMsg(asyncException.getWebSocketParamId(),asyncException.getResult());
+            log.info("asyncException:{}",asyncException.getResult().getMsg());
+            webSocketHandler.sendResultMsg(asyncException.getUserId(),asyncException.getResult());
         }
         log.info("Exception :");
         ex.printStackTrace();

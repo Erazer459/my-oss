@@ -1,6 +1,7 @@
 package io.github.franzli347.foss.config;
 
 import io.github.franzli347.foss.handler.AsyncExceptionHandler;
+import io.github.franzli347.foss.handler.WebSocketHandler;
 import io.github.franzli347.foss.utils.asyncUtils.Threads;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
@@ -42,6 +43,11 @@ public class ThreadPoolConfig implements AsyncConfigurer
      * 线程池维护线程所允许的空闲时间
      */
     private final int keepAliveSeconds = 300;
+    private final WebSocketHandler webSocketHandler;
+
+    public ThreadPoolConfig(WebSocketHandler webSocketHandler) {
+        this.webSocketHandler = webSocketHandler;
+    }
 
     @Bean(name = "threadPoolTaskExecutor")
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
@@ -74,7 +80,7 @@ public class ThreadPoolConfig implements AsyncConfigurer
     }
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return new AsyncExceptionHandler();
+        return new AsyncExceptionHandler(webSocketHandler);
     }
     @Override
     public Executor getAsyncExecutor() {//@Async 注解默认使用自定义executor

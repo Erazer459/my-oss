@@ -1,14 +1,15 @@
 package io.github.franzli347.foss.utils;
 
-import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.VideoCompressArgs;
 import io.github.franzli347.foss.entity.MyVideo;
-import io.github.franzli347.foss.mapper.FilesMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 
 import javax.activation.MimetypesFileTypeMap;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;
@@ -95,12 +96,18 @@ public class FileUtil {
     public static List<String> compressArgsLegal(String videoPath,VideoCompressArgs args){
         MyVideo videoInfo=FfmpegUtil.getVideoInfo(videoPath);
         List<String> error=new ArrayList<>();
-        if (args.getBitRate()>videoInfo.getBitRate())
+        if (args.getBitRate()>videoInfo.getBitRate()) {
+            log.info("原视频码率:{}", videoInfo.getBitRate());
             error.add("码率不得超过原视频");
-        if (args.getFrameRate()>videoInfo.getFrameRate())
+        }
+        if (args.getFrameRate()>videoInfo.getFrameRate()&&videoInfo.getBitRate()!=0) {
+            log.info("原视频帧率:{}", videoInfo.getFrameRate());
             error.add("帧率不得超过原视频");
-        if (args.getVideoSize().getWidth()>videoInfo.getVideoSize().getWidth()&&args.getVideoSize().getHeight()>videoInfo.getVideoSize().getHeight())
+        }
+        if (args.getVideoSize().getWidth()>videoInfo.getVideoSize().getWidth()&&args.getVideoSize().getHeight()>videoInfo.getVideoSize().getHeight()){
+            log.info("原视频分辨率:{}",videoInfo.getVideoSize());
             error.add("分辨率不得超过原视频");
+        }
         return error;
     }
 }

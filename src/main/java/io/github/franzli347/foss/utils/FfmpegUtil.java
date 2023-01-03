@@ -7,21 +7,15 @@ import com.xuggle.xuggler.IStreamCoder;
 import io.github.franzli347.foss.common.ProcessInfo;
 import io.github.franzli347.foss.common.VideoCompressArgs;
 import io.github.franzli347.foss.entity.MyVideo;
-import io.github.franzli347.foss.exception.AsyncException;
-import jdk.jfr.Timespan;
-import jdk.jfr.Timestamp;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.javassist.compiler.ast.StringL;
 import ws.schild.jave.EncoderException;
 import ws.schild.jave.MultimediaObject;
 import ws.schild.jave.info.MultimediaInfo;
-import ws.schild.jave.info.VideoInfo;
 import ws.schild.jave.info.VideoSize;
 import ws.schild.jave.process.ProcessWrapper;
 import ws.schild.jave.process.ffmpeg.DefaultFFMPEGLocator;
-
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -33,7 +27,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 
 /**
@@ -388,11 +381,10 @@ public class FfmpegUtil {
      * @Param [videoPath]
      * @return
      **/
-    public static boolean videoCompress(String videoPath, VideoCompressArgs compressArgs, ProcessInfo info, PropertyChangeListener listener) throws IOException {
+    public static void videoCompress(String videoPath, VideoCompressArgs compressArgs, ProcessInfo info, PropertyChangeListener listener) throws IOException {
         File oldFile=new File(videoPath);
         String tempPath=oldFile.getParent()+File.separator+System.currentTimeMillis()+oldFile.getName();
         log.info("开始压缩视频文件:{}",videoPath);
-//        try {
             ProcessWrapper ffmpeg = new DefaultFFMPEGLocator().createExecutor();
             ffmpeg.addArgument("-i");
             ffmpeg.addArgument(videoPath);
@@ -420,17 +412,6 @@ public class FfmpegUtil {
             result.renameTo(oldFile);
             log.info("视频压缩成功");
             ffmpeg.close();
-        Files.delete(Path.of(tempPath));//删除临时文件
-//        } catch (IOException e) {
-//            log.info("压缩视频失败:{},文件路径:{}",e.getMessage(),videoPath);
-//            try {
-//
-//            } catch (IOException ex) {
-//                throw new RuntimeException("临时文件删除失败");
-//            }
-//            throw new RuntimeException("视频压缩失败");
-//        }
-        return true;
     }
     /**
      * @Author AlanC
@@ -439,11 +420,10 @@ public class FfmpegUtil {
      * @Param [imagePath]
      * @return
      **/
-    public static boolean imageCompress(String imagePath) throws IOException {
+    public static void imageCompress(String imagePath) throws IOException {
         File oldFile=new File(imagePath);
         String tempPath=oldFile.getParent()+File.separator+System.currentTimeMillis()+oldFile.getName();
         log.info("开始压缩图片,目标路径:{}",tempPath);
-//        try {
         ProcessWrapper ffmpeg = new DefaultFFMPEGLocator().createExecutor();
         ffmpeg.addArgument("-i");
         ffmpeg.addArgument(imagePath);
@@ -471,12 +451,6 @@ public class FfmpegUtil {
             boolean b = result.renameTo(oldFile);
             log.info("图片压缩成功###:{}",b);
             ffmpeg.close();
-//        } catch (IOException e) {
-//            log.info("压缩图片失败:{},文件路径:{}",e.getMessage(),imagePath);
-            Files.delete(Path.of(imagePath));
-//            return false;
-//        }
-        return true;
     }
 }
 

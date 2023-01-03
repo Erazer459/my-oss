@@ -1,4 +1,5 @@
 package io.github.franzli347.foss.Interceptor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServerHttpRequest;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ public class MyhandshakeInterceptor implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         log.info("握手开始");
         // 获得请求参数
-        String userId = request.getHeaders().get("token").toString();//TODO 完成鉴权后将token转为userid
+        String userId = request.getHeaders().get("token").toString().substring(1,2);//TODO 完成鉴权后将token转为userid
         if (StringUtils.isNotBlank(userId)) {
             // 放入属性域
             attributes.put("id",userId);

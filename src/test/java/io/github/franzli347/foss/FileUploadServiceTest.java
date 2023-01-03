@@ -5,9 +5,11 @@ import io.github.franzli347.foss.common.ProcessInfo;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.VideoCompressArgs;
 import io.github.franzli347.foss.entity.MyVideo;
+import io.github.franzli347.foss.exception.AsyncException;
 import io.github.franzli347.foss.service.FileUploadService;
 import io.github.franzli347.foss.utils.FfmpegUtil;
 import io.github.franzli347.foss.utils.FileZipUtil;
+import io.github.franzli347.foss.utils.asyncUtils.AsyncTaskManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
@@ -140,6 +142,22 @@ class FileUploadServiceTest {
 //    public void getInfoTest(String videoPath){
 //        log.info("视频信息:{}",FfmpegUtil.getVideoInfo(videoPath).toString());
 //}
-
+//    @ParameterizedTest
+//    @ValueSource (ints = 2)
+//    @Order(3)
+//    @DisplayName(displayName)
+//    public void asyncTest(int i){
+//        for(int j=0;j<=i;j++){
+//            int finalJ = j;
+//            log.info("现在是{}",finalJ);
+//            AsyncTaskManager.me().execute(new MyAsyncTask() {
+//                @Override
+//                public void run(){
+//                    if (finalJ ==0)
+//                        throw new AsyncException(Result.builder().code(500).build(),"1");
+//                }
+//            });
+//        }
+//    }
 }
 
