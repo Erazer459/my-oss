@@ -154,7 +154,6 @@
             </exclusions>
         </dependency>
 
-
         <!--For one platform only (Linux 64Bit in this case)-->
         <dependency>
             <groupId>ws.schild</groupId>
@@ -173,9 +172,6 @@
             <artifactId>jave-native-osx64</artifactId>
             <version>2.4.6</version>
         </dependency>
-
-
-
     </dependencies>
 
     <build>
