@@ -6,7 +6,6 @@ import io.github.franzli347.foss.service.FileUploadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequestMapping("/upload")
-@Slf4j
 @Tag(name = "文件上传模块")
 public class FileUploadController {
 

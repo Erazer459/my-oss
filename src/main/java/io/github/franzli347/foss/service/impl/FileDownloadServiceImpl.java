@@ -4,7 +4,6 @@ import io.github.franzli347.foss.entity.Files;
 import io.github.franzli347.foss.service.FileDownloadService;
 import io.github.franzli347.foss.service.FilesService;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
  * @author FranzLi
  */
 @Service
-@Slf4j
 public class FileDownloadServiceImpl implements FileDownloadService {
 
 

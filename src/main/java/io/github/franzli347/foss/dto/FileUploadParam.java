@@ -27,7 +27,7 @@ public class FileUploadParam {
     /**
      * 当前分片大小
      */
-    private long size = 0L;
+    private long size;
 
     /**
      * bucket id
