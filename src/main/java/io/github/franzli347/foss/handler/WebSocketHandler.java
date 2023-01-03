@@ -1,6 +1,7 @@
 package io.github.franzli347.foss.handler;
 
-import com.alibaba.fastjson.JSON;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.franzli347.foss.common.ProcessInfo;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.support.wsSupport.WsSessionProvider;
@@ -13,6 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * @ClassName WebSocketHandler
@@ -23,9 +25,10 @@ import java.time.LocalDateTime;
 @Slf4j
 public class WebSocketHandler extends TextWebSocketHandler {
     private final WsSessionProvider wsSessionProvider;
-
-    public WebSocketHandler(WsSessionProvider wsSessionProvider) {
+    private final ObjectMapper objectMapper;
+    public WebSocketHandler(WsSessionProvider wsSessionProvider, ObjectMapper objectMapper) {
         this.wsSessionProvider = wsSessionProvider;
+        this.objectMapper = objectMapper;
     }
     /**
      * socket 建立成功事件
@@ -34,15 +37,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * @throws Exception
      */
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String userId = (String) session.getAttributes().get("id");
-        if (userId != null) {
+    public void afterConnectionEstablished(WebSocketSession session){
+        String userId = Optional.ofNullable((String) session.getAttributes().get("id")).orElseThrow(()->new RuntimeException("用户验证失败!"));
             // 用户连接成功，放入redis
-            log.info("userId:{}",userId);
-            wsSessionProvider.add(userId,session);
-        } else {
-            throw new RuntimeException("用户验证失败!");
-        }
+        log.info("userId:{}",userId);
+        wsSessionProvider.add(userId,session);
     }
     /**
      * 接收消息事件
@@ -68,24 +67,21 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * @throws Exception
      */
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        Object userId = session.getAttributes().get("id");
-        if (userId != null) {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
             // 用户退出，移除缓存
-            wsSessionProvider.removeAndClose(userId.toString());
-        }
+        wsSessionProvider.removeAndClose(Optional.ofNullable(session.getAttributes().get("id")).toString());
     }
     @SneakyThrows
     public <T> void sendPercentageMsg(String userId,ProcessInfo info){
         log.info("向客户端发送文件任务进度信息");
         WebSocketSession webSocketSession = wsSessionProvider.get(userId);
-        webSocketSession.sendMessage(new TextMessage(JSON.toJSONString(Result.builder().code(200).msg("任务进度").data(info).build())));
+        webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(Result.builder().code(200).msg("任务进度").data(info).build())));
     }
     @SneakyThrows
     public <T> void sendResultMsg(String userId, Result result){
         log.info("发送ws消息");
         WebSocketSession webSocketSession= wsSessionProvider.get(userId);
-        webSocketSession.sendMessage(new TextMessage(JSON.toJSONString(result)));
+        webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(result)));
     }
 
 }

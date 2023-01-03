@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import ws.schild.jave.EncoderException;
 import ws.schild.jave.MultimediaObject;
+import ws.schild.jave.info.AudioInfo;
 import ws.schild.jave.info.MultimediaInfo;
+import ws.schild.jave.info.VideoInfo;
 import ws.schild.jave.info.VideoSize;
 import ws.schild.jave.process.ProcessWrapper;
 import ws.schild.jave.process.ffmpeg.DefaultFFMPEGLocator;
@@ -340,39 +342,25 @@ public class FfmpegUtil {
     }
     /**
      * @Author AlanC
-     * @Description  使用xuggler获取视频信息
+     * @Description  通过路径获取视频信息
      * @Date 15:09 2022/12/26
      * @Param [videoPath]
      * @return VideoInfo
      **/
-    public static MyVideo getVideoInfo(String videoPath){
-        MyVideo videoInfo = new MyVideo();
-        IContainer container = IContainer.make();
-        int result = container.open(videoPath, IContainer.Type.READ, null);
-        if (result<0) {
-            log.info("视频信息获取失败失败");
-            throw new RuntimeException("Failed to open media file");
-        }
-        String fileSize=new BigDecimal(container.getFileSize()).divide(new BigDecimal(1048576),2, RoundingMode.HALF_UP)+"MB";
-        int numStreams=container.getNumStreams();
-        videoInfo.setVideoLength(container.getDuration()/1000)
-                 .setSize(fileSize);
-        for(int i=0;i<numStreams;i++){
-            IStream stream=container.getStream(i);
-            IStreamCoder coder=stream.getStreamCoder();
-            if(coder.getCodecType()== ICodec.Type.CODEC_TYPE_AUDIO){//音频
-                videoInfo.setSampleRate(coder.getSampleRate())
-                        .setSampleFormat(String.valueOf(coder.getSampleFormat()));
-            } else if (coder.getCodecType()== ICodec.Type.CODEC_TYPE_VIDEO) {//视频
-                videoInfo.setVideoSize(new VideoSize(coder.getWidth(), coder.getHeight()))
-                        .setBitRate(coder.getBitRate())
-                        .setFrameRate((float) coder.getFrameRate().getDouble())
-                        .setPixelType(String.valueOf(coder.getPixelType()))
-                        .setChannels(coder.getChannels());
-            }
-
-        }
-        return videoInfo;
+    public static MyVideo getVideoInfo(String videoPath) throws EncoderException {
+        File file=new File(videoPath);
+        MultimediaObject multimediaObject = new MultimediaObject(file);
+        VideoInfo vInfo=multimediaObject.getInfo().getVideo();
+        AudioInfo aInfo=multimediaObject.getInfo().getAudio();
+        return MyVideo.builder()
+                .videoLength(multimediaObject.getInfo().getDuration()/1000)
+                .bitRate(vInfo.getBitRate())
+                .channels(aInfo.getChannels())
+                .frameRate(vInfo.getFrameRate())
+                .format(multimediaObject.getInfo().getFormat())
+                .videoSize(vInfo.getSize())
+                .sampleRate(aInfo.getSamplingRate())
+                .build();
     }
     /**
      * @Author AlanC

@@ -2,6 +2,7 @@ package io.github.franzli347.foss.utils;
 
 import io.github.franzli347.foss.common.VideoCompressArgs;
 import io.github.franzli347.foss.entity.MyVideo;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 
@@ -93,6 +94,7 @@ public class FileUtil {
         log.info("文件类型:{}",type);
         return type.contains("video");
     }
+    @SneakyThrows
     public static List<String> compressArgsLegal(String videoPath,VideoCompressArgs args){
         MyVideo videoInfo=FfmpegUtil.getVideoInfo(videoPath);
         List<String> error=new ArrayList<>();

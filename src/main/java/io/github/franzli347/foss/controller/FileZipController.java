@@ -50,9 +50,9 @@ public class FileZipController {
     }
     /**
      * @Author AlanC
-     * @Description  文件批量压缩
+     * @Description  图片压缩
      * @Date 15:54 2022/12/28
-     * @Param [iList]
+     * @Param imageId
      * @return
      **/
     @Operation(summary = "图片压缩")

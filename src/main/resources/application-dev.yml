@@ -7,7 +7,7 @@ spring:
     location: banner
   redis:
     host: 47.113.225.98
-    password: !tufirewall
+    password: '!tufirewall'
   mvc:
     pathmatch:
       # 配置策略
@@ -17,7 +17,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://47.113.225.98:3306/turingoss?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: !Tufirewall123..
+    password: '!Tufirewall123..'
   ## jackson 配置
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
