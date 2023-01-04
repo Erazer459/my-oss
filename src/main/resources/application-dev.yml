@@ -12,6 +12,10 @@ spring:
     pathmatch:
       # 配置策略
       matching-strategy: ant-path-matcher
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   ## mysql 配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
