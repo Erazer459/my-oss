@@ -60,6 +60,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
                 };
                 deferredResult.setResult(ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + files.getFileName() + "\"")
+                        .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(file.length()))
                         .body(stream));
             } catch (IOException e) {
                 deferredResult.setErrorResult(e);
