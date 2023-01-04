@@ -86,7 +86,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             return filePathResolver.getFilePath(md5);
         }
         // 生成任务id
-        String taskId = String.valueOf(IdUtil.getSnowflake());
+        String taskId = String.valueOf(IdUtil.getSnowflake().nextId());
 
         FileUploadParam saveRedisData = new FileUploadParam(uid,
                 taskId,
