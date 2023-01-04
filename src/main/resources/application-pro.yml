@@ -32,10 +32,10 @@ logging:
     web: debug
 ## 存储路径映射
 pathMap:
-  source: E:\files\
+  source: /toss/
 ## 临时文件格式
-tmpFilePattern: '%stmp\%s.%d.chunk'
-downloadAddr: http://localhost
+tmpFilePattern: '%stmp/%s.%d.chunk'
+downloadAddr: http://47.113.225.98:8080
 ## mbp
 mybatis-plus:
   global-config:

@@ -86,7 +86,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             return filePathResolver.getFilePath(md5);
         }
         // 生成任务id
-        String taskId = String.valueOf(IdUtil.getSnowflake().nextId());
+        String taskId = String.valueOf(IdUtil.getSnowflakeNextId());
 
         FileUploadParam saveRedisData = new FileUploadParam(uid,
                 taskId,
@@ -158,7 +158,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             //  添加 md5 信息到redis
             stringRedisTemplate.opsForSet().add(RedisConstant.FILE_MD5_LIST, md5);
 
-            String resultPath = "%s%d\\%s".formatted(filePath, bid, name);
+            String resultPath = "%s%d/%s".formatted(filePath, bid, name);
             List<String> collect = chunkPathResolver.getChunkPaths(id, chunks);
 
             boolean merge = FileUtil.mergeFiles(collect.toArray(new String[0]), resultPath);
@@ -168,11 +168,10 @@ public class FileUploadServiceImpl implements FileUploadService {
 
             // 保存文件信息
             FileUploadParam saveData = new FileUploadParam(uid, id, chunks, size, bid, name, md5, LocalDateTime.now());
-
             doFilePostProcessor(resultPath, saveData);
 
             //返回信息
-            return "%s/%d/%s".formatted(downloadAddr,bid,name);
+            return filePathResolver.getFilePath(md5);
 
         }
         return "upload[%s]chunk[%d]success".formatted(name,chunk);

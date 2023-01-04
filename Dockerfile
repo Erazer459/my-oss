@@ -11,4 +11,4 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN echo 'Asia/Shanghai' >/etc/timezone
 #端口号
 EXPOSE 80
-ENTRYPOINT ["java","-jar","/app/app.jar","${appenv}"]
+ENTRYPOINT ["java","-jar","/app/app.jar","--spring.profiles.active=pro"]

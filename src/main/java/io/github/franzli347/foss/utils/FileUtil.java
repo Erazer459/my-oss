@@ -61,7 +61,7 @@ public class FileUtil {
     }
 
     public static String getFilePathWithoutName(String filePath){
-        return filePath.substring(0, filePath.lastIndexOf("\\"));
+        return filePath.substring(0, filePath.lastIndexOf("/"));
     }
 
 }

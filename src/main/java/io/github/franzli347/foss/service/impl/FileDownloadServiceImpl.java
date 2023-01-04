@@ -4,6 +4,7 @@ import io.github.franzli347.foss.entity.Files;
 import io.github.franzli347.foss.service.FileDownloadService;
 import io.github.franzli347.foss.service.FilesService;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,8 @@ public class FileDownloadServiceImpl implements FileDownloadService {
             60L, TimeUnit.SECONDS,
             new SynchronousQueue<>());
 
-
+    @Value("${pathMap.source}")
+    private String filePath;
     private final FilesService filesService;
 
     public FileDownloadServiceImpl(FilesService filesService) {
@@ -44,10 +46,10 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         DeferredResult<ResponseEntity<StreamingResponseBody>> deferredResult = new DeferredResult<>();
         executor.submit(() -> {
             try {
-
+                // 自定义的files
                 Files files = Optional.ofNullable(filesService.getById(id))
                         .orElseThrow(() -> new RuntimeException("文件不存在"));
-                File file = new File(files.getPath());
+                File file = new File(filePath + files.getPath());
                 InputStream inputStream = new FileInputStream(file);
                 StreamingResponseBody stream = outputStream -> {
                     int nRead;

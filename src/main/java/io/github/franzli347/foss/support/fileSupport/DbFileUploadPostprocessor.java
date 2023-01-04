@@ -1,5 +1,6 @@
 package io.github.franzli347.foss.support.fileSupport;
 
+import cn.hutool.core.util.IdUtil;
 import io.github.franzli347.foss.dto.FileUploadParam;
 import io.github.franzli347.foss.entity.Files;
 import io.github.franzli347.foss.service.FilesService;
@@ -27,6 +28,7 @@ public class DbFileUploadPostprocessor implements FileUploadPostProcessor{
         return filesService.save(
                 Files
                 .builder()
+                .id(IdUtil.getSnowflakeNextId())
                 .bid(param.getBid())
                 .fileName(param.getName())
                 .path(param.getBid() + "/" + param.getName())
