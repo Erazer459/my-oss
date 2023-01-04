@@ -32,7 +32,7 @@ logging:
     web: debug
 ## 存储路径映射
 pathMap:
-  source: F:\files\
+  source: \toss\
 ## 临时文件格式
 tmpFilePattern: '%stmp\%s.%d.chunk'
 downloadAddr: http://localhost
