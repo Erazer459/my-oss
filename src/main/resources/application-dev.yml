@@ -6,8 +6,8 @@ spring:
   banner:
     location: banner
   redis:
-    host: localhost
-    password: root
+    host: 47.113.225.98
+    password: '!tufirewall'
   mvc:
     pathmatch:
       # 配置策略
@@ -15,17 +15,13 @@ spring:
   ## mysql 配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/turingoss?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://47.113.225.98:3306/turingoss?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: root
+    password: '!Tufirewall123..'
   ## jackson 配置
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
-## global id config
-Snowflake:
-  workerId: 1
-  datacenterId: 1
 ## log4f config
 logging:
   level:
@@ -33,6 +29,9 @@ logging:
 ## 存储路径映射
 pathMap:
   source: F:\files\
+## 临时文件格式
+tmpFilePattern: '%stmp\%s.%d.chunk'
+downloadAddr: http://localhost
 ## mbp
 mybatis-plus:
   global-config:

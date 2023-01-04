@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author FranzLi
  */
-public abstract class FileUploadPostProcessorRegister {
+public class FileUploadPostProcessorRegister {
     private final List<FileUploadPostProcessor> fileUploadPostProcessors = new ArrayList<>();
 
     public FileUploadPostProcessorRegister register(FileUploadPostProcessor fileUploadPostProcessor) {

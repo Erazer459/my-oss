@@ -11,13 +11,13 @@ import java.util.List;
 
 @SpringBootTest
 @Slf4j
-public class BucketServiceTest {
+class BucketServiceTest {
 
     @Autowired
     private BucketService bucketService;
 
     @Test
-    public void testGetBucketsByUserIdWithPage(){
+    void testGetBucketsByUserIdWithPage(){
         List<Bucket> bucketsByUserIdWithPage = bucketService.getBucketsByUserIdWithPage(1, 0, 2);
         log.info("bucketsByUserIdWithPage:{}",bucketsByUserIdWithPage);
     }

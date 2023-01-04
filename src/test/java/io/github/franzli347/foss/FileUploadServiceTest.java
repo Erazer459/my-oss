@@ -1,11 +1,13 @@
 package io.github.franzli347.foss;
 
-import io.github.franzli347.foss.common.FileUploadParam;
-import io.github.franzli347.foss.common.Result;
+import io.github.franzli347.foss.dto.FileUploadParam;
 import io.github.franzli347.foss.service.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @SpringBootTest
@@ -33,62 +36,66 @@ class FileUploadServiceTest {
     public static Stream<FileUploadParam> fileUploadParamSource(){
         return Stream.of(FileUploadParam.builder()
                 .id(testId)
-                .uid("1")
+                .bid(1)
+                .uid(1)
                 .name("tt.txt")
                 .chunks(2)
                 .md5(RandomUtils.nextLong(0, 1000000000) + "")
                 .build());
     }
 
-    public static final String displayName = "\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75";
-
     @ParameterizedTest
     @MethodSource("fileUploadParamSource")
     @Order(1)
-    @DisplayName(displayName)
-//    @Rollback(false)
-    public void testInitMultipartUpload(FileUploadParam param) {
-        Result result = fileUploadService.initMultipartUpload(param);
-        Assertions.assertNotNull(result.getData());
-        log.info("testInitMultipartUpload:{}",result);
-        testId = result.getData().toString();
+    void testInitMultipartUpload(FileUploadParam param) {
+        String taskId = fileUploadService.initMultipartUpload(param.getUid(), param.getBid(), param.getName(), param.getChunks(), param.getMd5(), param.getSize());
+        Assertions.assertNotNull(taskId);
+        log.info("taskId:{}",taskId);
+        testId = taskId;
     }
 
 
     @ParameterizedTest
-    @DisplayName(displayName)
-
     @MethodSource("fileUploadParamSource")
     @Order(2)
-    public void testCheck(FileUploadParam param)  {
-        Result result = fileUploadService.check(param.getId());
-        log.info("testCheck:{}",result);
+    void testCheck(FileUploadParam param)  {
+        Set<String> set= fileUploadService.check(param.getId());
+        log.info("testCheck:{}",set);
     }
 
     @ParameterizedTest
     @MethodSource("fileUploadParamSource")
     @Order(3)
-    @DisplayName(displayName)
-//    @Rollback(false)
-    public void testUploadChunk(FileUploadParam param) throws IOException {
-        param.setFile(new MockMultipartFile("file", "test.txt", "text/plain", "turing".getBytes()));
-        param.setChunk(1);
-        log.info("param {}",param);
-        Result uploadChunk = fileUploadService.uploadChunk(param);
-        Assertions.assertEquals("upload " + "tt.txt" + " chunk " + 1 + " success",uploadChunk.getMsg());
-        log.info("testUploadChunk1:{}",uploadChunk);
-        //chunk2 upload
-        log.info("param {}",param);
-        param.setFile(new MockMultipartFile("file", "test.txt", "text/plain", " team".getBytes()));
-        param.setChunk(2);
-        Result uploadChunk2 = fileUploadService.uploadChunk(param);
-        Assertions.assertEquals("upload complete",uploadChunk2.getMsg());
-        log.info("testUploadChunk2:{}",uploadChunk2);
+    void testUploadChunk(FileUploadParam param) throws IOException {
+        String result = fileUploadService.uploadChunk(param.getId(),
+                param.getUid(),
+                param.getBid(),
+                param.getName(),
+                param.getChunks(),
+                1,
+                param.getSize(),
+                param.getMd5(),
+                new MockMultipartFile("file", "test.txt", "text/plain", "turing".getBytes()));
+        Assertions.assertEquals("upload[tt.txt]chunk[1]success",result);
 
-        byte[] bytes = Files.readAllBytes(Path.of(path + "tt.txt"));
+        log.info("testUploadChunk1:{}",result);
+        //chunk2 upload
+        result = fileUploadService.uploadChunk(param.getId(),
+                param.getUid(),
+                param.getBid(),
+                param.getName(),
+                param.getChunks(),
+                2,
+                param.getSize(),
+                param.getMd5(),
+                new MockMultipartFile("file", "test.txt", "text/plain", " team".getBytes())
+        );
+        Assertions.assertEquals("http://localhost/1/tt.txt",result);
+        log.info("testUploadChunk2:{}",result);
+        byte[] bytes = Files.readAllBytes(Path.of(path + "\\" + param.getBid() + "\\" + "tt.txt"));
         String s = new String(bytes);
         Assertions.assertEquals("turing team",s);
-        Files.delete(Path.of(path + "tt.txt"));
+        Files.delete(Path.of(path + "\\" + param.getBid() + "\\" + "tt.txt"));
     }
 
 }

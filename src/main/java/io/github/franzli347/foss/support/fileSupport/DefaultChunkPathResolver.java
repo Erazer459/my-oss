@@ -16,15 +16,16 @@ public class DefaultChunkPathResolver implements ChunkPathResolver{
 
     @Value("${pathMap.source}")
     String filePath;
+
+    @Value("${tmpFilePattern}")
+    String tmpFilePattern;
     @Override
     @SneakyThrows
     public List<String> getChunkPaths(String id,int chunks) {
         // init capacity
         List<String> chunkPaths = new ArrayList<>(chunks);
-        for (int i = 1; i <= chunks; i++) {
-            chunkPaths.add(filePath
-                    + id + "."
-                    + i + ".chunk");
+        for (int chunk = 1; chunk <= chunks; chunk++) {
+            chunkPaths.add(tmpFilePattern.formatted(filePath,id,chunk));
         }
         return chunkPaths;
     }
