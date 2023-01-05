@@ -34,7 +34,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
      * socket 建立成功事件
      *
      * @param session
-     * @throws Exception
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session){
@@ -54,7 +53,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 获得客户端传来的消息
         String payload = message.getPayload();
         Object userId = session.getAttributes().get("id");
-        session.sendMessage(new TextMessage("server 发送给 " + userId + " 消息 " + payload + " " + LocalDateTime.now().toString()));
+        session.sendMessage(new TextMessage("server 发送给 " + userId + " 消息 " + payload + " " + LocalDateTime.now()));
     }
 
     /**
@@ -70,12 +69,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         wsSessionProvider.removeAndClose(Optional.ofNullable(session.getAttributes().get("id")).toString());
     }
     @SneakyThrows
-    public <T> void sendPercentageMsg(String userId,ProcessInfo info){
+    public void sendPercentageMsg(String userId, ProcessInfo info){
         WebSocketSession webSocketSession = wsSessionProvider.get(userId);
         webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(Result.builder().code(200).msg("任务进度").data(info).build())));
     }
     @SneakyThrows
-    public <T> void sendResultMsg(String userId, Result result){
+    public void sendResultMsg(String userId, Result result){
         WebSocketSession webSocketSession= wsSessionProvider.get(userId);
         webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(result)));
     }

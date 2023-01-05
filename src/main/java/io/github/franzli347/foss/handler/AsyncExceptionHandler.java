@@ -28,8 +28,6 @@ public class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {//å
             log.info("asyncException:{}",asyncException.getResult().getMsg());
             webSocketHandler.sendResultMsg(asyncException.getUserId(),asyncException.getResult());
         }
-        log.info("Exception :");
-        ex.printStackTrace();
     }
 }
 

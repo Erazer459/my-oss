@@ -1,37 +1,18 @@
 package io.github.franzli347.foss;
 
 import io.github.franzli347.foss.common.FileUploadParam;
-import io.github.franzli347.foss.common.ProcessInfo;
 import io.github.franzli347.foss.common.Result;
-import io.github.franzli347.foss.common.VideoCompressArgs;
-import io.github.franzli347.foss.entity.MyVideo;
-import io.github.franzli347.foss.exception.AsyncException;
 import io.github.franzli347.foss.service.FileUploadService;
-import io.github.franzli347.foss.utils.FfmpegUtil;
-import io.github.franzli347.foss.utils.FileZipUtil;
-import io.github.franzli347.foss.utils.asyncUtils.AsyncTaskManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.Test;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import ws.schild.jave.info.VideoInfo;
-import ws.schild.jave.info.VideoSize;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.stream.Stream;
 
 @SpringBootTest

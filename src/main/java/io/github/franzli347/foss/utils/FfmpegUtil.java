@@ -1,9 +1,5 @@
 package io.github.franzli347.foss.utils;
 
-import com.xuggle.xuggler.ICodec;
-import com.xuggle.xuggler.IContainer;
-import com.xuggle.xuggler.IStream;
-import com.xuggle.xuggler.IStreamCoder;
 import io.github.franzli347.foss.common.ProcessInfo;
 import io.github.franzli347.foss.common.VideoCompressArgs;
 import io.github.franzli347.foss.entity.MyVideo;
@@ -15,7 +11,6 @@ import ws.schild.jave.MultimediaObject;
 import ws.schild.jave.info.AudioInfo;
 import ws.schild.jave.info.MultimediaInfo;
 import ws.schild.jave.info.VideoInfo;
-import ws.schild.jave.info.VideoSize;
 import ws.schild.jave.process.ProcessWrapper;
 import ws.schild.jave.process.ffmpeg.DefaultFFMPEGLocator;
 
@@ -26,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.file.Files;
 
@@ -432,7 +426,7 @@ public class FfmpegUtil {
             }
             Files.delete(oldFile.toPath());
             File result=new File(tempPath);
-            boolean b = result.renameTo(oldFile);
+            result.renameTo(oldFile);
             ffmpeg.close();
     }
 }
