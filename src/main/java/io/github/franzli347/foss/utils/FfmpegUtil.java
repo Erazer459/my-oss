@@ -109,7 +109,6 @@ public class FfmpegUtil {
             if (line2.contains("duration:") && line2.contains("bitrate:") && line2.contains("start:")){//获取原视频长度
                 source= Long.parseLong(line2.substring(line2.indexOf("duration:")+StringUtils.length("duration:"),line2.indexOf(",start")).replace(":","").replace(".",""));
                 info.setSource(source);
-                log.info("源视频:{}",source);
             }
             if (line2.contains("frame=")&&line2.contains("time=")&&line2.contains("size=")){//开始读取视频处理进度
                 Thread.sleep(1500);
@@ -372,7 +371,6 @@ public class FfmpegUtil {
     public static void videoCompress(String videoPath, VideoCompressArgs compressArgs, ProcessInfo info, PropertyChangeListener listener) throws IOException {
         File oldFile=new File(videoPath);
         String tempPath=oldFile.getParent()+File.separator+System.currentTimeMillis()+oldFile.getName();
-        log.info("开始压缩视频文件:{}",videoPath);
             ProcessWrapper ffmpeg = new DefaultFFMPEGLocator().createExecutor();
             ffmpeg.addArgument("-i");
             ffmpeg.addArgument(videoPath);
@@ -398,7 +396,6 @@ public class FfmpegUtil {
             Files.delete(oldFile.toPath());
             File result=new File(tempPath);
             result.renameTo(oldFile);
-            log.info("视频压缩成功");
             ffmpeg.close();
     }
     /**
@@ -411,7 +408,6 @@ public class FfmpegUtil {
     public static void imageCompress(String imagePath) throws IOException {
         File oldFile=new File(imagePath);
         String tempPath=oldFile.getParent()+File.separator+System.currentTimeMillis()+oldFile.getName();
-        log.info("开始压缩图片,目标路径:{}",tempPath);
         ProcessWrapper ffmpeg = new DefaultFFMPEGLocator().createExecutor();
         ffmpeg.addArgument("-i");
         ffmpeg.addArgument(imagePath);
@@ -437,7 +433,6 @@ public class FfmpegUtil {
             Files.delete(oldFile.toPath());
             File result=new File(tempPath);
             boolean b = result.renameTo(oldFile);
-            log.info("图片压缩成功###:{}",b);
             ffmpeg.close();
     }
 }

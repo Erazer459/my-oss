@@ -57,7 +57,6 @@ public class FileZipServiceImpl implements FileZipService {//TODO 大文件压�
         try {
             FileZipUtil.videoCompress(files.getPath(), args, info, evt -> {//持续监听压缩进度
                 if (evt.getPropertyName().equals("percentage") &&evt.getNewValue()!=evt.getOldValue()){
-                    log.info("新的进度:{}", ((ProcessInfo) evt.getSource()).getPercentage());
                     webSocketHandler.sendPercentageMsg(userId, (ProcessInfo) evt.getSource());
                 }
                 if (evt.getPropertyName().equals("done") && (boolean) evt.getNewValue()){

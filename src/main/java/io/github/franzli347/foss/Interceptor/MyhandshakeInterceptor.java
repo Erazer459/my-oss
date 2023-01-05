@@ -31,16 +31,13 @@ public class MyhandshakeInterceptor implements HandshakeInterceptor {
      */
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        log.info("握手开始");
         // 获得请求参数
         String userId = request.getHeaders().get("token").toString().substring(1,2);//TODO 完成鉴权后将token转为userid
         if (StringUtils.isNotBlank(userId)) {
             // 放入属性域
             attributes.put("id",userId);
-            log.info("用户 token:{} 握手成功！",userId);
             return true;
         }
-        log.info("用户验证失败");
         return false;
     }
 
@@ -54,7 +51,6 @@ public class MyhandshakeInterceptor implements HandshakeInterceptor {
      */
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
-        log.info("握手完成");
     }
 
 }
