@@ -15,11 +15,6 @@ public class FileUploadParam {
      */
     private Integer uid;
     /**
-     * 任务ID
-     */
-    private String id;
-
-    /**
      * 总分片数量
      */
     private int chunks;

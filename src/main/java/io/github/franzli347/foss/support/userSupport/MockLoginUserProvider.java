@@ -8,7 +8,6 @@ public class MockLoginUserProvider implements LoginUserProvider{
         UserBase userBase = new UserBase() {};
         userBase.setId(1);
         userBase.setUsername("123");
-        userBase.setPassword("123");
         return userBase;
     }
 }
