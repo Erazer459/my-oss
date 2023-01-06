@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "tmpFilePattern",
+      "type": "java.lang.String",
+      "description": "大文件上传暂存路径",
+      "defaultValue": "'%stmp\\%s.%d.chunk'"
+    },
+    {
+      "name": "downloadAddr",
+      "type": "java.lang.String",
+      "description": "下载服务器公网地址",
+      "defaultValue": "http://localhost"
+    }
+  ]
+}

@@ -1,17 +1,22 @@
 package io.github.franzli347.foss.controller;
 
-import io.github.franzli347.foss.common.FileUploadParam;
 import io.github.franzli347.foss.common.Result;
+import io.github.franzli347.foss.common.ResultCode;
 import io.github.franzli347.foss.service.FileUploadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * @author FranzLi
+ */
 @RestController
 @RequestMapping("/upload")
-@Slf4j
 @Tag(name = "文件上传模块")
 public class FileUploadController {
 
@@ -22,49 +27,86 @@ public class FileUploadController {
     }
 
     /**
-     * 文件上传初始化，返回上传任务id
+     * 文件上传初始化
      *
      * @return Result
      */
     @PostMapping("/initMultipartUpload")
     @Operation(summary = "文件上传初始化")
-/*    @Parameter(name = "uid", description = "用户id",required = true)
-    @Parameter(name = "name", description = "文件名",required = true)
-    @Parameter(name = "chunks", description = "分片数量",required = true)
-    @Parameter(name = "md5", description = "整个文件md5",required = true)
-    @Parameter(name = "size", description = "文件大小")*/
-    public Result initMultipartUpload(@RequestBody FileUploadParam param) {
-        return fileUploadService.initMultipartUpload(param);
+    public Result initMultipartUpload(int uid,
+                                      int bid,
+                                      String name,
+                                      int chunks,
+                                      String md5,
+                                      long size) {
+
+        boolean initStatus = fileUploadService.initMultipartUpload(
+                uid,
+                bid,
+                name,
+                chunks,
+                md5,
+                size);
+        return Result.builder().code(ResultCode.CODE_SUCCESS)
+                .data(initStatus)
+                .build();
     }
+
+
+    @Operation(summary = "检查是否可以秒传")
+    @PostMapping("/secUpload/{md5}/{targetBid}")
+    public Result secUpload(@PathVariable String md5,@PathVariable String targetBid){
+        boolean secUploadStatus = fileUploadService.secUpload(md5,targetBid);
+        return Result.builder()
+                .code(ResultCode.CODE_SUCCESS)
+                .data(secUploadStatus)
+                .build();
+    }
+
+
 
     /**
      * 分块上传
-     * @return
+     * @return Result
      */
-    @Operation(summary = "上传分块(用form-data)")
-/*    @Parameter(name = "id", description = "任务id",required = true)
-    @Parameter(name = "uid", description = "用户id",required = true)
-    @Parameter(name = "name", description = "文件名",required = true)
-    @Parameter(name = "chunks", description = "分片数量",required = true)
-    @Parameter(name = "chunk", description = "当前分片",required = true)
-    @Parameter(name = "size",description = "当前分块大小",required = true)
-    @Parameter(name = "md5", description = "整个文件md5",required = true)
-    @Parameter(name = "file", description = "分片对象",required = true, schema = @Schema(type = "file"))*/
+    @Operation(summary = "上传分块")
     @PostMapping("/uploadChunk")
-    public Result uploadChunk(FileUploadParam param) {
-        return fileUploadService.uploadChunk(param);
+    public Result uploadChunk(int uid,
+                              int bid,
+                              String name,
+                              int chunks,
+                              int chunk,
+                              Long size,
+                              String md5,
+                              MultipartFile file
+                              ) {
+        return Result.builder()
+                .code(ResultCode.CODE_SUCCESS)
+                .data(fileUploadService.uploadChunk(uid,bid,name,chunks,chunk,size,md5,file))
+                .build();
     }
 
     /**
-     * 检查上传任务当前块数
-     * @param id
+     * 检查上传任务已上传块数
      * @return Result
      */
-    @Operation(summary = "检查上传任务当前块数")
-    @Parameter(name = "id", description = "任务id",required = true)
-    @PostMapping("/check/{id}")
-    public Result check(@PathVariable String id) {
-        return fileUploadService.check(id);
+    @Operation(summary = "检查上传任务已上传块数")
+    @PostMapping("/check/{md5}")
+    public Result check(@PathVariable @Parameter(description = "任务id") String md5) {
+        return Result.builder()
+                .data(fileUploadService.check(md5))
+                .code(ResultCode.CODE_SUCCESS).build();
+    }
+
+
+    @Operation(summary = "放弃上传任务")
+    @PostMapping("/abort/{md5}")
+    public Result abort(@PathVariable final String md5){
+        boolean abort = fileUploadService.abort(md5);
+        return Result.builder()
+                .code(ResultCode.CODE_SUCCESS)
+                .data(abort)
+                .build();
     }
 
 }

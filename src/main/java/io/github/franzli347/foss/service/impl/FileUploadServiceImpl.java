@@ -1,14 +1,20 @@
 package io.github.franzli347.foss.service.impl;
 
+import cn.hutool.core.util.IdUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.franzli347.foss.common.FileUploadParam;
 import io.github.franzli347.foss.common.RedisConstant;
-import io.github.franzli347.foss.common.Result;
+import io.github.franzli347.foss.utils.StreamUtil;
+import io.github.franzli347.foss.dto.FileUploadParam;
+import io.github.franzli347.foss.entity.Files;
+import io.github.franzli347.foss.exception.FileException;
 import io.github.franzli347.foss.service.FileUploadService;
-import io.github.franzli347.foss.support.fileSupport.*;
+import io.github.franzli347.foss.service.FilesService;
+import io.github.franzli347.foss.support.fileSupport.ChunkPathResolver;
+import io.github.franzli347.foss.support.fileSupport.FileTransferResolver;
+import io.github.franzli347.foss.support.fileSupport.FileUploadPostProcessor;
+import io.github.franzli347.foss.support.fileSupport.FileUploadPostProcessorRegister;
 import io.github.franzli347.foss.utils.FileUtil;
-import io.github.franzli347.foss.utils.SnowflakeDistributeId;
-import io.github.franzli347.foss.utils.asyncUtils.AsyncTaskManager;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -17,11 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.TimerTask;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -32,13 +39,10 @@ import java.util.stream.Collectors;
  */
 @Service
 public class FileUploadServiceImpl implements FileUploadService {
-    private final SnowflakeDistributeId snowflakeDistributeId;
 
     private final StringRedisTemplate stringRedisTemplate;
 
     private final ObjectMapper objectMapper;
-
-    private final FilePathResolver filePathResolver;
 
     private final FileTransferResolver fileTransferResolver;
 
@@ -46,17 +50,30 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private final FileUploadPostProcessorRegister fileUploadPostProcessorRegister;
 
+    private final FilesService filesService;
+
+
     @Value("${pathMap.source}")
     private String filePath;
 
-    public FileUploadServiceImpl(SnowflakeDistributeId snowflakeDistributeId, StringRedisTemplate stringRedisTemplate, ObjectMapper objectMapper, FilePathResolver filePathResolver, FileTransferResolver fileTransferResolver, ChunkPathResolver chunkPathResolver, FileUploadPostProcessorRegister fileUploadPostProcessorRegister) {
-        this.snowflakeDistributeId = snowflakeDistributeId;
+    @Value("${tmpFilePattern}")
+    String tmpFilePattern;
+
+    @Value("${downloadAddr}")
+    String downloadAddr;
+
+    public FileUploadServiceImpl(StringRedisTemplate stringRedisTemplate,
+                                 ObjectMapper objectMapper,
+                                 FileTransferResolver fileTransferResolver,
+                                 ChunkPathResolver chunkPathResolver,
+                                 FileUploadPostProcessorRegister fileUploadPostProcessorRegister,
+                                 FilesService filesService) {
         this.stringRedisTemplate = stringRedisTemplate;
         this.objectMapper = objectMapper;
-        this.filePathResolver = filePathResolver;
         this.fileTransferResolver = fileTransferResolver;
         this.chunkPathResolver = chunkPathResolver;
         this.fileUploadPostProcessorRegister = fileUploadPostProcessorRegister;
+        this.filesService = filesService;
     }
 
     /**
@@ -67,46 +84,55 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
-    public Result initMultipartUpload(FileUploadParam param) {
-        // TODO : validate uid param
-        // 查询文件是否存在
-        //TODO bloom filter
+    public boolean initMultipartUpload(final int uid,
+                                      final int bid,
+                                      final String name,
+                                      final int chunks,
+                                      final String md5,
+                                      final long size) {
 
-        // 文件存在直接返回文件路径
-        if (Optional
-                .ofNullable(stringRedisTemplate.opsForSet().isMember(RedisConstant.FILE_MD5_LIST, param.getMd5()))
-                .orElse(false)) {
-            // TODO :返回文件路径
-            return Result.builder()
-                    .code(200)
-                    .msg("file is exist")
-                    .data(filePathResolver.getFilePath(param.getMd5()))
-                    .build();
+        FileUploadParam dt = new FileUploadParam(uid,
+                chunks,
+                size,
+                bid,
+                name,
+                md5,
+                LocalDateTime.now());
+
+        initUploadDataToRedis(dt);
+
+        return true;
+    }
+
+
+    @Override
+    public boolean secUpload(final String md5,final String targetBid){
+        boolean isUpload = Optional.ofNullable(stringRedisTemplate.opsForSet().isMember(RedisConstant.FILE_MD5_LIST, md5)).orElse(false);
+        if(isUpload){
+            saveFileDataToOther(md5,targetBid);
         }
-        // 生成任务id
-        param.setId(String.valueOf(snowflakeDistributeId.nextId()));
-        param.setCreateTime(LocalDateTime.now());
+        return isUpload;
+    }
 
-        // 序列化任务到redis
-        stringRedisTemplate
-                .opsForValue()
-                .set(RedisConstant.FILE_TASK + "_" + param.getId(), objectMapper.writeValueAsString(param));
+    @Override
+    public boolean abort(String md5) {
+        // 获取已经上传的分块
+        Set<String> members = stringRedisTemplate.opsForSet().members(RedisConstant.FILE_CHUNK_LIST + "_" + md5);
+        removeUploadDataFromRedis(md5);
+        //获取已经上传分块的文件路径
+        List<String> chunkPaths = chunkPathResolver.getChunkPaths(md5, members);
+        //删除已经上传分块
+        chunkPaths.forEach(StreamUtil.throwingConsumerWrapper(v -> java.nio.file.Files.deleteIfExists(Path.of(v))));
+        return true;
+    }
 
-        // 添加上传块数列表（redis set为空时会被自动删除
-        stringRedisTemplate
-                .opsForSet()
-                .add(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId(), "");
-        // 设置任务过期时间
 
-        List.of(RedisConstant.FILE_CHUNK_LIST + "_" + param.getId(),
-                RedisConstant.FILE_TASK + "_" + param.getId())
-                .forEach(key -> stringRedisTemplate.expire(key,  RedisConstant.FILE_TASK_EXPIRE, TimeUnit.SECONDS));
-
-        // 返回任务id
-        return Result.builder()
-                .data(param.getId())
-                .code(200)
-                .build();
+    private void saveFileDataToOther(final String md5,final String targetBid){
+        Files files = filesService.query().eq("md5", md5).oneOpt()
+                .orElseThrow(() ->new FileException("saveFileDataToOtherError"));
+        files.setBid(Integer.valueOf(targetBid));
+        files.setId(IdUtil.getSnowflakeNextId());
+        filesService.save(files);
     }
 
 
@@ -117,19 +143,14 @@ public class FileUploadServiceImpl implements FileUploadService {
      */
     @Override
     @SneakyThrows
-    public Result check(String id) {
+    public Set<String> check(String md5) {
         // 查询任务是否存在
-        objectMapper.readValue(Optional
-                        .ofNullable(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + id))
-                        .orElseThrow(() -> new RuntimeException("task is not exist"))
-                        ,FileUploadParam.class);
+        checkTaskStatus(md5);
         // 如果存在任务，返回已上传分片,不存在直接抛出异常
-        return Result.builder()
-                .data(Objects.requireNonNull(stringRedisTemplate.opsForSet().members(RedisConstant.FILE_CHUNK_LIST + "_" + id))
-                                .stream().filter(s -> !s.isBlank())
-                                .collect(Collectors.toSet()))
-                .code(200)
-                .build();
+        return Objects.requireNonNull(stringRedisTemplate.opsForSet()
+                        .members(RedisConstant.FILE_CHUNK_LIST + "_" + md5))
+                        .stream().filter(s -> !s.isBlank())
+                        .collect(Collectors.toSet());
     }
 
     /**
@@ -140,57 +161,101 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
-    public Result uploadChunk(FileUploadParam param) {
-        String id = Optional.ofNullable(param.getId()).orElseThrow(() -> new RuntimeException("id is null"));
+    public String uploadChunk(final int uid,
+                              final int bid,
+                              final String name,
+                              final int chunks,
+                              final int chunk,
+                              final Long size,
+                              final String md5,
+                              final MultipartFile file) {
+
         // 检查任务id
-        objectMapper.readValue(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + param.getId()),FileUploadParam.class);
-        // 获取当前上传分块
-        int chunk = param.getChunk();
-        String fileName = param.getName();
-        // 异步保存文件分块到本地
-        MultipartFile file = param.getFile();
-        // 转存分片
-        fileTransferResolver.transferFile(file, filePath + "tmp\\" + id + "." + chunk + ".chunk");
-        // 添加上传块数列表
-        stringRedisTemplate.opsForSet().add(RedisConstant.FILE_CHUNK_LIST + "_" + id, String.valueOf(chunk));
-        Long upLoadChunks = stringRedisTemplate.opsForSet().size(RedisConstant.FILE_CHUNK_LIST + "_" + id);
-        upLoadChunks = Optional.ofNullable(upLoadChunks).orElse(0L);
-        //所有块都上传完成(+1是因为set中有一个空字符串)
-        if (upLoadChunks == param.getChunks() + 1) {
-            //异步merge文件
-            // 异步删除redis信息
-            AsyncTaskManager.me().execute(new TimerTask() {
-                @Override
-                public void run() {
-                    stringRedisTemplate.delete(List.of(RedisConstant.FILE_CHUNK_LIST + "_" + id, id));
-                    //  添加  md5 信息到redis
-                    stringRedisTemplate.opsForSet().add(RedisConstant.FILE_MD5_LIST, param.getMd5());
-                }
-            });
-            ///TODO :修改寻块逻辑(没想到啥好方法，先拼接字符串写着,后面直接注入新的ChunkPathResolver代替即可)
-            // fix : 更改合并逻辑到主线程，防止合并失败无法返回错误信息
-            String resultPath = "%s%d\\%s".formatted(filePath, param.getBid(), fileName);
-            List<String> collect = chunkPathResolver.getChunkPaths(id, param.getChunks());
-            boolean merge = FileUtil.mergeFiles(collect.toArray(new String[0]), resultPath);
-            if (!merge) {
-                throw new IOException("merge file error");
-            }
-            // 保存文件信息
-            List<FileUploadPostProcessor> fileUploadPostProcessors = fileUploadPostProcessorRegister.getFileUploadPostProcessors();
-            for (FileUploadPostProcessor fileUploadPostProcessor : fileUploadPostProcessors) {
-                fileUploadPostProcessor.process(resultPath, param);
-            }
-            //返回信息
-            return Result.builder()
-                    .code(200)
-                    //TODO:修改为http路径
-                    .data(resultPath)
-                    .msg("upload complete")
-                    .build();
+        checkTaskStatus(md5);
+
+        //检查分块是否曾经上传
+        boolean chunkCheckError = Optional.ofNullable(stringRedisTemplate.opsForSet()
+                                .isMember(RedisConstant.FILE_CHUNK_LIST + "_" + md5, String.valueOf(chunk)))
+                                .orElseThrow(() -> new FileException("chunk_check_error"));
+
+
+        if(chunkCheckError){
+            return "upload[%s]chunk[%d]success".formatted(name,chunk);
         }
-        return Result.builder()
-                .code(200)
-                .msg("upload " + param.getName() + " chunk " + chunk + " success")
-                .build();
+
+        // 转存分片 ( 最后path = filepath\tmp\12345.1.chunk
+        fileTransferResolver.transferFile(file,tmpFilePattern.formatted(filePath,md5,chunk));
+        // 添加上传块数列表
+        stringRedisTemplate.opsForSet().add(RedisConstant.FILE_CHUNK_LIST + "_" + md5, String.valueOf(chunk));
+
+        Long upLoadChunks = Optional.ofNullable(stringRedisTemplate.opsForSet().size(RedisConstant.FILE_CHUNK_LIST + "_" + md5))
+                .orElseThrow(() -> new FileException("task_not_exist"));
+        //所有块都上传完成(+1是因为set中有一个空字符串)
+
+        if (upLoadChunks == chunks + 1) {
+            return afterChunksUpload(uid, bid, name, chunks, size, md5);
+        }
+
+        return "upload[%s]chunk[%d]success".formatted(name,chunk);
+    }
+
+    private String afterChunksUpload(int uid, int bid, String name, int chunks, Long size, String md5) throws IOException {
+        removeUploadDataFromRedis(md5);
+        //  添加 md5 信息到redis
+        stringRedisTemplate.opsForSet().add(RedisConstant.FILE_MD5_LIST, md5);
+
+        String resultPath = "%s%d/%s".formatted(filePath, bid, name);
+        List<String> collect = chunkPathResolver.getChunkPaths(md5, chunks);
+
+        boolean merge = FileUtil.mergeFiles(collect.toArray(new String[0]), resultPath);
+        if (!merge) {
+            throw new FileException("merge_file_error");
+        }
+
+        // 保存文件信息
+        FileUploadParam saveData = new FileUploadParam(uid, chunks, size, bid, name, md5, LocalDateTime.now());
+        doFilePostProcessor(resultPath, saveData);
+
+        //返回信息
+        return "Multipart_upload_complete";
+    }
+
+    private void removeUploadDataFromRedis(String md5) {
+        // 删除redis中的任务信息
+        stringRedisTemplate.delete(List.of(RedisConstant.FILE_CHUNK_LIST + "_" + md5, RedisConstant.FILE_TASK + "_" + md5));
+    }
+
+    private void doFilePostProcessor(String resultPath, FileUploadParam saveData) {
+        List<FileUploadPostProcessor> fileUploadPostProcessors = fileUploadPostProcessorRegister.getFileUploadPostProcessors();
+        for (FileUploadPostProcessor fileUploadPostProcessor : fileUploadPostProcessors) {
+            boolean processResult = fileUploadPostProcessor.process(resultPath, saveData);
+            if(!processResult) {
+                throw new FileException("process_error");
+            }
+        }
+    }
+
+    private void checkTaskStatus(String md5) throws JsonProcessingException {
+        objectMapper.readValue(Optional.ofNullable(stringRedisTemplate.opsForValue().get(RedisConstant.FILE_TASK + "_" + md5))
+                .orElseThrow(() -> new RuntimeException("task_is_not_exist")),FileUploadParam.class);
+    }
+
+
+    @SneakyThrows
+    private void initUploadDataToRedis(FileUploadParam dt) {
+        // 序列化任务到redis
+        stringRedisTemplate
+                .opsForValue()
+                .set(RedisConstant.FILE_TASK + "_" + dt.getMd5(), objectMapper.writeValueAsString(dt));
+
+        // 添加上传块数列表（redis set为空时会被自动删除
+        stringRedisTemplate
+                .opsForSet()
+                .add(RedisConstant.FILE_CHUNK_LIST + "_" + dt.getMd5(), "");
+
+        // 设置任务过期时间
+        List.of(RedisConstant.FILE_CHUNK_LIST + "_" + dt.getMd5(),
+                        RedisConstant.FILE_TASK + "_" + dt.getMd5())
+                .forEach(key -> stringRedisTemplate.expire(key,  RedisConstant.FILE_TASK_EXPIRE, TimeUnit.SECONDS));
     }
 }

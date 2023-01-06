@@ -12,22 +12,22 @@ public class RedisConstant {
     /**
      * 已上传文件md5前缀
      */
-    public final static String FILE_MD5_LIST = "FILE_MD5_LIST";
+    public static final  String FILE_MD5_LIST = "FILE_MD5_LIST";
 
     /**
      * 文件已上传块数前缀
      */
-    public final static String FILE_CHUNK_LIST = "FILE_CHUNK_LIST";
+    public static final String FILE_CHUNK_LIST = "FILE_CHUNK_LIST";
 
     /**
      * 文件上传任务前缀
      */
-    public final static String FILE_TASK = "FILE_TASK";
+    public static final String FILE_TASK = "FILE_TASK";
 
     /**
      * 文件上传任务过期时间
      */
-    public final static long FILE_TASK_EXPIRE = 3600 * 14;
+    public static final long FILE_TASK_EXPIRE = 50400;
     /**
      * 压缩任务前缀
      **/
@@ -36,4 +36,5 @@ public class RedisConstant {
      * WebSocket连接session
      **/
     public final static String WS_SESSION_LIST ="WS_SESSION_LIST";
+    
 }

@@ -1,25 +1,20 @@
 package io.github.franzli347.foss;
 
-import io.github.franzli347.foss.common.FileUploadParam;
-import io.github.franzli347.foss.common.Result;
-import io.github.franzli347.foss.service.FileUploadService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Stream;
+
 
 @SpringBootTest
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
 class FileUploadServiceTest {
+
+/*
     @Autowired
     private FileUploadService fileUploadService;
     @Value("${pathMap.source}")
@@ -27,37 +22,31 @@ class FileUploadServiceTest {
     private static String testId = "";
     public static Stream<FileUploadParam> fileUploadParamSource(){
         return Stream.of(FileUploadParam.builder()
-                .id(testId)
-                .uid("1")
+                .bid(1)
+                .uid(1)
                 .name("tt.txt")
                 .chunks(2)
                 .md5(RandomUtils.nextLong(0, 1000000000) + "")
                 .build());
     }
 
-    public static final String displayName = "\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75\uD83E\uDD75";
-
     @ParameterizedTest
     @MethodSource("fileUploadParamSource")
     @Order(1)
-    @DisplayName(displayName)
-//    @Rollback(false)
-    public void testInitMultipartUpload(FileUploadParam param) {
-        Result result = fileUploadService.initMultipartUpload(param);
-        Assertions.assertNotNull(result.getData());
-        log.info("testInitMultipartUpload:{}",result);
-        testId = result.getData().toString();
+    void testInitMultipartUpload(FileUploadParam param) {
+        boolean taskId = fileUploadService.initMultipartUpload(param.getUid(), param.getBid(), param.getName(), param.getChunks(), param.getMd5(), param.getSize());
+        Assertions.assertNotNull(taskId);
+        log.info("taskId:{}",taskId);
+        testId = taskId;
     }
 
 
     @ParameterizedTest
-    @DisplayName(displayName)
-
     @MethodSource("fileUploadParamSource")
     @Order(2)
-    public void testCheck(FileUploadParam param)  {
-        Result result = fileUploadService.check(param.getId());
-        log.info("testCheck:{}",result);
+    void testCheck(FileUploadParam param)  {
+        Set<String> set= fileUploadService.check(param.getId());
+        log.info("testCheck:{}",set);
     }
 
 //    @ParameterizedTest

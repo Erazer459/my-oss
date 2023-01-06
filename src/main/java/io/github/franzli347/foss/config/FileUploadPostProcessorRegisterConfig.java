@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
 public class FileUploadPostProcessorRegisterConfig {
 
     @Bean
-    public DBFileUploadPostprocessor dbFileUploadPostprocessor(FilesService filesService){
-        return new DBFileUploadPostprocessor(filesService);
+    public DbFileUploadPostprocessor dbFileUploadPostprocessor(FilesService filesService){
+        return new DbFileUploadPostprocessor(filesService);
     }
     @Bean
     public FileUploadPostProcessorRegister fileUploadPostProcessorRegister(DBFileUploadPostprocessor dbFileUploadPostprocessor) {

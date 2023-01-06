@@ -1,12 +1,24 @@
 package io.github.franzli347.foss.common;
 
-public enum ResultCode {
-    CODE_SUCCESS(200),
-    CODE_UNAUTH(401),
-    CODE_ERROR(500);
-    final int CODE;
+/**
+ * 返回状态码
+ * @author FranzLi
+ */
 
-    ResultCode(int code){
-        this.CODE = code;
-    }
+public final class ResultCode {
+
+
+    private ResultCode(){}
+    /**
+     * 成功
+     */
+    public static final int CODE_SUCCESS = 200;
+    /**
+     * 认证错误
+     */
+    public static final int CODE_AUTH = 401;
+    /**
+     * 服务器内部错误
+     */
+    public static final int CODE_ERROR = 500;
 }

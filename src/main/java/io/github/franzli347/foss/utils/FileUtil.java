@@ -44,7 +44,11 @@ public class FileUtil {
         if (Files.isDirectory(p) || Files.exists(p) || filePath == null || filePath.length < 1 || Strings.isEmpty(resultPath)) {
             return false;
         }
-
+        Path pwn = Path.of(getFilePathWithoutName(resultPath));
+        // 文件夹不存在创建文件夹
+        if(!Files.exists(pwn)){
+            Files.createDirectories(pwn);
+        }
         if (filePath.length == 1) {
             return new File(filePath[0]).renameTo(new File(resultPath));
         }
@@ -58,7 +62,7 @@ public class FileUtil {
 
         File resultFile = new File(resultPath);
 
-        try(FileChannel resultFileChannel = new FileOutputStream(resultFile, true).getChannel();) {
+        try(FileChannel resultFileChannel = new FileOutputStream(resultFile, true).getChannel()) {
             for (int i = 0; i < filePath.length; i ++) {
                 try(FileChannel blk = new FileInputStream(files[i]).getChannel()){
                     resultFileChannel.transferFrom(blk, resultFileChannel.size(), blk.size());
@@ -69,8 +73,8 @@ public class FileUtil {
             return false;
         }
 
-        for (int i = 0; i < filePath.length; i ++) {
-            Files.delete(Path.of(filePath[i]));
+        for (String s : filePath) {
+            Files.delete(Path.of(s));
         }
 
         return true;
@@ -112,4 +116,9 @@ public class FileUtil {
         }
         return error;
     }
+
+    public static String getFilePathWithoutName(String filePath){
+        return filePath.substring(0, filePath.lastIndexOf("/"));
+    }
+
 }

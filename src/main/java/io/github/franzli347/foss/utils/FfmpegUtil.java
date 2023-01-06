@@ -323,7 +323,6 @@ public class FfmpegUtil {
      * @param url
      * @return
      */
-    @SneakyThrows()
     public static MultimediaInfo getVideoInfo(URL url) {
         try {
             MultimediaObject multimediaObject = new MultimediaObject(url);
