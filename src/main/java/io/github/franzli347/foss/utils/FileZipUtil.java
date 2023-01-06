@@ -1,3 +1,4 @@
+package io.github.franzli347.foss.utils;
 
 import io.github.franzli347.foss.common.ProcessInfo;
 import io.github.franzli347.foss.common.VideoCompressArgs;
