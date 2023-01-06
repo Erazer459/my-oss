@@ -27,7 +27,7 @@ public class FileUploadController {
     }
 
     /**
-     * 文件上传初始化，返回上传任务id
+     * 文件上传初始化
      *
      * @return Result
      */
@@ -39,17 +39,31 @@ public class FileUploadController {
                                       int chunks,
                                       String md5,
                                       long size) {
+
+        boolean initStatus = fileUploadService.initMultipartUpload(
+                uid,
+                bid,
+                name,
+                chunks,
+                md5,
+                size);
         return Result.builder().code(ResultCode.CODE_SUCCESS)
-                .data(fileUploadService.initMultipartUpload(
-                        uid,
-                        bid,
-                        name,
-                        chunks,
-                        md5,
-                        size)
-                )
+                .data(initStatus)
                 .build();
     }
+
+
+    @Operation(summary = "检查是否可以秒传")
+    @PostMapping("/secUpload/{md5}/{targetBid}")
+    public Result secUpload(@PathVariable String md5,@PathVariable String targetBid){
+        boolean secUploadStatus = fileUploadService.secUpload(md5,targetBid);
+        return Result.builder()
+                .code(ResultCode.CODE_SUCCESS)
+                .data(secUploadStatus)
+                .build();
+    }
+
+
 
     /**
      * 分块上传
@@ -57,8 +71,7 @@ public class FileUploadController {
      */
     @Operation(summary = "上传分块")
     @PostMapping("/uploadChunk")
-    public Result uploadChunk(String id,
-                              int uid,
+    public Result uploadChunk(int uid,
                               int bid,
                               String name,
                               int chunks,
@@ -69,20 +82,31 @@ public class FileUploadController {
                               ) {
         return Result.builder()
                 .code(ResultCode.CODE_SUCCESS)
-                .data(fileUploadService.uploadChunk(id,uid,bid,name,chunks,chunk,size,md5,file))
+                .data(fileUploadService.uploadChunk(uid,bid,name,chunks,chunk,size,md5,file))
                 .build();
     }
 
     /**
-     * 检查上传任务当前块数
+     * 检查上传任务已上传块数
      * @return Result
      */
-    @Operation(summary = "检查上传任务当前块数")
-    @PostMapping("/check/{id}")
-    public Result check(@PathVariable @Parameter(description = "任务id") String id) {
+    @Operation(summary = "检查上传任务已上传块数")
+    @PostMapping("/check/{md5}")
+    public Result check(@PathVariable @Parameter(description = "任务id") String md5) {
         return Result.builder()
-                .data(fileUploadService.check(id))
+                .data(fileUploadService.check(md5))
                 .code(ResultCode.CODE_SUCCESS).build();
+    }
+
+
+    @Operation(summary = "放弃上传任务")
+    @PostMapping("/abort/{md5}")
+    public Result abort(@PathVariable final String md5){
+        boolean abort = fileUploadService.abort(md5);
+        return Result.builder()
+                .code(ResultCode.CODE_SUCCESS)
+                .data(abort)
+                .build();
     }
 
 

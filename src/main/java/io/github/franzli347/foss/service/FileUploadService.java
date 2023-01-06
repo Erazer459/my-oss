@@ -14,9 +14,9 @@ public interface FileUploadService {
      * @param chunks 分块总数
      * @param md5 文件md5
      * @param size 文件大小
-     * @return 任务id
+     * @return 初始化状态
      */
-    String initMultipartUpload(final int uid,
+    boolean initMultipartUpload(final int uid,
                                final int bid,
                                final String name,
                                final int chunks,
@@ -25,14 +25,13 @@ public interface FileUploadService {
 
     /**
      * 检查任务状态
-     * @param id 任务id
+     * @param md5 文件md5
      * @return 已上传分块数
      */
-    Set<String> check(String id);
+    Set<String> check(String md5);
 
     /**
      * 上传分块
-     * @param id 任务id
      * @param uid  用户id
      * @param bid bucket id
      * @param name 文件名
@@ -43,8 +42,7 @@ public interface FileUploadService {
      * @param file 文件
      * @return 上传结果
      */
-    String uploadChunk(final String id,
-                       final int uid,
+    String uploadChunk(final int uid,
                        final int bid,
                        final String name,
                        final int chunks,
@@ -52,4 +50,20 @@ public interface FileUploadService {
                        final Long size,
                        final String md5,
                        final MultipartFile file);
+
+
+    /**
+     * 文件秒传检测
+     *
+     * @param md5       文件md5
+     * @param targetBid
+     * @return 文件地址
+     */
+    boolean secUpload(String md5, String targetBid);
+
+    /**
+     * @param md5 文件md5
+     * @return 取消状态
+     */
+    boolean abort(String md5);
 }
