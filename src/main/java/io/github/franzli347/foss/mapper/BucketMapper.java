@@ -1,7 +1,7 @@
 package io.github.franzli347.foss.mapper;
 
-import io.github.franzli347.foss.entity.Bucket;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.github.franzli347.foss.entity.Bucket;
 
 import java.util.List;
 

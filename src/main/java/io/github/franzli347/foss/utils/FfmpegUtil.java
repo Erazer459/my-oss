@@ -1,17 +1,29 @@
 package io.github.franzli347.foss.utils;
 
+import io.github.franzli347.foss.common.ProcessInfo;
+import io.github.franzli347.foss.common.VideoCompressArgs;
+import io.github.franzli347.foss.entity.MyVideo;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import ws.schild.jave.EncoderException;
 import ws.schild.jave.MultimediaObject;
+import ws.schild.jave.info.AudioInfo;
 import ws.schild.jave.info.MultimediaInfo;
+import ws.schild.jave.info.VideoInfo;
 import ws.schild.jave.process.ProcessWrapper;
 import ws.schild.jave.process.ffmpeg.DefaultFFMPEGLocator;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.nio.file.Files;
+
 
 /**
  * 核心工具包
@@ -80,15 +92,42 @@ public class FfmpegUtil {
         while ((line = br.readLine()) != null) {
             doNothing(line);
         }
+        br.close();
     }
-
+    @SneakyThrows
+    private static void blockFfmpeg(BufferedReader br, ProcessInfo info, PropertyChangeListener listener)throws IOException{
+        String line;
+        while((line = br.readLine()) != null){
+            String line2=StringUtils.deleteWhitespace(line.toLowerCase());
+            long source;
+            if (line2.contains("duration:") && line2.contains("bitrate:") && line2.contains("start:")){//获取原视频长度
+                source= Long.parseLong(line2.substring(line2.indexOf("duration:")+StringUtils.length("duration:"),line2.indexOf(",start")).replace(":","").replace(".",""));
+                info.setSource(source);
+            }
+            if (line2.contains("frame=")&&line2.contains("time=")&&line2.contains("size=")){//开始读取视频处理进度
+                Thread.sleep(1500);
+                changePercentage(info,line2,listener);
+            }else{
+                doNothing(line);//没有视频信息或进度信息则等待
+            }
+        }
+        br.close();
+        info.setDone(true);//任务完成
+        listener.propertyChange(new PropertyChangeEvent(info,"done",false,true));//通知
+    }
+    private static void changePercentage(ProcessInfo info, String line,PropertyChangeListener listener){
+        Double oldPercentage=info.getPercentage();
+        long timeProcessed = Long.parseLong(line.substring(line.indexOf("time=")+ StringUtils.length("time="), line.indexOf("bitrate")).replace(":","").replace(".",""));
+        info.setPercentage(new BigDecimal(timeProcessed*1.0 / info.getSource() * 100).setScale(2,BigDecimal.ROUND_DOWN).doubleValue());
+        listener.propertyChange(new PropertyChangeEvent(info,"percentage",oldPercentage,info.getPercentage()));
+    }
     /**
      * 打印日志，调试阶段可解开注释，观察执行情况
      *
      * @param line
      */
     private static void doNothing(String line) {
-//    log.info(line);
+    log.info(line);
     }
 
 
@@ -292,6 +331,102 @@ public class FfmpegUtil {
             log.error("获取视频信息报错={}", e.getMessage());
             throw new RuntimeException("获取视频信息报错", e);
         }
+    }
+    /**
+     * @Author AlanC
+     * @Description  通过路径获取视频信息
+     * @Date 15:09 2022/12/26
+     * @Param [videoPath]
+     * @return VideoInfo
+     **/
+    public static MyVideo getVideoInfo(String videoPath) throws EncoderException {
+        File file=new File(videoPath);
+        MultimediaObject multimediaObject = new MultimediaObject(file);
+        VideoInfo vInfo=multimediaObject.getInfo().getVideo();
+        AudioInfo aInfo=multimediaObject.getInfo().getAudio();
+        return MyVideo.builder()
+                .videoLength(multimediaObject.getInfo().getDuration()/1000)
+                .bitRate(vInfo.getBitRate())
+                .channels(aInfo.getChannels())
+                .frameRate(vInfo.getFrameRate())
+                .format(multimediaObject.getInfo().getFormat())
+                .videoSize(vInfo.getSize())
+                .sampleRate(aInfo.getSamplingRate())
+                .build();
+    }
+    /**
+     * @Author AlanC
+     * @Description 视频压缩
+     * @Date 22:20 2022/12/25
+     * @Param [videoPath]
+     * @return
+     **/
+    public static void videoCompress(String videoPath, VideoCompressArgs compressArgs, ProcessInfo info, PropertyChangeListener listener) throws IOException {
+        File oldFile=new File(videoPath);
+        String tempPath=oldFile.getParent()+File.separator+System.currentTimeMillis()+oldFile.getName();
+            ProcessWrapper ffmpeg = new DefaultFFMPEGLocator().createExecutor();
+            ffmpeg.addArgument("-i");
+            ffmpeg.addArgument(videoPath);
+            ffmpeg.addArgument("-c:v");
+            ffmpeg.addArgument("libx264");//编码格式H.264
+            ffmpeg.addArgument("-preset");
+            ffmpeg.addArgument("veryslow");
+            ffmpeg.addArgument("-crf");
+            ffmpeg.addArgument("20");//crf参数
+            ffmpeg.addArgument("-c:a");
+            ffmpeg.addArgument("copy");
+            ffmpeg.addArgument("-b:v");
+            ffmpeg.addArgument(String.valueOf(compressArgs.getBitRate()));//比特率
+            ffmpeg.addArgument("-s");
+            ffmpeg.addArgument(compressArgs.getVideoSizeAsFFArg());//分辨率
+            ffmpeg.addArgument("-r");
+            ffmpeg.addArgument(String.valueOf(compressArgs.getFrameRate()));//帧数
+            ffmpeg.addArgument(tempPath);
+            ffmpeg.execute();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(ffmpeg.getErrorStream()))) {
+                blockFfmpeg(br,info,listener);
+            }
+            Files.delete(oldFile.toPath());
+            File result=new File(tempPath);
+            result.renameTo(oldFile);
+            ffmpeg.close();
+    }
+    /**
+     * @Author AlanC
+     * @Description  ffmpeg图片压缩
+     * @Date 17:17 2022/12/26
+     * @Param [imagePath]
+     * @return
+     **/
+    public static void imageCompress(String imagePath) throws IOException {
+        File oldFile=new File(imagePath);
+        String tempPath=oldFile.getParent()+File.separator+System.currentTimeMillis()+oldFile.getName();
+        ProcessWrapper ffmpeg = new DefaultFFMPEGLocator().createExecutor();
+        ffmpeg.addArgument("-i");
+        ffmpeg.addArgument(imagePath);
+        ffmpeg.addArgument("-vf");
+        ffmpeg.addArgument("scale=iw:ih");
+        ffmpeg.addArgument("-codec");
+        ffmpeg.addArgument("libwebp");
+        ffmpeg.addArgument("-lossless");
+        if (FileUtil.getExtraName(imagePath).equals(".png")){//仅对png使用无损压缩,提升质量和压缩效率
+                ffmpeg.addArgument("1");
+                ffmpeg.addArgument("-q");
+                ffmpeg.addArgument("100");
+        }else {
+            ffmpeg.addArgument("0");
+            ffmpeg.addArgument("-q");
+            ffmpeg.addArgument("75");
+        }
+        ffmpeg.addArgument(tempPath);
+        ffmpeg.execute();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(ffmpeg.getErrorStream()))) {
+                blockFfmpeg(br);
+            }
+            Files.delete(oldFile.toPath());
+            File result=new File(tempPath);
+            result.renameTo(oldFile);
+            ffmpeg.close();
     }
 }
 

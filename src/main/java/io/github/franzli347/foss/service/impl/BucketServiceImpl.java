@@ -2,8 +2,8 @@ package io.github.franzli347.foss.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.github.franzli347.foss.entity.Bucket;
-import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.mapper.BucketMapper;
+import io.github.franzli347.foss.service.BucketService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package io.github.franzli347.foss.service;
 
-import io.github.franzli347.foss.entity.Bucket;
 import com.baomidou.mybatisplus.extension.service.IService;
+import io.github.franzli347.foss.entity.Bucket;
 
 import java.util.List;
 
