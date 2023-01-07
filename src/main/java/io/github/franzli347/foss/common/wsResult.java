@@ -4,15 +4,16 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * @author FranzLi
- */
+ * @ClassName wsResult
+ * @Author AlanC
+ * @Date 2023/1/7 15:29
+ **/
 @Data
 @SuperBuilder
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class Result {
-    int code;
-    Object data;
-    String msg;
+public class wsResult extends Result{
+    String userId;
+    String wsTag;
 }
