@@ -1,6 +1,7 @@
 package io.github.franzli347.foss.controller;
 
 import io.github.franzli347.foss.common.Result;
+import io.github.franzli347.foss.common.ResultCode;
 import io.github.franzli347.foss.common.VideoCompressArgs;
 import io.github.franzli347.foss.service.FileZipService;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
@@ -46,7 +47,7 @@ public class FileZipController {
     @Parameter(name = "compressArgs",description = "视频压缩参数",required = false)
     public Result videoCompress(@PathVariable int vid, @RequestBody VideoCompressArgs compressArgs){
         fileZipService.videoCompress(vid,compressArgs, String.valueOf(loginUserProvider.getLoginUser().getId()));//TODO 完成鉴权后从拦截器获取principal的id
-        return Result.builder().code(200).msg("压缩任务创建完毕").data(vid).data(compressArgs).build();
+        return Result.builder().code(ResultCode.CODE_SUCCESS).msg("视频压缩任务创建完毕").data(vid).data(compressArgs).build();
     }
     /**
      * @Author AlanC
@@ -60,7 +61,7 @@ public class FileZipController {
     @Parameter(name = "imageId",description = "图片id",required = true)
     public Result imageCompress(@PathVariable int imageId){
         fileZipService.imageCompress(imageId,String.valueOf(loginUserProvider.getLoginUser().getId()));
-        return Result.builder().code(200).msg("图片压缩任务创建完毕").data(imageId).build();
+        return Result.builder().code(ResultCode.CODE_SUCCESS).msg("图片压缩任务创建完毕").data(imageId).build();
     }
 
 }
