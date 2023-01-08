@@ -1,7 +1,6 @@
 package io.github.franzli347.foss.exception;
 
-import io.github.franzli347.foss.common.Result;
-import io.github.franzli347.foss.common.wsResult;
+import io.github.franzli347.foss.common.WsResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,5 +12,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AsyncException extends BaseException {//异步异常由AsyncExceptionHandler处理
-    private wsResult result;
+    private WsResult result;
 }

@@ -2,9 +2,6 @@ package io.github.franzli347.foss.handler;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.franzli347.foss.common.ProcessInfo;
-import io.github.franzli347.foss.common.Result;
-import io.github.franzli347.foss.common.ResultCode;
 import io.github.franzli347.foss.support.wsSupport.WsSessionProvider;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +10,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import io.github.franzli347.foss.common.wsResult;
+import io.github.franzli347.foss.common.WsResult;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -70,7 +67,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         wsSessionProvider.removeAndClose(Optional.ofNullable(session.getAttributes().get("id")).toString());
     }
     @SneakyThrows
-    public void sendResultMsg(wsResult result){
+    public void sendResultMsg(WsResult result){
         WebSocketSession webSocketSession= wsSessionProvider.get(result.getUserId());
         webSocketSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(result)));
     }

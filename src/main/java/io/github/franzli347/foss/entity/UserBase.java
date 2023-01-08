@@ -1,5 +1,8 @@
 package io.github.franzli347.foss.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 
 /**
@@ -14,6 +17,8 @@ import lombok.*;
  * @description 用户基类
  */
 public class UserBase {
+        @TableId(type = IdType.INPUT)
+        @Hidden
         private int id;
 
         private String username;
