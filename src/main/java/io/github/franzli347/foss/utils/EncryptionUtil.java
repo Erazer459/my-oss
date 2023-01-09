@@ -1,5 +1,7 @@
 package io.github.franzli347.foss.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.math.BigInteger;
@@ -17,6 +19,7 @@ import java.util.Random;
  * @Param
  * @return
  **/
+@Slf4j
 public class EncryptionUtil {
 
     public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1";
@@ -44,7 +47,7 @@ public class EncryptionUtil {
      */
     public static boolean authenticate(String attemptedPassword, String encryptedPassword, String salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         // 用同样的盐值对用户输入的password进行加密
-        String encryptedAttemptedPassword = getEncryptedPassword(attemptedPassword, salt);
+        String encryptedAttemptedPassword= getEncryptedPassword(attemptedPassword, salt);
         // 把加密后的密文和原密文进行比較，同样则验证成功。否则失败
         return encryptedAttemptedPassword.equals(encryptedPassword);
     }

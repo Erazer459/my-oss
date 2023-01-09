@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @ClassName SysUser
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode
 @NoArgsConstructor
+@SuperBuilder
 @AllArgsConstructor
 @TableName("tb_sysuser")
 public class SysUser extends UserBase{

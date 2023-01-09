@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements UserService {
-    QueryWrapper<SysUser> wrapper=new QueryWrapper<>();
+
 
     @Override
     public SysUser getUserByUsername(String username) {
-        return baseMapper.selectOne(wrapper.eq("username",username));
+        return baseMapper.getUserByUsername(username);
     }
 }

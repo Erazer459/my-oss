@@ -94,7 +94,7 @@ public class BucketController {
 
     @PutMapping("/create")
     @Operation(summary = "为指定用户创建bucket")
-    public Result create2Usr(@RequestBody Bucket bucket) {
+    public Result create2Usr(@RequestBody Bucket bucket) {//TODO 当前用户如何管理此bucket?应该使用共享表存储共享关系
         bucket.setUsedSize(0.0);
         return Result
                 .builder()
