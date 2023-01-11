@@ -40,6 +40,25 @@ public class BucketController {
                                         .ofNullable(loginUserProvider.getLoginUser())
                                         .orElseThrow(() -> new RuntimeException("loginUserProvider exception"))
                                         .getId()
+                        , page, size))
+                .build();
+    }
+
+
+    @PostMapping("listAll/{page}/{size}")
+    @Operation(summary = "获取登录用户的所有有权限的bucket")
+    @Parameter(name = "page", description = "页码")
+    @Parameter(name = "size", description = "每页数量")
+    public Result listAll(@PathVariable int page, @PathVariable int size) {
+        //TODO validate
+        return Result
+                .builder()
+                .code(200)
+                .data(bucketService
+                        .listAll(Optional
+                                .ofNullable(loginUserProvider.getLoginUser())
+                                .orElseThrow(() -> new RuntimeException("loginUserProvider exception"))
+                                .getId()
                                 , page, size))
                 .build();
     }

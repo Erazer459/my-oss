@@ -21,5 +21,16 @@
         order by create_time desc
         limit ${page},${size}
     </select>
+    <select id="listAll" resultType="io.github.franzli347.foss.entity.Bucket">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_bucket b
+        where b.id in (
+            select bid from tb_bucket_permission
+            where uid = #{userId}
+        )
+        order by create_time desc
+        limit ${page},${size}
+    </select>
 
 </mapper>
