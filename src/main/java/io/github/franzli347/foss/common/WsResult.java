@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class wsResult extends Result{
+public class WsResult extends Result{
     String userId;
     String wsTag;
 }
