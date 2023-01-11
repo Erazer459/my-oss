@@ -126,6 +126,28 @@ public class FileUploadServiceImpl implements FileUploadService {
         return true;
     }
 
+    @Override
+    public boolean smallFileUpload(int uid, int bid, String name, long size, String md5, MultipartFile file) {
+        //判断文件是否已经上传
+        boolean isUpload = Optional.ofNullable(stringRedisTemplate.opsForSet().isMember(RedisConstant.FILE_MD5_LIST, md5)).orElse(false);
+        if (isUpload) {
+            saveFileDataToOther(md5, String.valueOf(bid));
+            return true;
+        }
+
+        String resultPath = getResultPath(bid,name);
+        //转存文件
+        fileTransferResolver.transferFile(file, resultPath);
+
+        //保存文件md5到redis
+        stringRedisTemplate.opsForSet().add(RedisConstant.FILE_MD5_LIST, md5);
+
+        FileUploadParam dt = new FileUploadParam(uid, 0, size, bid, name, md5, LocalDateTime.now());
+
+        doFilePostProcessor(resultPath,dt);
+        return true;
+    }
+
 
     private void saveFileDataToOther(final String md5,final String targetBid){
         Files files = filesService.query().eq("md5", md5).oneOpt()
@@ -204,7 +226,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         //  添加 md5 信息到redis
         stringRedisTemplate.opsForSet().add(RedisConstant.FILE_MD5_LIST, md5);
 
-        String resultPath = "%s%d/%s".formatted(filePath, bid, name);
+        String resultPath = getResultPath(bid, name);
         List<String> collect = chunkPathResolver.getChunkPaths(md5, chunks);
 
         boolean merge = FileUtil.mergeFiles(collect.toArray(new String[0]), resultPath);
@@ -258,4 +280,9 @@ public class FileUploadServiceImpl implements FileUploadService {
                         RedisConstant.FILE_TASK + "_" + dt.getMd5())
                 .forEach(key -> stringRedisTemplate.expire(key,  RedisConstant.FILE_TASK_EXPIRE, TimeUnit.SECONDS));
     }
+
+    private String getResultPath(int bid, String name) {
+        return "%s%d/%s".formatted(filePath, bid, name);
+    }
+
 }

@@ -32,27 +32,14 @@ public class FileDownloadController {
         this.fileDownloadService = fileDownloadService;
     }
 
-/*
-    @GetMapping("/download/{id}")
-    @Operation(summary = "小文件下载接口(不可断点续传不可分块")
-    public DeferredResult<ResponseEntity<StreamingResponseBody>> download(@PathVariable String id) {
-        return fileDownloadService.download(id);
-    }
-*/
 
-    @GetMapping("/download/{id}")
-    @Operation(summary = "文件下载接口(可断点续传可分块")
+    @GetMapping("/download/{id}/{inline}")
+    @Operation(summary = "文件下载/视频播放接口(可断点续传可分块")
     @SneakyThrows
-    public void getDownload(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
-        fileDownloadService.download(id, request, response);
+    public void getDownload(@PathVariable String id, @PathVariable Boolean inline, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+        fileDownloadService.download(id, inline,request, response);
     }
 
 
-    @GetMapping(value = "/player/{id}")
-    @SneakyThrows
-    public void player(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
-        //TODO:RESOLVEPATH
-        fileDownloadService.player(id, request, response);
-    }
 
 }

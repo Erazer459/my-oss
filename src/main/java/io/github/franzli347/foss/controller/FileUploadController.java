@@ -109,4 +109,18 @@ public class FileUploadController {
                 .build();
     }
 
+    @Operation(summary = "小文件上传(小于10m),直接上传")
+    @PostMapping("/smallFileUpload")
+    public Result smallFileUpload(int uid,
+                                  int bid,
+                                  String name,
+                                  long size,
+                                  String md5,
+                                  MultipartFile file){
+        return Result.builder()
+                .code(ResultCode.CODE_SUCCESS)
+                .data(fileUploadService.smallFileUpload(uid,bid,name,size,md5,file))
+                .build();
+    }
+
 }
