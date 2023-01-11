@@ -21,6 +21,11 @@ public class BucketServiceImpl extends ServiceImpl<BucketMapper, Bucket>
     public List<Bucket> getBucketsByUserIdWithPage(int userId, int page, int size) {
       return baseMapper.getBucketsByUserIdWithPage(userId,page,size);
     }
+
+    @Override
+    public List<Bucket> listAll(int userId, int page, int size) {
+        return baseMapper.listAll(userId,page,size);
+    }
 }
 
 

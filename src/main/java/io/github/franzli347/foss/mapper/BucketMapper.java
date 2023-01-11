@@ -14,6 +14,8 @@ import java.util.List;
 public interface BucketMapper extends BaseMapper<Bucket> {
 
     List<Bucket> getBucketsByUserIdWithPage(int userId, int page, int size);
+
+    List<Bucket> listAll(int userId, int page, int size);
 }
 
 
