@@ -62,7 +62,8 @@ public class FileUploadController {
     @Operation(summary = "检查是否可以秒传(如果可以秒传会直接保存到目标桶)")
     @PostMapping("/secUpload/{md5}/{targetBid}")
     public boolean secUpload(@PathVariable @Parameter(description = "文件md5") String md5,
-                             @PathVariable @Parameter(description = "目标桶id") String targetBid) {
+                             @PathVariable @Parameter(description = "目标桶id")
+                             @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") String targetBid) {
         return fileUploadService.secUpload(md5, targetBid);
     }
 
@@ -74,7 +75,8 @@ public class FileUploadController {
      */
     @Operation(summary = "上传分块")
     @PostMapping("/uploadChunk")
-    public String uploadChunk(@Parameter(description = "目标桶id") int bid,
+    public String uploadChunk(@Parameter(description = "目标桶id")
+                              @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") int bid,
                               @Parameter(description = "文件名")
                                     @Pattern(regexp = FileConstant.ILLEGAL_FILE_RE,message = FileConstant.FILE_NAME_ILLEGAL_MSG) String name,
                               @Parameter(description = "分块数量")
@@ -107,7 +109,8 @@ public class FileUploadController {
 
     @Operation(summary = "小文件上传(小于10m),直接上传")
     @PostMapping("/smallFileUpload")
-    public boolean smallFileUpload(@Parameter(description = "目标桶id") int bid,
+    public boolean smallFileUpload(@Parameter(description = "目标桶id")
+                                   @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") int bid,
                                    @Parameter(description = "文件名")
                                    @Pattern(regexp = FileConstant.ILLEGAL_FILE_RE,message = FileConstant.FILE_NAME_ILLEGAL_MSG) String name,
                                    @Parameter(description = "文件大小(总文件大小，不是分块之后的)") Long size,

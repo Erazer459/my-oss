@@ -3,7 +3,9 @@ package io.github.franzli347.foss.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.ValidatedGroup;
+import io.github.franzli347.foss.service.BucketService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -24,6 +26,7 @@ import java.time.LocalDateTime;
 public class Bucket implements Serializable {
 
     @NotNull(message="id不能为空")
+    @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket id不存在",groups = {ValidatedGroup.Update.class,ValidatedGroup.Remove.class})
     @TableId
     @Schema(description = "id(除了修改都不用传)")
     @NotNull(message = "id不能为空",groups = {ValidatedGroup.Update.class})

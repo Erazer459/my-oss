@@ -46,7 +46,7 @@ public class BucketServiceImpl extends ServiceImpl<BucketMapper, Bucket>
         if(bid > 0){
             throw new BucketException("bucket_is_not_empty");
         }
-        //FIXME:权限删除
+        //TODO:权限删除
         return removeById(id);
     }
 }

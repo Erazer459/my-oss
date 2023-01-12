@@ -1,6 +1,6 @@
 package io.github.franzli347.foss.controller;
 
-import io.github.franzli347.foss.common.Result;
+import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.ValidatedGroup;
 import io.github.franzli347.foss.entity.Bucket;
 import io.github.franzli347.foss.service.BucketService;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +18,7 @@ import java.util.Optional;
  */
 @RequestMapping("/bucket")
 @RestController
+@Validated
 @Tag(name = "桶管理模块")
 public class BucketController {
     private final BucketService bucketService;
@@ -77,7 +77,7 @@ public class BucketController {
     @GetMapping("/get/{id}")
     @Operation(summary = "获取bucket信息")
     @Parameter(name = "id", description = "bucket id")
-    public Bucket get(@PathVariable int id) {
+    public Bucket get(@PathVariable @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket id不存在") int id) {
         return bucketService.getById(id);
     }
 

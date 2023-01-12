@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 /**
  * @author FranzLi
  */
-@Target({ElementType.PARAMETER})
+@Target({ElementType.PARAMETER,ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {FiledExistInTableValidator.class})
 @Documented

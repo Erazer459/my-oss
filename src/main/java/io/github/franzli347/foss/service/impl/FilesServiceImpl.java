@@ -48,12 +48,10 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files>
         Files f = getById(id);
         String path = filePath + f.getPath();
         // 修改文件名称
-        FileUtil.file(path).renameTo(new File(fileName));
         // 修改数据库内容
         f.setFileName(fileName);
         f.setPath(f.getPath().substring(0,f.getPath().lastIndexOf("/")+1) + fileName);
-        updateById(f);
-        return true;
+        return FileUtil.file(path).renameTo(new File(fileName)) && updateById(f);
     }
 
 
