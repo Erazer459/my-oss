@@ -2,6 +2,7 @@ package io.github.franzli347.foss.controller;
 
 import io.github.franzli347.foss.service.FileDownloadService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +35,11 @@ public class FileDownloadController {
 
 
     @GetMapping("/download/{id}/{inline}")
-    @Operation(summary = "文件下载/视频播放接口(可断点续传可分块")
+    @Operation(summary = "文件下载/视频播放接口(可断点续传可分块)")
     @SneakyThrows
-    public void getDownload(@PathVariable String id, @PathVariable Boolean inline, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
+    public void getDownload(@PathVariable @Parameter(description = "文件id") String id,
+                            @PathVariable @Parameter(description = "Content-disposition响应头是inline还是attachment") Boolean inline,
+                            HttpServletRequest request, HttpServletResponse response){
         fileDownloadService.download(id, inline,request, response);
     }
 

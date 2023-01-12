@@ -10,4 +10,8 @@ import io.github.franzli347.foss.entity.Files;
 */
 public interface FilesService extends IService<Files> {
 
+    boolean removeFilesById(String id);
+
+    boolean updateFilesName(String id, String fileName);
+
 }

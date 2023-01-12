@@ -9,7 +9,6 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class IovServiceImpl implements IovService {
 
     @SneakyThrows
     @Override
-    public List<ImageSimilarity> imageDiff(List<Serializable> ids) {
+    public List<ImageSimilarity> imageDiff(List<String> ids) {
         List<Files> files = filesService.listByIds(ids);
         List<ImageSimilarity> res = new LinkedList<>();
         for (int i = 0; i < files.size() - 1; i++) {
@@ -37,11 +36,7 @@ public class IovServiceImpl implements IovService {
                 Files files2 = files.get(j);
                 double similarity = imageHistogram.match(new File(files1.getPath()), new File(files2.getPath()));
                 if (similarity > MINIMUM_SIMILARITY) {
-                    res.add(ImageSimilarity.builder()
-                            .id1(String.valueOf(files1.getId()))
-                            .id2(String.valueOf(files2.getId()))
-                            .similarity(similarity)
-                            .build());
+                    res.add(ImageSimilarity.of(files1.getId(), files2.getId(), similarity));
                 }
             }
         }

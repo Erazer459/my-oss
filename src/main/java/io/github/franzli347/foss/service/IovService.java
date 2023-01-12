@@ -6,5 +6,5 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface IovService {
-    List<ImageSimilarity> imageDiff(List<Serializable> ids);
+    List<ImageSimilarity> imageDiff(List<String> ids);
 }

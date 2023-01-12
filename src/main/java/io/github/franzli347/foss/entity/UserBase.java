@@ -19,7 +19,7 @@ import lombok.*;
 public class UserBase {
         @TableId(type = IdType.INPUT)
         @Hidden
-        private int id;
+        private Integer id;
 
         private String username;
 

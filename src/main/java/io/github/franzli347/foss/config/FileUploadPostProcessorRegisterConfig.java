@@ -1,5 +1,6 @@
 package io.github.franzli347.foss.config;
 
+import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.service.FilesService;
 import io.github.franzli347.foss.support.fileSupport.CheckFilePostprocessor;
 import io.github.franzli347.foss.support.fileSupport.DbFileUploadPostprocessor;
@@ -17,8 +18,8 @@ import org.springframework.context.annotation.Configuration;
 public class FileUploadPostProcessorRegisterConfig {
 
     @Bean
-    public DbFileUploadPostprocessor dbFileUploadPostprocessor(FilesService filesService){
-        return new DbFileUploadPostprocessor(filesService);
+    public DbFileUploadPostprocessor dbFileUploadPostprocessor(FilesService filesService, BucketService bucketService) {
+        return new DbFileUploadPostprocessor(filesService,bucketService);
     }
     @Bean
     public CheckFilePostprocessor checkFilePostprocessor(){

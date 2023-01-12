@@ -13,9 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.Optional;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
 
 /**
  * @author FranzLi
@@ -24,29 +22,21 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class FileDownloadServiceImpl implements FileDownloadService {
 
-
-    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-            60L, TimeUnit.SECONDS,
-            new SynchronousQueue<>());
-
     @Value("${pathMap.source}")
     private String filePath;
     private final FilesService filesService;
-
     public FileDownloadServiceImpl(FilesService filesService) {
         this.filesService = filesService;
     }
-
     @Override
     @SneakyThrows
     public void download(String id, Boolean inline, HttpServletRequest request, HttpServletResponse response) {
         // Get your file stream from wherever.
-        log.info("name=" + id);
-        //TODO PATH
+        log.debug("id=" + id);
         Files files = Optional.ofNullable(filesService.getById(id))
                 .orElseThrow(() -> new RuntimeException("文件不存在"));
         String fullPath = filePath + files.getPath();
-        log.info("下载路径:" + fullPath);
+        log.debug("下载路径:" + fullPath);
         File downloadFile = new File(fullPath);
         ServletContext context = request.getServletContext();
         // get MIME type of the file
@@ -57,15 +47,15 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         }
         // set content attributes for the response
         response.setContentType(mimeType);
-        // response.setContentLength((int) downloadFile.length());
-        // set headers for the response
+        // response.setContentLength((int) downloadFile.length()); set headers for the response
         String headerKey = "Content-Disposition";
-        String headerValue = String.format("%s; filename=\"%s\"", downloadFile.getName(),inline ? "inline":"attachment");
+        String headerValue = String.format("%s; filename=\"%s\"", downloadFile.getName(),Boolean.TRUE.equals(inline) ? "inline":"attachment");
         response.setHeader(headerKey, headerValue);
         // 解析断点续传相关信息
         response.setHeader("Accept-Ranges", "bytes");
         long downloadSize = downloadFile.length();
-        long fromPos = 0, toPos = 0;
+        long fromPos = 0;
+        long toPos = 0;
         if (request.getHeader("Range") == null) {
             response.setHeader("Content-Length", downloadSize + "");
         } else {
