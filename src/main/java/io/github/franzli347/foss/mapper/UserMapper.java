@@ -5,6 +5,7 @@ import io.github.franzli347.foss.vo.LoginRecord;
 import io.github.franzli347.foss.entity.SysUser;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
