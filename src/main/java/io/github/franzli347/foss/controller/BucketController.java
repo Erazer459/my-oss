@@ -61,12 +61,8 @@ public class BucketController {
     @Operation(summary = "删除bucket")
     @Parameter(name = "bid", description = "bucket id")
     @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege={AuthConstant.OWNER})
-    public Result delete(@PathVariable int bid) {
-        return Result
-                .builder()
-                .code(200)
-                .data(bucketService.removeById(bid))
-                .build();
+    public boolean delete(@PathVariable int bid) {
+        return bucketService.removeBucket(bid);
     }
 
     @PutMapping
@@ -83,11 +79,7 @@ public class BucketController {
                 .uid(bucket.getUid())
                 .privilege(AuthConstant.READWRITE)
                 .build());
-        return Result
-                .builder()
-                .code(200)
-                .data(success)
-                .build();
+        return success;
     }
 
     @PostMapping("/update")

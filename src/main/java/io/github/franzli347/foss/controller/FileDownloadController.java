@@ -34,6 +34,7 @@ public class FileDownloadController {
     @GetMapping("/download/{id}/{inline}")
     @Operation(summary = "文件下载/视频播放接口(可断点续传可分块)")
     @SneakyThrows
+    @CheckBucketPrivilege(spelString = "#id",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.READWRITE,AuthConstant.ONLYREAD,AuthConstant.OWNER})
     public void getDownload(@PathVariable
                                 @Parameter(description = "文件id")
                                 @FiledExistInTable(colum = "id",serviceClz = FilesService.class,message = "文件不存在") String id,
@@ -44,12 +45,5 @@ public class FileDownloadController {
     }
 
 
-    @GetMapping(value = "/player/{id}")
-    @SneakyThrows
-    @CheckBucketPrivilege(spelString = "#id",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.ONLYREAD,AuthConstant.READWRITE})
-    public void player(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
-        //TODO:RESOLVEPATH
-        fileDownloadService.player(id, request, response);
-    }
 
 }
