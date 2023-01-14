@@ -2,7 +2,12 @@ package io.github.franzli347.foss.controller;
 
 import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.ValidatedGroup;
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.common.AuthConstant;
+import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.entity.Bucket;
+import io.github.franzli347.foss.entity.BucketPrivilege;
+import io.github.franzli347.foss.service.BucketPrivilegeService;
 import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,10 +28,12 @@ import java.util.Optional;
 public class BucketController {
     private final BucketService bucketService;
     private final LoginUserProvider loginUserProvider;
+    private final BucketPrivilegeService bucketPrivilegeService;
 
-    public BucketController(BucketService bucketService, LoginUserProvider loginUserProvider) {
+    public BucketController(BucketService bucketService, LoginUserProvider loginUserProvider, BucketPrivilegeService bucketPrivilegeService) {
         this.bucketService = bucketService;
         this.loginUserProvider = loginUserProvider;
+        this.bucketPrivilegeService = bucketPrivilegeService;
     }
 
     @PostMapping("list/{page}/{size}")
@@ -50,11 +57,16 @@ public class BucketController {
     }
 
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("delete/{bid}")
     @Operation(summary = "删除bucket")
-
-    public boolean delete(@PathVariable @Parameter(name = "id", description = "bucket id") int id) {
-        return bucketService.removeBucket(id);
+    @Parameter(name = "bid", description = "bucket id")
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege={AuthConstant.OWNER})
+    public Result delete(@PathVariable int bid) {
+        return Result
+                .builder()
+                .code(200)
+                .data(bucketService.removeById(bid))
+                .build();
     }
 
     @PutMapping
@@ -65,20 +77,40 @@ public class BucketController {
                 .orElseThrow(() -> new RuntimeException("loginUserProvider exception"))
                 .getId());
         bucket.setUsedSize(0.0);
-        return bucketService.save(bucket);
+        boolean success=bucketService.save(bucket);
+        bucketPrivilegeService.setPrivilege(BucketPrivilege
+                .builder().bid(bucket.getId())
+                .uid(bucket.getUid())
+                .privilege(AuthConstant.READWRITE)
+                .build());
+        return Result
+                .builder()
+                .code(200)
+                .data(success)
+                .build();
     }
 
     @PostMapping("/update")
     @Operation(summary = "更新bucket信息")
-    public boolean update(@RequestBody @Validated({ValidatedGroup.Update.class}) Bucket bucket) {
-        return bucketService.updateById(bucket);
+    @CheckBucketPrivilege(spelString = "#bucket.id",argType = AuthConstant.BID,privilege=AuthConstant.OWNER)
+    public Result update(@RequestBody Bucket bucket) {
+        return Result
+                .builder()
+                .code(200)
+                .data(bucketService.updateById(bucket))
+                .build();
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/get/{bid}")
     @Operation(summary = "获取bucket信息")
     @Parameter(name = "id", description = "bucket id")
-    public Bucket get(@PathVariable @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket id不存在") int id) {
-        return bucketService.getById(id);
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = {AuthConstant.ONLYREAD, AuthConstant.OWNER, AuthConstant.READWRITE})
+    public Result get(@PathVariable int bid) {
+        return Result
+                .builder()
+                .code(200)
+                .data(bucketService.getById(bid))
+                .build();
     }
 
 

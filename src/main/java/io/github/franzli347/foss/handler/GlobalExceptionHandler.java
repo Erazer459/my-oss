@@ -1,5 +1,7 @@
 package io.github.franzli347.foss.handler;
 
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotRoleException;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.ResultCode;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,16 @@ public class GlobalExceptionHandler {
         log.error("exception occur reason {} on request url {}",e.getMessage(),req.getRequestURL());
         e.printStackTrace();
         return Result.builder().code(ResultCode.CODE_ERROR).msg(e.getMessage()).build();
+    }
+    @ExceptionHandler(value = NotRoleException.class)
+    @ResponseBody
+    public Result AuthenticationExceptionHandler(NotRoleException e){
+        return Result.builder().code(ResultCode.CODE_AUTH).msg("用户无权限").build();
+    }
+    @ExceptionHandler(value = NotLoginException.class)
+    @ResponseBody
+    public Result NotLoginExceptionHandler(NotLoginException e){
+        return Result.builder().code(ResultCode.CODE_AUTH).msg("用户未登录").build();
     }
 
 }

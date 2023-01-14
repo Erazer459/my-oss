@@ -1,6 +1,8 @@
 package io.github.franzli347.foss.controller;
 
 import io.github.franzli347.foss.annotation.FiledExistInTable;
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.common.AuthConstant;
 import io.github.franzli347.foss.service.FileDownloadService;
 import io.github.franzli347.foss.service.FilesService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,5 +44,12 @@ public class FileDownloadController {
     }
 
 
+    @GetMapping(value = "/player/{id}")
+    @SneakyThrows
+    @CheckBucketPrivilege(spelString = "#id",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.ONLYREAD,AuthConstant.READWRITE})
+    public void player(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
+        //TODO:RESOLVEPATH
+        fileDownloadService.player(id, request, response);
+    }
 
 }

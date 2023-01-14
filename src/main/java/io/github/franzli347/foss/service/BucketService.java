@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.github.franzli347.foss.entity.Bucket;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author FranzLi

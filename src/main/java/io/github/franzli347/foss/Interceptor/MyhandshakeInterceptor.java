@@ -1,5 +1,6 @@
 package io.github.franzli347.foss.Interceptor;
 
+import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServerHttpRequest;
@@ -32,7 +33,7 @@ public class MyhandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         // 获得请求参数
-        String userId = request.getHeaders().get("token").toString().substring(1,2);//TODO 完成鉴权后将token转为userid
+        String userId = StpUtil.getLoginId().toString();
         if (StringUtils.isNotBlank(userId)) {
             // 放入属性域
             attributes.put("id",userId);
