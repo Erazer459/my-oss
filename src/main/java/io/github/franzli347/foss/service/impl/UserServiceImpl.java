@@ -1,5 +1,8 @@
 package io.github.franzli347.foss.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.github.franzli347.foss.vo.LoginRecord;
 import io.github.franzli347.foss.entity.SysUser;

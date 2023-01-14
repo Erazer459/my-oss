@@ -1,5 +1,7 @@
 package io.github.franzli347.foss.controller;
 
+import io.github.franzli347.foss.annotation.FiledExistInTable;
+import io.github.franzli347.foss.common.ValidatedGroup;
 import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
 import io.github.franzli347.foss.common.AuthConstant;
 import io.github.franzli347.foss.common.Result;
@@ -11,8 +13,9 @@ import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,6 +23,7 @@ import java.util.Optional;
  */
 @RequestMapping("/bucket")
 @RestController
+@Validated
 @Tag(name = "桶管理模块")
 public class BucketController {
     private final BucketService bucketService;
@@ -34,37 +38,22 @@ public class BucketController {
 
     @PostMapping("list/{page}/{size}")
     @Operation(summary = "获取登录用户的所有bucket")
-    @Parameter(name = "page", description = "页码")
-    @Parameter(name = "size", description = "每页数量")
-    public Result list(@PathVariable int page, @PathVariable int size) {
-        return Result
-                .builder()
-                .code(200)
-                .data(bucketService
-                        .getBucketsByUserIdWithPage(Optional
-                                        .ofNullable(loginUserProvider.getLoginUser())
-                                        .orElseThrow(() -> new RuntimeException("loginUserProvider exception"))
-                                        .getId()
-                        , page, size))
-                .build();
+    public List<Bucket> list(@PathVariable @Parameter(name = "page", description = "页码") int page,
+                             @PathVariable @Parameter(name = "size", description = "每页数量") int size) {
+        return bucketService.getBucketsByUserIdWithPage(Optional.ofNullable(loginUserProvider.getLoginUser())
+                        .orElseThrow(() -> new RuntimeException("loginUserProvider_exception"))
+                        .getId()
+                , page, size);
     }
 
 
     @PostMapping("listAll/{page}/{size}")
     @Operation(summary = "获取登录用户的所有有权限的bucket")
-    @Parameter(name = "page", description = "页码")
-    @Parameter(name = "size", description = "每页数量")
-    public Result listAll(@PathVariable int page, @PathVariable int size) {
-        return Result
-                .builder()
-                .code(200)
-                .data(bucketService
-                        .listAll(Optional
-                                .ofNullable(loginUserProvider.getLoginUser())
-                                .orElseThrow(() -> new RuntimeException("loginUserProvider exception"))
-                                .getId()
-                                , page, size))
-                .build();
+    public List<Bucket> listAll(@PathVariable @Parameter(name = "page", description = "页码") int page,
+                          @PathVariable @Parameter(name = "size", description = "每页数量") int size) {
+        return bucketService.listAll(Optional
+                .ofNullable(loginUserProvider.getLoginUser())
+                .orElseThrow(() -> new RuntimeException("loginUserProvider exception")).getId(), page, size);
     }
 
 
@@ -82,7 +71,7 @@ public class BucketController {
 
     @PutMapping
     @Operation(summary = "为当前登录用户创建bucket")
-    public Result create(@RequestBody Bucket bucket) {
+    public boolean create(@RequestBody Bucket bucket) {
         bucket.setUid(Optional
                 .ofNullable(loginUserProvider.getLoginUser())
                 .orElseThrow(() -> new RuntimeException("loginUserProvider exception"))
@@ -100,18 +89,6 @@ public class BucketController {
                 .data(success)
                 .build();
     }
-
-    @PutMapping("/create")
-    @Operation(summary = "为指定用户创建bucket")
-    public Result create2Usr(@RequestBody Bucket bucket) {
-        bucket.setUsedSize(0.0);
-        return Result
-                .builder()
-                .code(200)
-                .data(bucketService.save(bucket))
-                .build();
-    }
-
 
     @PostMapping("/update")
     @Operation(summary = "更新bucket信息")

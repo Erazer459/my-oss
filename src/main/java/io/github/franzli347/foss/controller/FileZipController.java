@@ -49,7 +49,8 @@ public class FileZipController {
     @Parameter(name = "compressArgs",description = "视频压缩参数",required = false)
     @CheckBucketPrivilege(spelString = "#vid",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
     public Result videoCompress(@PathVariable int vid, @RequestBody VideoCompressArgs compressArgs){
-        fileZipService.videoCompress(vid,compressArgs, String.valueOf(loginUserProvider.getLoginUser().getId()));//TODO 完成鉴权后从拦截器获取principal的id
+        //TODO 完成鉴权后从拦截器获取principal的id
+        fileZipService.videoCompress(vid,compressArgs, String.valueOf(loginUserProvider.getLoginUser().getId()));
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("视频压缩任务创建完毕").data(vid).data(compressArgs).build();
     }
     /**

@@ -16,4 +16,8 @@ public interface BucketService extends IService<Bucket> {
     List<Bucket> getBucketsByUserIdWithPage(int userId,int page,int size);
 
     List<Bucket> listAll(int userId, int page, int size);
+
+    boolean updateBucketSize(Integer bid, double fileSize);
+
+    boolean removeBucket(int id);
 }
