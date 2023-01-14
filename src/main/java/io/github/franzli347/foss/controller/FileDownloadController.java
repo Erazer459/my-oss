@@ -1,6 +1,9 @@
 package io.github.franzli347.foss.controller;
 
 import io.github.franzli347.foss.annotation.FiledExistInTable;
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.common.AuthConstant;
+import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.service.FileDownloadService;
 import io.github.franzli347.foss.service.FilesService;
@@ -33,6 +36,7 @@ public class FileDownloadController {
     @GetMapping("/download/{bid}/{id}")
     @Operation(summary = "文件下载/视频播放接口(可断点续传可分块,请求头里面带上inline:false/true来设置Content-disposition响应头的值)")
     @SneakyThrows
+    @CheckBucketPrivilege(spelString = "#id",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.READWRITE,AuthConstant.ONLYREAD,AuthConstant.OWNER})
     public void getDownload(@PathVariable @Parameter(description = "bucket id") @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket不存在") String bid,
                             @PathVariable @Parameter(description = "文件id") @FiledExistInTable(colum = "id",serviceClz = FilesService.class,message = "文件不存在") String id,
                             HttpServletRequest request,
@@ -40,5 +44,7 @@ public class FileDownloadController {
         boolean inline = Boolean.getBoolean(Optional.ofNullable(request.getHeader("inline")).orElse("true"));
         fileDownloadService.download(id,bid, inline,request, response);
     }
+
+
 
 }

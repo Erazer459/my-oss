@@ -4,6 +4,10 @@ import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.FileConstant;
 import io.github.franzli347.foss.exception.FileException;
 import io.github.franzli347.foss.service.BucketService;
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.common.AuthConstant;
+import io.github.franzli347.foss.common.Result;
+import io.github.franzli347.foss.common.ResultCode;
 import io.github.franzli347.foss.service.FileUploadService;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +52,7 @@ public class FileUploadController {
      */
     @PostMapping("/initMultipartUpload")
     @Operation(summary = "文件上传初始化")
+    @CheckBucketPrivilege(spelString = "#{bid}",argType = AuthConstant.BID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
     public boolean initMultipartUpload(@Parameter(description = "目标桶id")
                                        @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") Integer bid,
                                        @Parameter(description = "文件名")
@@ -111,6 +116,7 @@ public class FileUploadController {
 
     @Operation(summary = "小文件上传(小于10m),直接上传")
     @PostMapping("/smallFileUpload")
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
     public boolean smallFileUpload(@Parameter(description = "目标桶id")
                                    @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") int bid,
                                    @Parameter(description = "文件md5",required = true) String md5,

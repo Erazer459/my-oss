@@ -3,10 +3,12 @@ package io.github.franzli347.foss.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @ClassName SysUser
@@ -16,12 +18,14 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode
 @NoArgsConstructor
+@SuperBuilder
 @AllArgsConstructor
 @TableName("tb_sysuser")
 public class SysUser extends UserBase{
     /**
      * 密码
      */
+    @Schema(description = "密码")
     @TableField("password")
     private String password;
     /**
@@ -31,5 +35,11 @@ public class SysUser extends UserBase{
     @TableField("salt")
     private String salt;
 
-    //Role
+    public UserBase toUserBase(){
+        return UserBase.builder()
+                .email(this.getEmail())
+                .id(this.getId())
+                .username(this.getUsername())
+                .build();
+    }
 }

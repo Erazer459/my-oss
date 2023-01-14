@@ -14,8 +14,5 @@ import java.math.BigDecimal;
 import java.util.List;
 
 class BucketServiceTest {
-    @Test
-    public void test(){
-        System.out.println(!"mai///sa.jpg".matches(FileConstant.ILLEGAL_FILE_RE));
-    }
+
 }
