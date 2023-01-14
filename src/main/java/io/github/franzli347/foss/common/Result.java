@@ -1,12 +1,13 @@
 package io.github.franzli347.foss.common;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author FranzLi
  */
 @Data
-@Builder
+@SuperBuilder
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor

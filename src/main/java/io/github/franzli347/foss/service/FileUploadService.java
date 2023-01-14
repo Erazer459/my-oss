@@ -66,4 +66,6 @@ public interface FileUploadService {
      * @return 取消状态
      */
     boolean abort(String md5);
+
+    boolean smallFileUpload(int uid, int bid, String name, long size, String md5, MultipartFile file);
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.github.franzli347.foss.entity.Bucket;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author FranzLi
@@ -14,4 +15,11 @@ public interface BucketService extends IService<Bucket> {
 
     List<Bucket> getBucketsByUserIdWithPage(int userId,int page,int size);
 
+    List<Bucket> listAll(int userId, int page, int size);
+
+    boolean updateBucketSizeWithFile(Integer bid, double fileSize);
+
+    boolean removeBucket(int id);
+
+    boolean updateBucketData(Bucket bucket);
 }

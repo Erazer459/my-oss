@@ -1,7 +1,7 @@
 package io.github.franzli347.foss.utils;
 
 import io.github.franzli347.foss.common.ProcessInfo;
-import io.github.franzli347.foss.common.VideoCompressArgs;
+import io.github.franzli347.foss.dto.VideoCompressArgs;
 import io.github.franzli347.foss.entity.MyVideo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -398,7 +398,7 @@ public class FfmpegUtil {
      * @Param [imagePath]
      * @return
      **/
-    public static void imageCompress(String imagePath) throws IOException {
+    public static void imageCompress(String imagePath, int quality) throws IOException {
         File oldFile=new File(imagePath);
         String tempPath=oldFile.getParent()+File.separator+System.currentTimeMillis()+oldFile.getName();
         ProcessWrapper ffmpeg = new DefaultFFMPEGLocator().createExecutor();
@@ -416,7 +416,7 @@ public class FfmpegUtil {
         }else {
             ffmpeg.addArgument("0");
             ffmpeg.addArgument("-q");
-            ffmpeg.addArgument("75");
+            ffmpeg.addArgument(String.valueOf(quality));
         }
         ffmpeg.addArgument(tempPath);
         ffmpeg.execute();

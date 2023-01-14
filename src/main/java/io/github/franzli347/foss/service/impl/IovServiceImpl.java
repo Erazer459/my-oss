@@ -6,10 +6,10 @@ import io.github.franzli347.foss.service.FilesService;
 import io.github.franzli347.foss.service.IovService;
 import io.github.franzli347.foss.utils.ImageHistogram;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,23 +25,27 @@ public class IovServiceImpl implements IovService {
 
     private static final double MINIMUM_SIMILARITY = 0.75;
 
+    @Value("${pathMap.source}")
+    private String path;
+
+    public IovServiceImpl(FilesService filesService,ImageHistogram imageHistogram){
+        this.filesService = filesService;
+        this.imageHistogram = imageHistogram;
+    }
+
 
     @SneakyThrows
     @Override
-    public List<ImageSimilarity> imageDiff(List<Serializable> ids) {
+    public List<ImageSimilarity> imageDiff(List<String> ids) {
         List<Files> files = filesService.listByIds(ids);
         List<ImageSimilarity> res = new LinkedList<>();
         for (int i = 0; i < files.size() - 1; i++) {
             for (int j = i + 1; j < files.size(); j++) {
                 Files files1 = files.get(i);
                 Files files2 = files.get(j);
-                double similarity = imageHistogram.match(new File(files1.getPath()), new File(files2.getPath()));
+                double similarity = imageHistogram.match(new File(path + files1.getPath()), new File(path + files2.getPath()));
                 if (similarity > MINIMUM_SIMILARITY) {
-                    res.add(ImageSimilarity.builder()
-                            .id1(String.valueOf(files1.getId()))
-                            .id2(String.valueOf(files2.getId()))
-                            .similarity(similarity)
-                            .build());
+                    res.add(ImageSimilarity.of(files1.getId(), files2.getId(), similarity));
                 }
             }
         }
