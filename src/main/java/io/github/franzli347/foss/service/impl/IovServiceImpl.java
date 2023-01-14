@@ -6,6 +6,7 @@ import io.github.franzli347.foss.service.FilesService;
 import io.github.franzli347.foss.service.IovService;
 import io.github.franzli347.foss.utils.ImageHistogram;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -24,6 +25,14 @@ public class IovServiceImpl implements IovService {
 
     private static final double MINIMUM_SIMILARITY = 0.75;
 
+    @Value("${pathMap.source}")
+    private String path;
+
+    public IovServiceImpl(FilesService filesService,ImageHistogram imageHistogram){
+        this.filesService = filesService;
+        this.imageHistogram = imageHistogram;
+    }
+
 
     @SneakyThrows
     @Override
@@ -34,7 +43,7 @@ public class IovServiceImpl implements IovService {
             for (int j = i + 1; j < files.size(); j++) {
                 Files files1 = files.get(i);
                 Files files2 = files.get(j);
-                double similarity = imageHistogram.match(new File(files1.getPath()), new File(files2.getPath()));
+                double similarity = imageHistogram.match(new File(path + files1.getPath()), new File(path + files2.getPath()));
                 if (similarity > MINIMUM_SIMILARITY) {
                     res.add(ImageSimilarity.of(files1.getId(), files2.getId(), similarity));
                 }

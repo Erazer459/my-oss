@@ -52,7 +52,6 @@ public class BucketController {
 
     @DeleteMapping("delete/{id}")
     @Operation(summary = "删除bucket")
-
     public boolean delete(@PathVariable @Parameter(name = "id", description = "bucket id") int id) {
         return bucketService.removeBucket(id);
     }
@@ -71,7 +70,7 @@ public class BucketController {
     @PostMapping("/update")
     @Operation(summary = "更新bucket信息")
     public boolean update(@RequestBody @Validated({ValidatedGroup.Update.class}) Bucket bucket) {
-        return bucketService.updateById(bucket);
+        return bucketService.updateBucketData(bucket);
     }
 
     @GetMapping("/get/{id}")
@@ -80,7 +79,5 @@ public class BucketController {
     public Bucket get(@PathVariable @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket id不存在") int id) {
         return bucketService.getById(id);
     }
-
-
 
 }

@@ -7,6 +7,7 @@ import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.service.FilesService;
 import lombok.SneakyThrows;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -21,6 +22,7 @@ public class DbFileUploadPostprocessor implements FileUploadPostProcessor{
 
     private final BucketService bucketService;
 
+
     public DbFileUploadPostprocessor(FilesService filesService,BucketService bucketService) {
         this.filesService = filesService;
         this.bucketService = bucketService;
@@ -30,16 +32,19 @@ public class DbFileUploadPostprocessor implements FileUploadPostProcessor{
     @Override
     public boolean process(String filePath, FileUploadParam param) {
         double fileSize = java.nio.file.Files.size(Path.of(filePath));
-        return filesService.save(Files.builder()
+        String path = param.getBid() + File.separator + param.getName();
+        boolean save = filesService.save(Files.builder()
                 .id(IdUtil.getSnowflakeNextId())
                 .bid(param.getBid())
                 .fileName(param.getName())
-                .path(param.getBid() + "/" + param.getName())
+                .path(path)
                 .md5(param.getMd5())
                 .fileSize(fileSize)
-                .build())
-                &&
-                bucketService.updateBucketSize(param.getBid(), fileSize);
-
+                .fileType(FileTypeHelper.getFileType(path))
+                .build());
+        boolean size = bucketService.updateBucketSizeWithFile(param.getBid(), fileSize);
+        return save && size;
     }
+
+
 }

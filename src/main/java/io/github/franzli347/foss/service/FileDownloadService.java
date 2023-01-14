@@ -5,5 +5,5 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface FileDownloadService {
 
-    void download(String id, Boolean inline, HttpServletRequest request, HttpServletResponse response);
+    void download(String id, String bid, Boolean inline, HttpServletRequest request, HttpServletResponse response);
 }

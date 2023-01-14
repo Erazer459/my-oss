@@ -2,6 +2,7 @@ package io.github.franzli347.foss.controller;
 
 import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.FileConstant;
+import io.github.franzli347.foss.exception.FileException;
 import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.service.FileUploadService;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -111,12 +113,13 @@ public class FileUploadController {
     @PostMapping("/smallFileUpload")
     public boolean smallFileUpload(@Parameter(description = "目标桶id")
                                    @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") int bid,
-                                   @Parameter(description = "文件名")
-                                   @Pattern(regexp = FileConstant.ILLEGAL_FILE_RE,message = FileConstant.FILE_NAME_ILLEGAL_MSG) String name,
-                                   @Parameter(description = "文件大小(总文件大小，不是分块之后的)") Long size,
-                                   @Parameter(description = "文件md5(不是分块之后的)") String md5,
+                                   @Parameter(description = "文件md5",required = true) String md5,
                                    @Parameter(description = "分块对象") MultipartFile file) {
-        return fileUploadService.smallFileUpload(loginUserProvider.getLoginUser().getId(), bid, name, size, md5, file);
+        String fileName = Optional.ofNullable(file.getOriginalFilename()).orElseThrow(() -> new FileException("上传失败"));
+        if(!fileName.matches(FileConstant.ILLEGAL_FILE_RE)){
+            throw new IllegalArgumentException(FileConstant.FILE_NAME_ILLEGAL_MSG);
+        }
+        return fileUploadService.smallFileUpload(loginUserProvider.getLoginUser().getId(), bid, fileName, file.getSize(), md5, file);
     }
 
 }

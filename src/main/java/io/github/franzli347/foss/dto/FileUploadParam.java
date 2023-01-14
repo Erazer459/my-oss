@@ -4,6 +4,11 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ *
+ * 文件上传参数
+ * @author FranzLi
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

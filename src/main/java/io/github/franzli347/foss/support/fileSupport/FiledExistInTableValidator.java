@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.utils;
+package io.github.franzli347.foss.support.fileSupport;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.IService;
