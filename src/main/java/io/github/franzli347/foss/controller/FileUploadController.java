@@ -50,6 +50,7 @@ public class FileUploadController {
      */
     @PostMapping("/initMultipartUpload")
     @Operation(summary = "文件上传初始化")
+    @CheckBucketPrivilege(spelString = "#{bid}",argType = AuthConstant.BID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
     public boolean initMultipartUpload(@Parameter(description = "目标桶id")
                                        @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") Integer bid,
                                        @Parameter(description = "文件名")
@@ -113,6 +114,7 @@ public class FileUploadController {
 
     @Operation(summary = "小文件上传(小于10m),直接上传")
     @PostMapping("/smallFileUpload")
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
     public boolean smallFileUpload(@Parameter(description = "目标桶id")
                                    @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") int bid,
                                    @Parameter(description = "文件名")
