@@ -5,6 +5,5 @@ import io.github.franzli347.foss.entity.UserBase;
 
 public interface LoginUserProvider {
     SysUser getLoginUser();
-    void setLoginUser(SysUser sysUser);
 
 }

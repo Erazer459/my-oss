@@ -26,7 +26,7 @@
         <include refid="Base_Column_List"/>
         from tb_bucket b
         where b.id in (
-            select bid from tb_bucket_permission
+            select bid from tb_bucket_privilege
             where uid = #{userId}
         )
         order by create_time desc

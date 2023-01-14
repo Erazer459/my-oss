@@ -1,7 +1,11 @@
 package io.github.franzli347.foss.controller;
 
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.common.AuthConstant;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.entity.Bucket;
+import io.github.franzli347.foss.entity.BucketPrivilege;
+import io.github.franzli347.foss.service.BucketPrivilegeService;
 import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,10 +24,12 @@ import java.util.Optional;
 public class BucketController {
     private final BucketService bucketService;
     private final LoginUserProvider loginUserProvider;
+    private final BucketPrivilegeService bucketPrivilegeService;
 
-    public BucketController(BucketService bucketService, LoginUserProvider loginUserProvider) {
+    public BucketController(BucketService bucketService, LoginUserProvider loginUserProvider, BucketPrivilegeService bucketPrivilegeService) {
         this.bucketService = bucketService;
         this.loginUserProvider = loginUserProvider;
+        this.bucketPrivilegeService = bucketPrivilegeService;
     }
 
     @PostMapping("list/{page}/{size}")
@@ -31,7 +37,6 @@ public class BucketController {
     @Parameter(name = "page", description = "页码")
     @Parameter(name = "size", description = "每页数量")
     public Result list(@PathVariable int page, @PathVariable int size) {
-        //TODO validate
         return Result
                 .builder()
                 .code(200)
@@ -50,7 +55,6 @@ public class BucketController {
     @Parameter(name = "page", description = "页码")
     @Parameter(name = "size", description = "每页数量")
     public Result listAll(@PathVariable int page, @PathVariable int size) {
-        //TODO validate
         return Result
                 .builder()
                 .code(200)
@@ -64,16 +68,15 @@ public class BucketController {
     }
 
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("delete/{bid}")
     @Operation(summary = "删除bucket")
-    @Parameter(name = "id", description = "bucket id")
-    public Result delete(@PathVariable int id) {
-        //TODO: bucket is empty validation
-        //TODO: validate privilege
+    @Parameter(name = "bid", description = "bucket id")
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege={AuthConstant.OWNER})
+    public Result delete(@PathVariable int bid) {
         return Result
                 .builder()
                 .code(200)
-                .data(bucketService.removeById(id))
+                .data(bucketService.removeById(bid))
                 .build();
     }
 
@@ -85,16 +88,22 @@ public class BucketController {
                 .orElseThrow(() -> new RuntimeException("loginUserProvider exception"))
                 .getId());
         bucket.setUsedSize(0.0);
+        boolean success=bucketService.save(bucket);
+        bucketPrivilegeService.setPrivilege(BucketPrivilege
+                .builder().bid(bucket.getId())
+                .uid(bucket.getUid())
+                .privilege(AuthConstant.READWRITE)
+                .build());
         return Result
                 .builder()
                 .code(200)
-                .data(bucketService.save(bucket))
+                .data(success)
                 .build();
     }
 
     @PutMapping("/create")
     @Operation(summary = "为指定用户创建bucket")
-    public Result create2Usr(@RequestBody Bucket bucket) {//TODO 当前用户如何管理此bucket?应该使用共享表存储共享关系
+    public Result create2Usr(@RequestBody Bucket bucket) {
         bucket.setUsedSize(0.0);
         return Result
                 .builder()
@@ -106,8 +115,8 @@ public class BucketController {
 
     @PostMapping("/update")
     @Operation(summary = "更新bucket信息")
+    @CheckBucketPrivilege(spelString = "#bucket.id",argType = AuthConstant.BID,privilege=AuthConstant.OWNER)
     public Result update(@RequestBody Bucket bucket) {
-        //TODO: privilege validate
         return Result
                 .builder()
                 .code(200)
@@ -115,14 +124,15 @@ public class BucketController {
                 .build();
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/get/{bid}")
     @Operation(summary = "获取bucket信息")
     @Parameter(name = "id", description = "bucket id")
-    public Result get(@PathVariable int id) {
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = {AuthConstant.ONLYREAD, AuthConstant.OWNER, AuthConstant.READWRITE})
+    public Result get(@PathVariable int bid) {
         return Result
                 .builder()
                 .code(200)
-                .data(bucketService.getById(id))
+                .data(bucketService.getById(bid))
                 .build();
     }
 

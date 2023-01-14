@@ -1,5 +1,7 @@
 package io.github.franzli347.foss.controller;
 
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.common.AuthConstant;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.ResultCode;
 import io.github.franzli347.foss.service.FileUploadService;
@@ -33,13 +35,13 @@ public class FileUploadController {
      */
     @PostMapping("/initMultipartUpload")
     @Operation(summary = "文件上传初始化")
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
     public Result initMultipartUpload(int uid,
                                       int bid,
                                       String name,
                                       int chunks,
                                       String md5,
                                       long size) {
-
         boolean initStatus = fileUploadService.initMultipartUpload(
                 uid,
                 bid,

@@ -1,5 +1,6 @@
 package io.github.franzli347.foss.controller;
 
+import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import io.github.franzli347.foss.common.Result;
@@ -10,6 +11,7 @@ import io.github.franzli347.foss.service.UserService;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.github.franzli347.foss.utils.EncryptionUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +41,7 @@ public class LoginController {
     @SneakyThrows
     public Result registry(@RequestBody SysUser user){
         if (service.getUserByUsername(user.getUsername())!=null){
-            throw new BaseException("用户已存在");
+            throw new RuntimeException("用户已存在");
         }
         String salt = EncryptionUtil.generateSalt();
         // 盐值加密
@@ -50,15 +52,16 @@ public class LoginController {
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("注册成功").build();
     }
     @SneakyThrows
-    @PostMapping("/doLogin")
+    @PostMapping("/doLogin/{username}/{password}")
     @Operation(summary = "用户登录")
-    public Result doLogin(@RequestBody SysUser loginUser){
-        SysUser sysUser=Optional.ofNullable(service.getUserByUsername(loginUser.getUsername())).orElseThrow(()->new BaseException("用户不存在"));
-        if (!EncryptionUtil.authenticate(loginUser.getPassword(),sysUser.getPassword(),sysUser.getSalt())){
-            throw new BaseException("用户名或密码错误");
+    @Parameter(name = "username",description = "用户名",required = true)
+    @Parameter(name = "password",description = "密码",required = true)
+    public Result doLogin(String username,String password){
+        SysUser sysUser=Optional.ofNullable(service.getUserByUsername(username)).orElseThrow(()->new RuntimeException("用户不存在"));
+        if (!EncryptionUtil.authenticate(password,sysUser.getPassword(),sysUser.getSalt())){
+            throw new RuntimeException("用户名或密码错误");
         }
-        String oldToken= StpUtil.getTokenValueByLoginId(sysUser.getId());
-        if (StringUtils.isNotBlank(oldToken)){
+        if (StringUtils.isNotBlank(StpUtil.getTokenValueByLoginId(sysUser.getId()))){
             StpUtil.logout(sysUser.getId());//如果token不为空就先logout
         }
         StpUtil.login(sysUser.getId());

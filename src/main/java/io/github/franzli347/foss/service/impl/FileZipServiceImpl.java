@@ -1,6 +1,7 @@
 package io.github.franzli347.foss.service.impl;
 
 import io.github.franzli347.foss.common.*;
+import io.github.franzli347.foss.dto.VideoCompressArgs;
 import io.github.franzli347.foss.entity.Files;
 import io.github.franzli347.foss.exception.AsyncException;
 import io.github.franzli347.foss.handler.WebSocketHandler;
@@ -72,7 +73,7 @@ public class FileZipServiceImpl implements FileZipService {//TODO 大文件压�
 
     @Override
     @Async
-    public void imageCompress(int imageId, String userId) {
+    public void imageCompress(int imageId,int quality,String userId) {
         String imagePath= String.valueOf(filesService.getById(imageId));
             if (Optional.ofNullable(stringRedisTemplate.opsForSet().isMember(RedisConstant.COMPRESS_TASK + "_" + imageId, imageId))
                     .orElse(false)) {
@@ -85,7 +86,7 @@ public class FileZipServiceImpl implements FileZipService {//TODO 大文件压�
             String key = RedisConstant.COMPRESS_TASK + "_" + imageId;
             stringRedisTemplate.opsForSet().add(key, String.valueOf(imageId));
             stringRedisTemplate.expire(key, RedisConstant.FILE_TASK_EXPIRE, TimeUnit.SECONDS);
-            FileZipUtil.imageCompress(imagePath);
+            FileZipUtil.imageCompress(imagePath,quality);
         } catch (Exception e) {
             stringRedisTemplate.opsForSet().remove(RedisConstant.COMPRESS_TASK + "_" + imageId, imageId);
             throw new AsyncException(WsResult.builder().code(ResultCode.CODE_ERROR).wsTag(WsTagConstant.COMPRESS).msg("图片压缩失败").data(imageId).userId(userId).build());

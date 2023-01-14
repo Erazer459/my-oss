@@ -1,5 +1,7 @@
 package io.github.franzli347.foss.controller;
 
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.common.AuthConstant;
 import io.github.franzli347.foss.service.FileDownloadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,6 +45,7 @@ public class FileDownloadController {
     @GetMapping("/download/{id}")
     @Operation(summary = "文件下载接口(可断点续传可分块")
     @SneakyThrows
+    @CheckBucketPrivilege(spelString = "#id",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.ONLYREAD,AuthConstant.READWRITE})
     public void getDownload(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException {
         fileDownloadService.download(id, request, response);
     }
@@ -50,6 +53,7 @@ public class FileDownloadController {
 
     @GetMapping(value = "/player/{id}")
     @SneakyThrows
+    @CheckBucketPrivilege(spelString = "#id",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.ONLYREAD,AuthConstant.READWRITE})
     public void player(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
         //TODO:RESOLVEPATH
         fileDownloadService.player(id, request, response);

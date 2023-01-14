@@ -1,8 +1,10 @@
 package io.github.franzli347.foss.controller;
 
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.common.AuthConstant;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.ResultCode;
-import io.github.franzli347.foss.common.VideoCompressArgs;
+import io.github.franzli347.foss.dto.VideoCompressArgs;
 import io.github.franzli347.foss.service.FileZipService;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,6 +47,7 @@ public class FileZipController {
     @PostMapping("/video/{vid}")
     @Parameter(name = "vid",description = "视频文件id",required = true)
     @Parameter(name = "compressArgs",description = "视频压缩参数",required = false)
+    @CheckBucketPrivilege(spelString = "#vid",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
     public Result videoCompress(@PathVariable int vid, @RequestBody VideoCompressArgs compressArgs){
         fileZipService.videoCompress(vid,compressArgs, String.valueOf(loginUserProvider.getLoginUser().getId()));//TODO 完成鉴权后从拦截器获取principal的id
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("视频压缩任务创建完毕").data(vid).data(compressArgs).build();
@@ -57,10 +60,12 @@ public class FileZipController {
      * @return
      **/
     @Operation(summary = "图片压缩")
-    @PostMapping("/image/{imageId}")
+    @PostMapping("/image/{imageId}/{quality}")
     @Parameter(name = "imageId",description = "图片id",required = true)
-    public Result imageCompress(@PathVariable int imageId){
-        fileZipService.imageCompress(imageId,String.valueOf(loginUserProvider.getLoginUser().getId()));
+    @Parameter(name = "quality",description = "图片质量(无损仅限png为100,其余依次 75,45,10)")
+    @CheckBucketPrivilege(spelString = "#imageId",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
+    public Result imageCompress(@PathVariable int imageId,@PathVariable int quality){
+        fileZipService.imageCompress(imageId,quality,String.valueOf(loginUserProvider.getLoginUser().getId()));
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("图片压缩任务创建完毕").data(imageId).build();
     }
 

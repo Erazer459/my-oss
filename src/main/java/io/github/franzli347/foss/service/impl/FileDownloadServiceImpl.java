@@ -1,6 +1,7 @@
 package io.github.franzli347.foss.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
 import io.github.franzli347.foss.entity.Files;
 import io.github.franzli347.foss.service.FileDownloadService;
 import io.github.franzli347.foss.service.FilesService;
