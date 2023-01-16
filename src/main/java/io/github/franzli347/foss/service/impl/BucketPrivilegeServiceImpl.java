@@ -38,19 +38,6 @@ public class BucketPrivilegeServiceImpl extends ServiceImpl<BucketPrivilegeMappe
     public List<Map<String, Object>> getPrivilegeAsMap(int userId) {
         return baseMapper.selectMaps(new QueryWrapper<BucketPrivilege>().select("bid","privilege").eq("uid",userId));
     }
-    /**
-     * @Author AlanC
-     * @Description 给特定用户设置特定bucket的读写权限
-     * @Date 22:41 2023/1/11
-     * @Param [privilege]
-     * @return int
-     **/
-
-    @Override
-    public int setPrivilege(BucketPrivilege privilege) {
-        return baseMapper.insert(privilege);
-    }
-
     @Override
     public void checkPrivilegeExist(BucketPrivilege privilege) {
         Optional.ofNullable(baseMapper.selectOne(new QueryWrapper<BucketPrivilege>()
