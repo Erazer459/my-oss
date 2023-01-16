@@ -1,11 +1,12 @@
 package io.github.franzli347.foss.utils;
 
-import cn.dev33.satoken.context.model.SaRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.franzli347.foss.vo.IpVo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @ClassName IPUtil
@@ -14,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
  **/
 @Slf4j
 public class IPUtil {
-    public static String getIpAddress(SaRequest request) {
+    public static String getIpAddress(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
@@ -28,9 +29,9 @@ public class IPUtil {
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
-//        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-//            ip = request.getRemoteAddr();
-//        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
         return ip;
     }
     @SneakyThrows
