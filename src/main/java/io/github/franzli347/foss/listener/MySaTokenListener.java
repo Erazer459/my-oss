@@ -44,14 +44,16 @@ public class MySaTokenListener implements SaTokenListener {
 
     @Override
     public void doLogin(String loginType, Object loginId, String tokenValue, SaLoginModel loginModel) {
-        String ip=IPUtil.getIpAddress((HttpServletRequest)SaHolder.getRequest().getSource());
+        HttpServletRequest request=(HttpServletRequest)SaHolder.getRequest().getSource();
+        String ip=IPUtil.getIpAddress(request);
        service.addLoginRecord(LoginRecord.builder()
                .ip(ip)
                .time(LocalDateTime.now())
                .uid((Integer) loginId)
-               .device(UserAgent.parseUserAgentString(SaHolder.getRequest().getHeader("user-agent")).getOperatingSystem().getDeviceType().getName())
+               .device(UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getOperatingSystem().getName())
                .city(IPUtil.getCityByIp(restTemplate,objectMapper,ip).getLocationInfo())
                .build());
+
     }
     @Override
     public void doLogout(String s, Object o, String s1) {
