@@ -1,9 +1,13 @@
 package io.github.franzli347.foss.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.github.franzli347.foss.entity.Bucket;
+import io.github.franzli347.foss.entity.BucketPrivilege;
 import io.github.franzli347.foss.exception.BucketException;
 import io.github.franzli347.foss.mapper.BucketMapper;
+import io.github.franzli347.foss.service.BucketPrivilegeService;
 import io.github.franzli347.foss.service.BucketService;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -17,10 +21,12 @@ import java.util.Optional;
 @Service
 public class BucketServiceImpl extends ServiceImpl<BucketMapper, Bucket>
     implements BucketService{
-
-
-
     private final double EPSILON = 0.001;
+    private final BucketPrivilegeService privilegeService;
+
+    public BucketServiceImpl(BucketPrivilegeService privilegeService) {
+        this.privilegeService = privilegeService;
+    }
 
     @Override
     public List<Bucket> getBucketsByUserIdWithPage(int userId, int page, int size) {
@@ -43,7 +49,7 @@ public class BucketServiceImpl extends ServiceImpl<BucketMapper, Bucket>
         if(Math.abs(byId.getUsedSize()) > EPSILON){
             throw new BucketException("bucket_is_not_empty");
         }
-        //TODO:权限删除
+        privilegeService.remove(new LambdaQueryWrapper<BucketPrivilege>().eq(BucketPrivilege::getBid,id));//删除相关权限
         return removeById(id);
     }
 

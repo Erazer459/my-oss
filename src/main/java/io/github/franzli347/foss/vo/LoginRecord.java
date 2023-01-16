@@ -1,10 +1,7 @@
 package io.github.franzli347.foss.vo;
 
 import cn.dev33.satoken.context.SaHolder;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.franzli347.foss.utils.IPUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +21,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@TableName("tb_login_record")
 public class LoginRecord {
     @TableId(type = IdType.INPUT)
     @Schema(description = "id")

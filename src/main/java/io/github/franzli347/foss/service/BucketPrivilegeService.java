@@ -16,9 +16,9 @@ public interface BucketPrivilegeService extends IService<BucketPrivilege> {
 
     void checkPrivilegeExist(BucketPrivilege privilege);
     
-    List<BucketPrivilege> getBucketPrivilegeByBid(int bid);
+    List<BucketPrivilege> getBucketPrivilegeByBid(int bid, String type,int page,int size);
 
     List<BucketPrivilege> getAllPrivilegeInfo(int id);
 
-    int updatePrivilege(int privilegeId, String privilege);
+    boolean updatePrivilege(int privilegeId, String privilege);
 }

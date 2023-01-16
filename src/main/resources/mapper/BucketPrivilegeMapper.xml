@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.franzli347.foss.mapper.BucketPrivilegeMapper">
+    <sql id="Base_Column_List">
+        id,uid,bid,privilege,create_time,update_time
+    </sql>
+    <select id="getBucketPrivilegeByBid" resultType="io.github.franzli347.foss.entity.BucketPrivilege" >
+        select 
+            <include refid="Base_Column_List"/>
+        from
+            tb_bucket_privilege
+        where
+        bid=#{bid}
+            <if test="type!=null">
+               and privilege=#{type}
+            </if>
+        order by update_time desc
+        limit #{page},#{size}
+    </select>
+    <update id="updatePrivilege">
+        update tb_bucket_privilege
+        set privilege = #{privilege}
+        where id= #{id}
+    </update>
+</mapper>

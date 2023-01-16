@@ -1,5 +1,6 @@
 package io.github.franzli347.foss.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 
@@ -23,7 +24,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
 
     @Override
     public SysUser getUserByUsername(String username) {
-        return baseMapper.getUserByUsername(username);
+        return baseMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername,username));
     }
 
     @Override
@@ -34,5 +35,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     @Override
     public List<LoginRecord> getLoginRecord(int uid,int page,int size) {
        return baseMapper.getUserLoginRecords(uid,page,size);
+    }
+
+    @Override
+    public SysUser getUserByEmail(String email) {
+        return baseMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail,email));
     }
 }

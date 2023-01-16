@@ -1,7 +1,7 @@
 package io.github.franzli347.foss.service.impl;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.github.franzli347.foss.entity.BucketPrivilege;
 import io.github.franzli347.foss.mapper.BucketPrivilegeMapper;
@@ -36,30 +36,30 @@ public class BucketPrivilegeServiceImpl extends ServiceImpl<BucketPrivilegeMappe
      **/
     @Override
     public List<Map<String, Object>> getPrivilegeAsMap(int userId) {
-        return baseMapper.selectMaps(new QueryWrapper<BucketPrivilege>().select("bid","privilege").eq("uid",userId));
+        return baseMapper.selectMaps(new LambdaQueryWrapper<BucketPrivilege>().select(BucketPrivilege::getBid,BucketPrivilege::getPrivilege).eq(BucketPrivilege::getUid,userId));
     }
     @Override
     public void checkPrivilegeExist(BucketPrivilege privilege) {
-        Optional.ofNullable(baseMapper.selectOne(new QueryWrapper<BucketPrivilege>()
-                .select("privilege")
-                .eq("uid", privilege.getUid())
-                .eq("bid", privilege.getBid()))).ifPresent(r->{
+        Optional.ofNullable(baseMapper.selectOne(new LambdaQueryWrapper<BucketPrivilege>()
+                .select(BucketPrivilege::getPrivilege)
+                .eq(BucketPrivilege::getUid, privilege.getUid())
+                .eq(BucketPrivilege::getBid, privilege.getBid()))).ifPresent(r->{
             throw new RuntimeException("该条授权信息已存在");
         });
     }
 
     @Override
-    public List<BucketPrivilege> getBucketPrivilegeByBid(int bid) {
-        return baseMapper.selectList(new QueryWrapper<BucketPrivilege>().eq("bid",bid));
+    public List<BucketPrivilege> getBucketPrivilegeByBid(int bid, String type, int page, int size) {
+        return baseMapper.getBucketPrivilegeByBid(bid,type,page,size);
     }
 
     @Override
     public List<BucketPrivilege> getAllPrivilegeInfo(int id) {
-        return baseMapper.selectList(new QueryWrapper<BucketPrivilege>().eq("uid",id));
+        return baseMapper.selectList(new LambdaQueryWrapper<BucketPrivilege>().eq(BucketPrivilege::getUid,id));
     }
 
     @Override
-    public int updatePrivilege(int privilegeId, String privilege) {
+    public boolean updatePrivilege(int privilegeId, String privilege) {
         return baseMapper.updatePrivilege(privilegeId,privilege);
     }
 

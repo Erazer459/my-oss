@@ -57,6 +57,9 @@ public class UserInfoController {
     @Parameter(name = "email",description = "更新后的邮箱地址",required = false)
     public Result update(@RequestParam(required = false) String username,@RequestParam(required = false) String email){
         Optional.ofNullable(userService.getUserByUsername(username)).ifPresent(s -> {throw new RuntimeException("该用户名已存在");});
+        Optional.ofNullable(userService.getUserByEmail(email)).ifPresent(r->{
+            throw new RuntimeException("邮箱已被使用");
+        });
         return Result.builder()
                 .code(ResultCode.CODE_SUCCESS)
                 .data(userService.updateById(SysUser.builder()

@@ -36,7 +36,6 @@ public class IPUtil {
     @SneakyThrows
     public static IpVo getCityByIp(RestTemplate restTemplate, ObjectMapper objectMapper, String ip){
         String info=restTemplate.getForObject("http://ip-api.com/json/{ip}?lang=zh-CN", String.class,ip);
-        IpVo ipVo=objectMapper.readValue(info, IpVo.class);
-        return ipVo;
+        return objectMapper.readValue(info, IpVo.class);
     }
 }
