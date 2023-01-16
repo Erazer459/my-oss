@@ -37,9 +37,12 @@ public class LoginController {
     @Operation(summary = "用户注册")
     @SneakyThrows
     public Result registry(@RequestBody SysUser user){
-        if (service.getUserByUsername(user.getUsername())!=null){
-            throw new RuntimeException("用户已存在");
-        }
+        Optional.ofNullable(service.getUserByUsername(user.getUsername())).ifPresent(r-> {
+            throw new RuntimeException("用户名已存在");
+        });
+        Optional.ofNullable(service.getUserByEmail(user.getEmail())).ifPresent(r->{
+        throw new RuntimeException("邮箱已被使用");
+        });
         String salt = EncryptionUtil.generateSalt();
         // 盐值加密
         String password = EncryptionUtil.getEncryptedPassword(user.getPassword(), salt);
@@ -49,14 +52,19 @@ public class LoginController {
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("注册成功").build();
     }
     @SneakyThrows
-    @PostMapping("/doLogin/{username}/{password}")
+    @PostMapping("/doLogin/{nameOrEmail}/{password}")
     @Operation(summary = "用户登录")
-    @Parameter(name = "username",description = "用户名",required = true)
+    @Parameter(name = "nameOrEmail",description = "用户名或邮箱",required = true)
     @Parameter(name = "password",description = "密码",required = true)
-    public Result doLogin(@PathVariable String username,@PathVariable String password){
-        SysUser sysUser=Optional.ofNullable(service.getUserByUsername(username)).orElseThrow(()->new RuntimeException("用户不存在"));
+    public Result doLogin(@PathVariable String nameOrEmail,@PathVariable String password){
+        SysUser sysUser;
+        if (nameOrEmail.contains("@")){
+            sysUser=Optional.ofNullable(service.getUserByEmail(nameOrEmail)).orElseThrow(()->new RuntimeException("邮箱错误或用户不存在"));
+        }else {
+            sysUser=Optional.ofNullable(service.getUserByUsername(nameOrEmail)).orElseThrow(()->new RuntimeException("用户名错误或用户不存在"));
+        }
         if (!EncryptionUtil.authenticate(password,sysUser.getPassword(),sysUser.getSalt())){
-            throw new RuntimeException("用户名或密码错误");
+            throw new RuntimeException("密码错误");
         }
         if (StringUtils.isNotBlank(StpUtil.getTokenValueByLoginId(sysUser.getId()))){
             StpUtil.logout(sysUser.getId());//如果token不为空就先logout

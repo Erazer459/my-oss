@@ -35,4 +35,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     public List<LoginRecord> getLoginRecord(int uid,int page,int size) {
        return baseMapper.getUserLoginRecords(uid,page,size);
     }
+
+    @Override
+    public SysUser getUserByEmail(String email) {
+        return baseMapper.selectOne(new QueryWrapper<SysUser>().eq("email",email));
+    }
 }
