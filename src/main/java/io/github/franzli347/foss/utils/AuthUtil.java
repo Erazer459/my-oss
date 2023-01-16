@@ -14,11 +14,11 @@ public class AuthUtil {
         return bid+"-"+privilege;
     }
     public static void privilegeCheck(int uid,String privilege){
+        if (uid==StpUtil.getLoginIdAsInt()){
+            throw new RuntimeException("无法为自己设置权限");
+        }
         if (!privilege.equals(AuthConstant.READWRITE)&&!privilege.equals(AuthConstant.ONLYREAD)){
             throw new RuntimeException("权限类型错误,只能为r或rw");
-        }
-        if (uid== StpUtil.getLoginIdAsInt()){
-            throw new RuntimeException("无法为自己设置权限");
         }
     }
 }
