@@ -16,10 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -56,7 +53,7 @@ public class LoginController {
     @Operation(summary = "用户登录")
     @Parameter(name = "username",description = "用户名",required = true)
     @Parameter(name = "password",description = "密码",required = true)
-    public Result doLogin(String username,String password){
+    public Result doLogin(@PathVariable String username,@PathVariable String password){
         SysUser sysUser=Optional.ofNullable(service.getUserByUsername(username)).orElseThrow(()->new RuntimeException("用户不存在"));
         if (!EncryptionUtil.authenticate(password,sysUser.getPassword(),sysUser.getSalt())){
             throw new RuntimeException("用户名或密码错误");

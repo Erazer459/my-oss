@@ -48,7 +48,7 @@ public class BucketPrivilegeController {
         privilegeService.checkPrivilegeExist(privilege);
         return Result.builder()
                 .code(ResultCode.CODE_SUCCESS)
-                .data(privilegeService.setPrivilege(privilege))
+                .data(privilegeService.save(privilege))
                 .build();
     }
     @DeleteMapping("/delete/{id}")

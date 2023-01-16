@@ -22,7 +22,6 @@
 
     <dependencies>
 
-
         <!--spring-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -173,26 +172,7 @@
             <artifactId>sa-token-spring-boot-starter</artifactId>
             <version>1.33.0</version>
         </dependency>
-
-        <!-- Sa-Token 权限认证，在线文档：https://sa-token.cc -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-boot-starter</artifactId>
-            <version>1.33.0</version>
-        </dependency>
         <!-- Sa-Token 整合 Redis (使用 jackson 序列化方式) -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-dao-redis-jackson</artifactId>
-            <version>1.33.0</version>
-        </dependency>
-        <!-- Sa-Token 整合 jwt -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-jwt</artifactId>
-            <version>1.33.0</version>
-        </dependency>
-
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-dao-redis-jackson</artifactId>

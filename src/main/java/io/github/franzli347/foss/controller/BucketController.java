@@ -1,5 +1,7 @@
 package io.github.franzli347.foss.controller;
 
+
+
 import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
 import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.AuthConstant;
@@ -77,7 +79,7 @@ public class BucketController {
                 .getId());
         bucket.setUsedSize(0.0);
         boolean success=bucketService.save(bucket);
-        bucketPrivilegeService.setPrivilege(BucketPrivilege
+        bucketPrivilegeService.save(BucketPrivilege
                 .builder().bid(bucket.getId())
                 .uid(bucket.getUid())
                 .privilege(AuthConstant.READWRITE)

@@ -14,8 +14,6 @@ import java.util.Map;
 public interface BucketPrivilegeService extends IService<BucketPrivilege> {
     List<Map<String,Object>> getPrivilegeAsMap(int userId);
 
-    int setPrivilege(BucketPrivilege privilege);
-
     void checkPrivilegeExist(BucketPrivilege privilege);
     
     List<BucketPrivilege> getBucketPrivilegeByBid(int bid);
