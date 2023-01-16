@@ -12,8 +12,8 @@
     <insert id="addLoginRecord">
         insert
         into tb_login_record
-            (ip,time,uid,city)
-        values(#{ip},#{time},#{uid},#{city})
+            (ip,time,device,uid,city)
+        values(#{ip},#{time},#{device},#{uid},#{city})
     </insert>
     <select id="getUserLoginRecords" resultType="io.github.franzli347.foss.vo.LoginRecord">
         select
