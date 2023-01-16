@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Result exceptionHandler(HttpServletRequest req, Exception e){
-        log.error("exception occur reason {} on request url {}",e.getMessage(),req.getRequestURL());
+        log.error("exception occur reason {} on request url {}",e.getMessage(),req.getRequestURI());
         e.printStackTrace();
         return Result.builder().code(ResultCode.CODE_ERROR).msg(e.getMessage()).build();
     }

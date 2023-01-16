@@ -1,9 +1,6 @@
 package io.github.franzli347.foss.service.impl;
 
-
-
-import cn.hutool.core.util.StrUtil;
-import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.github.franzli347.foss.entity.Files;
 import io.github.franzli347.foss.service.FileDownloadService;
 import io.github.franzli347.foss.service.FilesService;
@@ -34,11 +31,15 @@ public class FileDownloadServiceImpl implements FileDownloadService {
     }
     @Override
     @SneakyThrows
-    public void download(String id, Boolean inline, HttpServletRequest request, HttpServletResponse response) {
+    public void download(String id, String bid, Boolean inline, HttpServletRequest request, HttpServletResponse response) {
         // Get your file stream from wherever.
         log.debug("id=" + id);
-        Files files = Optional.ofNullable(filesService.getById(id))
-                .orElseThrow(() -> new RuntimeException("文件不存在"));
+        LambdaQueryWrapper<Files> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Files::getId,id);
+        queryWrapper.eq(Files::getBid,bid);
+
+        Files files = Optional.ofNullable(filesService.getOne(queryWrapper)).orElseThrow(() -> new RuntimeException("文件不存在"));
+
         String fullPath = filePath + files.getPath();
         log.debug("下载路径:" + fullPath);
         File downloadFile = new File(fullPath);
@@ -53,7 +54,7 @@ public class FileDownloadServiceImpl implements FileDownloadService {
         response.setContentType(mimeType);
         // response.setContentLength((int) downloadFile.length()); set headers for the response
         String headerKey = "Content-Disposition";
-        String headerValue = String.format("%s; filename=\"%s\"", downloadFile.getName(),Boolean.TRUE.equals(inline) ? "inline":"attachment");
+        String headerValue = String.format("%s; filename=\"%s\"", Boolean.TRUE.equals(inline) ? "inline":"attachment",downloadFile.getName());
         response.setHeader(headerKey, headerValue);
         // 解析断点续传相关信息
         response.setHeader("Accept-Ranges", "bytes");

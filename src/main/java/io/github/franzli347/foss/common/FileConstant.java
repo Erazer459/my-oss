@@ -1,18 +1,29 @@
 package io.github.franzli347.foss.common;
 
+import java.security.PrivilegedAction;
+
+/**
+ * 文件类型常量
+ * @author FranzLi
+ */
 public class FileConstant {
 
     private FileConstant(){}
 
     /**
+     * 文件分隔符
+     */
+    private static String file_split;
+
+    /**
      * 判断文件名是否非法正则
      */
-    public static final String ILLEGAL_FILE_RE = "[^\\s\\\\/:\\*\\?\\\"<>\\|](\\x20|[^\\s\\\\/:\\*\\?\\\"<>\\|])*[^\\s\\\\/:\\*\\?\\\"<>\\|\\.]$";
+    public static final String ILLEGAL_FILE_RE = "^((?![\\s\\\\/:\\*\\?\\\"<>\\|]).)*";
 
     /**
      * 文件名非法消息提示
      */
-    public static final String FILE_NAME_ILLEGAL_MSG = "文件名非法,文件名中不能含有 / \\ \" : | * ? < >等字符";
+    public static final String FILE_NAME_ILLEGAL_MSG = "文件名非法,文件名中不能含有 \\ / : * ? \" < > |等字符";
 
     /**
      * 最小总分片数量

@@ -1,5 +1,11 @@
 package io.github.franzli347.foss.controller;
 
+
+
+import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
+import io.github.franzli347.foss.annotation.FiledExistInTable;
+import io.github.franzli347.foss.common.AuthConstant;
+import io.github.franzli347.foss.common.ValidatedGroup;
 import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
 import io.github.franzli347.foss.common.AuthConstant;
 import io.github.franzli347.foss.common.Result;
@@ -11,6 +17,7 @@ import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -57,7 +64,6 @@ public class BucketController {
 
     @DeleteMapping("delete/{bid}")
     @Operation(summary = "删除bucket")
-    @Parameter(name = "bid", description = "bucket id")
     @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege={AuthConstant.OWNER})
     public boolean delete(@PathVariable int bid) {
         return bucketService.removeBucket(bid);
@@ -65,6 +71,7 @@ public class BucketController {
 
     @PutMapping
     @Operation(summary = "为当前登录用户创建bucket")
+    @Transactional
     public boolean create(@RequestBody Bucket bucket) {
         bucket.setUid(Optional
                 .ofNullable(loginUserProvider.getLoginUser())
@@ -82,25 +89,16 @@ public class BucketController {
 
     @PostMapping("/update")
     @Operation(summary = "更新bucket信息")
-    @CheckBucketPrivilege(spelString = "#bucket.id",argType = AuthConstant.BID,privilege=AuthConstant.OWNER)
-    public Result update(@RequestBody Bucket bucket) {
-        return Result
-                .builder()
-                .code(200)
-                .data(bucketService.updateById(bucket))
-                .build();
+    public boolean update(@RequestBody @Validated({ValidatedGroup.Update.class}) Bucket bucket) {
+        return bucketService.updateBucketData(bucket);
     }
 
     @GetMapping("/get/{bid}")
     @Operation(summary = "获取bucket信息")
-    @Parameter(name = "id", description = "bucket id")
+    @Parameter(name = "bid", description = "bucket id")
     @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = {AuthConstant.ONLYREAD, AuthConstant.OWNER, AuthConstant.READWRITE})
-    public Result get(@PathVariable int bid) {
-        return Result
-                .builder()
-                .code(200)
-                .data(bucketService.getById(bid))
-                .build();
+    public Bucket get(@PathVariable @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket id不存在") int bid) {
+        return bucketService.getById(bid);
     }
 
 

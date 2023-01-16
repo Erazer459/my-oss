@@ -4,6 +4,9 @@ import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.franzli347.foss.common.RedisConstant;
+import io.github.franzli347.foss.entity.Bucket;
+import io.github.franzli347.foss.exception.BucketException;
+import io.github.franzli347.foss.service.BucketService;
 import io.github.franzli347.foss.utils.StreamUtil;
 import io.github.franzli347.foss.dto.FileUploadParam;
 import io.github.franzli347.foss.entity.Files;
@@ -52,6 +55,10 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private final FilesService filesService;
 
+    private final BucketService bucketService;
+
+    private final double EPSILON = 0.001;
+
 
     @Value("${pathMap.source}")
     private String filePath;
@@ -64,13 +71,14 @@ public class FileUploadServiceImpl implements FileUploadService {
                                  FileTransferResolver fileTransferResolver,
                                  ChunkPathResolver chunkPathResolver,
                                  FileUploadPostProcessorRegister fileUploadPostProcessorRegister,
-                                 FilesService filesService) {
+                                 FilesService filesService, BucketService bucketService) {
         this.stringRedisTemplate = stringRedisTemplate;
         this.objectMapper = objectMapper;
         this.fileTransferResolver = fileTransferResolver;
         this.chunkPathResolver = chunkPathResolver;
         this.fileUploadPostProcessorRegister = fileUploadPostProcessorRegister;
         this.filesService = filesService;
+        this.bucketService = bucketService;
     }
 
     /**
@@ -80,7 +88,7 @@ public class FileUploadServiceImpl implements FileUploadService {
      */
     @Override
     @SneakyThrows
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean initMultipartUpload(final int uid,
                                       final int bid,
                                       final String name,
@@ -88,6 +96,12 @@ public class FileUploadServiceImpl implements FileUploadService {
                                       final String md5,
                                       final long size) {
 
+        // 检查bucket容量大小
+        Bucket bucket = bucketService.getById(bid);
+        double freeSize = bucket.getTotalSize() - bucket.getUsedSize();
+        if(freeSize < size){
+            throw new BucketException("容量不足");
+        }
         FileUploadParam dt = new FileUploadParam(uid,
                 chunks,
                 size,
@@ -97,12 +111,12 @@ public class FileUploadServiceImpl implements FileUploadService {
                 LocalDateTime.now());
 
         initUploadDataToRedis(dt);
-
         return true;
     }
 
 
     @Override
+    @Transactional
     public boolean secUpload(final String md5,final String targetBid){
         boolean isUpload = Optional.ofNullable(stringRedisTemplate.opsForSet().isMember(RedisConstant.FILE_MD5_LIST, md5)).orElse(false);
         if(isUpload){
@@ -124,6 +138,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     @Override
+    @Transactional
     public boolean smallFileUpload(int uid, int bid, String name, long size, String md5, MultipartFile file) {
         //判断文件是否已经上传
         boolean isUpload = Optional.ofNullable(stringRedisTemplate.opsForSet().isMember(RedisConstant.FILE_MD5_LIST, md5)).orElse(false);
@@ -200,6 +215,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         return "upload[%s]chunk[%d]success".formatted(name,chunk);
     }
 
+
     private String afterChunksUpload(int uid, int bid, String name, int chunks, Long size, String md5) throws IOException {
         String resultPath = getResultPath(bid, name);
         List<String> collect = chunkPathResolver.getChunkPaths(md5, chunks);
@@ -229,7 +245,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         for (FileUploadPostProcessor fileUploadPostProcessor : fileUploadPostProcessors) {
             boolean processResult = fileUploadPostProcessor.process(resultPath, saveData);
             if(!processResult) {
-                throw new FileException("process_error");
+                throw new FileException("process_error on " + fileUploadPostProcessor.getClass().getName());
             }
         }
     }
@@ -257,6 +273,11 @@ public class FileUploadServiceImpl implements FileUploadService {
     private void saveFileDataToOther(final String md5,final String targetBid){
         Files files = filesService.query().eq("md5", md5).oneOpt()
                 .orElseThrow(() ->new FileException("saveFileDataToOtherError"));
+        Bucket bucket = bucketService.getById(targetBid);
+        double freeSize = bucket.getTotalSize() - bucket.getUsedSize();
+        if(freeSize < files.getFileSize()){
+            throw new BucketException("容量不足");
+        }
         files.setBid(Integer.valueOf(targetBid));
         files.setId(IdUtil.getSnowflakeNextId());
         filesService.save(files);

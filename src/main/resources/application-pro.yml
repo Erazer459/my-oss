@@ -14,8 +14,8 @@ spring:
       matching-strategy: ant-path-matcher
   servlet:
     multipart:
-      max-file-size: 1024MB
-      max-request-size: 1024MB
+      max-file-size: 600MB
+      max-request-size: 600MB
   ## mysql 配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -30,11 +30,13 @@ spring:
 logging:
   level:
     web: debug
+    io.github.franzli347.foss.mapper: debug
 ## 存储路径映射
 pathMap:
   source: /toss/
 ## 临时文件格式
 tmpFilePattern: '%stmp/%s.%d.chunk'
+## 配置当前服务器ip
 downloadAddr: http://47.113.225.98:8080
 ## mbp
 mybatis-plus:
@@ -43,24 +45,5 @@ mybatis-plus:
       table-prefix: tb_
       id-type: auto
     banner: false
-##sa-token
-sa-token:
-  # token名称 (同时也是cookie名称)
-  token-name: token
-  # token有效期，单位s 默认30天, -1代表永不过期
-  timeout: 259200
-  # token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
-  activity-timeout: 259200
-  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
-  is-concurrent: true
-  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
-  is-share: true
-  #从请求头获取token
-  isReadHeader: true
-  #禁用cookie
-  isReadCookie: false
-  # 是否输出操作日志
-  is-log: false
-  #自动续签
-  autoRenew: true
-  jwt-secret-key: asdibwaibiqwubfqofibbgoiqwnf
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl

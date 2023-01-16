@@ -1,13 +1,14 @@
 package io.github.franzli347.foss.annotation;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.github.franzli347.foss.utils.FiledExistInTableValidator;
+import io.github.franzli347.foss.support.fileSupport.FiledExistInTableValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**
+ * 判断value在colum中是否在表中
  * @author FranzLi
  */
 @Target({ElementType.PARAMETER,ElementType.FIELD})

@@ -27,7 +27,7 @@ public class Bucket implements Serializable {
 
     @NotNull(message="id不能为空")
     @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket id不存在",groups = {ValidatedGroup.Update.class,ValidatedGroup.Remove.class})
-    @TableId
+    @TableId()
     @Schema(description = "id(除了修改都不用传)")
     @NotNull(message = "id不能为空",groups = {ValidatedGroup.Update.class})
     private Integer id;
@@ -48,7 +48,5 @@ public class Bucket implements Serializable {
     @Null(message = "createTime禁止修改",groups = {ValidatedGroup.Update.class})
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
-
-
 
 }

@@ -13,8 +13,17 @@
 
     <update id="updateBucketSize">
         update tb_bucket
-        set used_size = used_size + #{fileSize}
-        where id = #{id}
+        set used_size = used_size
+        <choose>
+            <when test="fileSize gt 0">
+                +
+            </when>
+            <otherwise>
+                -
+            </otherwise>
+        </choose>
+        #{fileSize}
+        where id = #{bid}
     </update>
 
     <select id="getBucketsByUserIdWithPage" resultType="io.github.franzli347.foss.entity.Bucket">
