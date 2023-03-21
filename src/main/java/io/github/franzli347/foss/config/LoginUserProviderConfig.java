@@ -10,10 +10,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class LoginUserProviderConfig {
-    /**
-     * TODO: 完成鉴权模块后切换
-     * @return
-     */
     @Bean
     public LoginUserProvider loginUserProvider() {
         return new LoginSysUserProvider();

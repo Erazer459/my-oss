@@ -1,17 +1,13 @@
 package io.github.franzli347.foss.controller;
 
-import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.ResultCode;
 import io.github.franzli347.foss.entity.SysUser;
-import io.github.franzli347.foss.exception.BaseException;
 import io.github.franzli347.foss.service.UserService;
-import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.github.franzli347.foss.utils.EncryptionUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +22,9 @@ import java.util.Optional;
 @Slf4j
 public class LoginController {
     private final UserService service;
-    private final LoginUserProvider provider;
 
-    public LoginController(UserService service, LoginUserProvider provider) {
+    public LoginController(UserService service) {
         this.service = service;
-        this.provider = provider;
     }
 
     @PostMapping("/registry")
@@ -52,18 +46,16 @@ public class LoginController {
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("注册成功").build();
     }
     @SneakyThrows
-    @PostMapping("/doLogin/{nameOrEmail}/{password}")
+    @PostMapping("/doLogin")
     @Operation(summary = "用户登录")
-    @Parameter(name = "nameOrEmail",description = "用户名或邮箱",required = true)
-    @Parameter(name = "password",description = "密码",required = true)
-    public Result doLogin(@PathVariable String nameOrEmail,@PathVariable String password){
+    public Result doLogin(@RequestBody SysUser user){
         SysUser sysUser;
-        if (nameOrEmail.contains("@")){
-            sysUser=Optional.ofNullable(service.getUserByEmail(nameOrEmail)).orElseThrow(()->new RuntimeException("邮箱错误或用户不存在"));
+        if (Optional.ofNullable(user.getEmail()).isPresent()){
+            sysUser=Optional.ofNullable(service.getUserByEmail(user.getEmail())).orElseThrow(()->new RuntimeException("邮箱错误或用户不存在"));
         }else {
-            sysUser=Optional.ofNullable(service.getUserByUsername(nameOrEmail)).orElseThrow(()->new RuntimeException("用户名错误或用户不存在"));
+            sysUser=Optional.ofNullable(service.getUserByUsername(user.getUsername())).orElseThrow(()->new RuntimeException("用户名错误或用户不存在"));
         }
-        if (!EncryptionUtil.authenticate(password,sysUser.getPassword(),sysUser.getSalt())){
+        if (!EncryptionUtil.authenticate(user.getPassword(),sysUser.getPassword(),sysUser.getSalt())){
             throw new RuntimeException("密码错误");
         }
         if (StringUtils.isNotBlank(StpUtil.getTokenValueByLoginId(sysUser.getId()))){
