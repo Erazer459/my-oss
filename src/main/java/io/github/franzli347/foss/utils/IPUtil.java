@@ -1,7 +1,6 @@
 package io.github.franzli347.foss.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.franzli347.foss.vo.IpVo;
+import cn.dev33.satoken.secure.SaSecureUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
@@ -35,8 +34,8 @@ public class IPUtil {
         return ip;
     }
     @SneakyThrows
-    public static IpVo getCityByIp(RestTemplate restTemplate, ObjectMapper objectMapper, String ip){
-        String info=restTemplate.getForObject("http://ip-api.com/json/{ip}?lang=zh-CN", String.class,ip);
-        return objectMapper.readValue(info, IpVo.class);
+    public static String getCityByIp(RestTemplate restTemplate, String ip){
+        String sig= SaSecureUtil.md5("/ws/location/v1/ip?ip="+ip+"&key=OIDBZ-XC734-NXTUU-FRY4H-KJRJK-3JB34SBBEIitwl5d1VFxmuz9qAXYJcP3SGCw");
+        return  restTemplate.getForObject("https://apis.map.qq.com/ws/location/v1/ip?ip="+ip+"&key=OIDBZ-XC734-NXTUU-FRY4H-KJRJK-3JB34&sig="+sig, String.class,ip);
     }
 }
