@@ -37,11 +37,9 @@ public class LoginController {
         Optional.ofNullable(service.getUserByEmail(user.getEmail())).ifPresent(r->{
         throw new RuntimeException("邮箱已被使用");
         });
-        String salt = EncryptionUtil.generateSalt();
-        // 盐值加密
-        String password = EncryptionUtil.getEncryptedPassword(user.getPassword(), salt);
+        // sha1加密
+        String password = EncryptionUtil.getEncryptedPassword(user.getPassword());
         user.setPassword(password);
-        user.setSalt(salt);
         service.save(user);
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("注册成功").build();
     }
@@ -55,7 +53,7 @@ public class LoginController {
         }else {
             sysUser=Optional.ofNullable(service.getUserByUsername(user.getUsername())).orElseThrow(()->new RuntimeException("用户名错误或用户不存在"));
         }
-        if (!EncryptionUtil.authenticate(user.getPassword(),sysUser.getPassword(),sysUser.getSalt())){
+        if (!EncryptionUtil.authenticate(user.getPassword(),sysUser.getPassword())){
             throw new RuntimeException("密码错误");
         }
         if (StringUtils.isNotBlank(StpUtil.getTokenValueByLoginId(sysUser.getId()))){

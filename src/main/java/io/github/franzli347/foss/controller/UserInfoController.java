@@ -1,6 +1,5 @@
 package io.github.franzli347.foss.controller;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.ResultCode;
 import io.github.franzli347.foss.entity.SysUser;
@@ -27,7 +26,6 @@ public class UserInfoController {
     private final UserService userService;
 
     private final LoginUserProvider loginUserProvider;
-
     public UserInfoController(UserService userService, LoginUserProvider loginUserProvider) {
         this.userService = userService;
         this.loginUserProvider = loginUserProvider;
@@ -53,8 +51,8 @@ public class UserInfoController {
     }
     @PostMapping("/update")
     @Operation(summary = "更新当前用户信息(用户名或邮箱)")
-    @Parameter(name = "username",description = "更新后的用户名",required = false)
-    @Parameter(name = "email",description = "更新后的邮箱地址",required = false)
+    @Parameter(name = "username",description = "更新后的用户名")
+    @Parameter(name = "email",description = "更新后的邮箱地址")
     public Result update(@RequestParam(required = false) String username,@RequestParam(required = false) String email){
         Optional.ofNullable(userService.getUserByUsername(username)).ifPresent(s -> {throw new RuntimeException("该用户名已存在");});
         Optional.ofNullable(userService.getUserByEmail(email)).ifPresent(r->{
@@ -72,16 +70,14 @@ public class UserInfoController {
     @PostMapping("/update/password")
     @Operation(summary = "更新当前用户密码")
     public Result updatePassword(String oldPassword,String newPassword){
-       if (!EncryptionUtil.authenticate(oldPassword,loginUserProvider.getLoginUser().getPassword(),loginUserProvider.getLoginUser().getSalt())){
+       if (!EncryptionUtil.authenticate(oldPassword,loginUserProvider.getLoginUser().getPassword())){
            throw new RuntimeException("原密码错误");
        }
-       String newSalt = EncryptionUtil.generateSalt();
-       newPassword=EncryptionUtil.getEncryptedPassword(newPassword,newSalt);
+       newPassword=EncryptionUtil.getEncryptedPassword(newPassword);
         return Result.builder()
                 .code(ResultCode.CODE_SUCCESS)
                 .data(userService.updateById(SysUser.builder()
                         .id(loginUserProvider.getLoginUser().getId())
-                        .salt(newSalt)
                         .password(newPassword)
                         .build()))
                 .build();

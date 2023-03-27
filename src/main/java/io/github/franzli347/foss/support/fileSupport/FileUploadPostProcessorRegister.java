@@ -7,6 +7,8 @@ import java.util.List;
  * @author FranzLi
  */
 public class FileUploadPostProcessorRegister {
+
+
     private final List<FileUploadPostProcessor> fileUploadPostProcessors = new ArrayList<>();
 
     public FileUploadPostProcessorRegister register(FileUploadPostProcessor fileUploadPostProcessor) {

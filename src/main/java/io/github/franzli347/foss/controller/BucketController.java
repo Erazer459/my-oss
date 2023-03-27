@@ -2,13 +2,11 @@ package io.github.franzli347.foss.controller;
 
 
 
+import cn.dev33.satoken.stp.StpUtil;
 import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
 import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.AuthConstant;
 import io.github.franzli347.foss.common.ValidatedGroup;
-import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
-import io.github.franzli347.foss.common.AuthConstant;
-import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.entity.Bucket;
 import io.github.franzli347.foss.entity.BucketPrivilege;
 import io.github.franzli347.foss.service.BucketPrivilegeService;
@@ -81,7 +79,7 @@ public class BucketController {
         boolean success=bucketService.save(bucket);
         bucketPrivilegeService.save(BucketPrivilege
                 .builder().bid(bucket.getId())
-                .uid(bucket.getUid())
+                .uid(StpUtil.getLoginIdAsInt())
                 .privilege(AuthConstant.READWRITE)
                 .build());
         return success;

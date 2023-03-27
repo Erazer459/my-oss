@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -33,7 +30,8 @@ public class SysUser extends UserBase{
      */
     @Hidden
     @TableField("salt")
-    private String salt;
+    @Builder.Default
+    private String salt="turing_oss";
 
     public UserBase toUserBase(){
         return UserBase.builder()
