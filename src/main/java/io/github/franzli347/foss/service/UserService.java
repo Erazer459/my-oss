@@ -13,4 +13,5 @@ public interface UserService extends IService<SysUser> {
 
     List<LoginRecord> getLoginRecord(int uid,int page,int size);
     SysUser getUserByEmail(String email);
+
 }

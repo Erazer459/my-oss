@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import io.github.franzli347.foss.common.Result;
 import io.github.franzli347.foss.common.ResultCode;
 import io.github.franzli347.foss.entity.SysUser;
+import io.github.franzli347.foss.service.ShareAuthService;
 import io.github.franzli347.foss.service.UserService;
 import io.github.franzli347.foss.utils.EncryptionUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,9 +23,10 @@ import java.util.Optional;
 @Slf4j
 public class LoginController {
     private final UserService service;
-
-    public LoginController(UserService service) {
+    private final ShareAuthService authService;
+    public LoginController(UserService service, ShareAuthService authService) {
         this.service = service;
+        this.authService = authService;
     }
 
     @PostMapping("/registry")
@@ -41,6 +43,7 @@ public class LoginController {
         String password = EncryptionUtil.getEncryptedPassword(user.getPassword());
         user.setPassword(password);
         service.save(user);
+        authService.generateKeys(user.getId());
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("注册成功").build();
     }
     @SneakyThrows

@@ -3,6 +3,7 @@ package io.github.franzli347.foss.controller;
 
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
 import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.AuthConstant;
@@ -98,7 +99,10 @@ public class BucketController {
     public Bucket get(@PathVariable @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket id不存在") int bid) {
         return bucketService.getById(bid);
     }
-
-
+    @GetMapping("/get/count")
+    @Operation(summary = "获取当前用户bucket总数")
+    public String getCount(){
+        return String.valueOf(bucketPrivilegeService.count(new LambdaQueryWrapper<BucketPrivilege>().eq(BucketPrivilege::getUid,StpUtil.getLoginIdAsInt())));
+    }
 
 }

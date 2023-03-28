@@ -21,11 +21,7 @@ import java.util.Optional;
  **/
 @Service
 public class BucketPrivilegeServiceImpl extends ServiceImpl<BucketPrivilegeMapper, BucketPrivilege> implements BucketPrivilegeService {
-    private final LoginUserProvider loginUserProvider;
 
-    public BucketPrivilegeServiceImpl(LoginUserProvider loginUserProvider) {
-        this.loginUserProvider = loginUserProvider;
-    }
 
     /**
      * @Author AlanC
