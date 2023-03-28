@@ -31,7 +31,7 @@
         <include refid="Base_Column_List"/>
         from tb_bucket
         where uid = #{userId}
-        limit #{page},#{size}
+        limit ${(page - 1)*size},#{size}
     </select>
 
     <select id="listAll" resultType="io.github.franzli347.foss.entity.Bucket">
@@ -42,8 +42,7 @@
             select bid from tb_bucket_privilege
             where uid = #{userId}
         )
-        order by create_time desc
-        limit #{page},#{size}
+        limit #{size},${(page-1)*size}
     </select>
 
 </mapper>
