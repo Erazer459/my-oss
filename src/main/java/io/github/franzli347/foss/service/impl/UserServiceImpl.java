@@ -1,7 +1,6 @@
 package io.github.franzli347.foss.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -41,4 +40,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     public SysUser getUserByEmail(String email) {
         return baseMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail,email));
     }
+
+
 }

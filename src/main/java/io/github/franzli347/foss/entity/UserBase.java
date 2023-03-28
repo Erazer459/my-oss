@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
  * @description 用户基类
  */
 public class UserBase {
-        @TableId(type = IdType.INPUT)
+        @TableId(type = IdType.AUTO)
         @Hidden
         @TableField("id")
         private int id;
