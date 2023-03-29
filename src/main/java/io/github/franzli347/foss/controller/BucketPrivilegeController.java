@@ -65,17 +65,29 @@ public class BucketPrivilegeController {
                 .data(privilegeService.removeById(id))
                 .build();
     }
-    @GetMapping(value = {"/getBucketPrivilege/{bid}/{type}/{page}/{size}","/getBucketPrivilege/{bid}/{page}/{size}"})
+    @GetMapping(value = {"/getBucketPrivilege/{bid}/{type}/{page}/{size}"})
     @Operation(summary = "获取指定bucket的授权信息(所有or只读or读写)(需要此bucket所有权)")
     @Parameter(name="bid",description = "bucket id")
     @Parameter(name = "type",description = "权限类型(r,rw或者无)")
     @Parameter(name = "page", description = "页码")
     @Parameter(name = "size", description = "每页数量")
     @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = AuthConstant.OWNER)
-    public Result getBucketPrivilege(@PathVariable int bid,@PathVariable(required = false) String type,@PathVariable int page,@PathVariable int size){
+    public Result getBucketPrivilege(@PathVariable int bid,@PathVariable String type,@PathVariable int page,@PathVariable int size){
         return Result.builder()
                 .code(ResultCode.CODE_SUCCESS)
                 .data(privilegeService.getBucketPrivilegeByBid(bid,type,page,size))
+                .build();
+    }
+    @GetMapping("/getBucketPrivilege/{bid}/{page}/{size}")
+    @Operation(summary = "获取指定bucket的授权信息(所有or只读or读写)(需要此bucket所有权)")
+    @Parameter(name="bid",description = "bucket id")
+    @Parameter(name = "page", description = "页码")
+    @Parameter(name = "size", description = "每页数量")
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = AuthConstant.OWNER)
+    public Result getBucketPrivilegeWithoutType(@PathVariable int bid,@PathVariable int page,@PathVariable int size){
+        return Result.builder()
+                .code(ResultCode.CODE_SUCCESS)
+                .data(privilegeService.getBucketPrivilegeByBid(bid,null,page,size))
                 .build();
     }
     @GetMapping("/getAll")

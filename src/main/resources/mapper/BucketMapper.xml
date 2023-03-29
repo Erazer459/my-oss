@@ -42,7 +42,7 @@
             select bid from tb_bucket_privilege
             where uid = #{userId}
         )
-        limit #{size},${(page-1)*size}
+        limit ${(page - 1)*size},#{size}
     </select>
 
 </mapper>
