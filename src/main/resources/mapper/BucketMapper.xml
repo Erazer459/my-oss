@@ -31,7 +31,6 @@
         <include refid="Base_Column_List"/>
         from tb_bucket
         where uid = #{userId}
-        order by create_time desc
         limit ${(page - 1)*size},#{size}
     </select>
 
@@ -43,7 +42,6 @@
             select bid from tb_bucket_privilege
             where uid = #{userId}
         )
-        order by create_time desc
         limit ${(page - 1)*size},#{size}
     </select>
 
