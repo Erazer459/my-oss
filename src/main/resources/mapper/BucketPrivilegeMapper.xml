@@ -17,7 +17,7 @@
                and privilege=#{type}
             </if>
         order by update_time desc
-        limit #{page},#{size}
+        limit ${(page - 1)*size},#{size}
     </select>
     <update id="updatePrivilege">
         update tb_bucket_privilege

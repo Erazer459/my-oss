@@ -32,7 +32,7 @@
         from tb_bucket
         where uid = #{userId}
         order by create_time desc
-        limit #{page},#{size}
+        limit ${(page - 1)*size},#{size}
     </select>
 
     <select id="listAll" resultType="io.github.franzli347.foss.entity.Bucket">
@@ -44,7 +44,7 @@
             where uid = #{userId}
         )
         order by create_time desc
-        limit #{page},#{size}
+        limit ${(page - 1)*size},#{size}
     </select>
 
 </mapper>

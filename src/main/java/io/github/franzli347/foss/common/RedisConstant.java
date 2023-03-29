@@ -36,5 +36,5 @@ public class RedisConstant {
      * WebSocket连接session
      **/
     public final static String WS_SESSION_LIST ="WS_SESSION_LIST";
-    
+
 }

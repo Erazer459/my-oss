@@ -9,5 +9,5 @@ public interface ShareAuthService extends IService<AuthKeys> {
 
     void generateKeys(int uid);
 
-    String generateSharePath(int expire, int fileId);
+    String generateSharePath(int bid,int expire, String fileId);
 }
