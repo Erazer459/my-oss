@@ -11,4 +11,6 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<SysUser> {
     void addLoginRecord(LoginRecord record);
     List<LoginRecord> getUserLoginRecords(int uid,int page,int size);
+
+    long getTotal(int uid);
 }

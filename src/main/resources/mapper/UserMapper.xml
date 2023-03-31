@@ -21,6 +21,11 @@
         from tb_login_record
         where uid=#{uid}
         order by time desc
-        limit #{page},#{size}
+        limit ${(page - 1)*size},#{size}
+    </select>
+    <select id="getTotal" resultType="long">
+        select count(*)
+        from tb_login_record
+        where uid=#{uid}
     </select>
 </mapper>
