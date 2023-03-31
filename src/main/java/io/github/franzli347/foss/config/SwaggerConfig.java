@@ -8,7 +8,6 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 
 /**
  * @author FranzLi
@@ -18,7 +17,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi userApi(){
         String[] paths = { "/**" };
-        String[] packagedToMatch = { "io.github.franzli347.foss.controller" };
+        String[] packagedToMatch = { "io.github.franzli347.foss.web.controller" };
         return GroupedOpenApi.builder().group("用户模块")
                 .pathsToMatch(paths)
                 .packagesToScan(packagedToMatch).build();
@@ -33,6 +32,7 @@ public class SwaggerConfig {
                 ).schemaRequirement("token",this.securityScheme())
                 .addSecurityItem(new SecurityRequirement().addList("token"));
     }
+
     private SecurityScheme securityScheme() {
         SecurityScheme securityScheme = new SecurityScheme();
         securityScheme.setType(SecurityScheme.Type.APIKEY);

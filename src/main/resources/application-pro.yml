@@ -19,7 +19,7 @@ spring:
   ## mysql 配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://47.113.225.98:3306/turingoss?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://gz-cynosdbmysql-grp-hv910w7l.sql.tencentcdb.com:29773/turingoss
     username: root
     password: '!Tufirewall123..'
   ## jackson 配置

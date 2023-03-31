@@ -1,8 +1,8 @@
 package io.github.franzli347.foss.support.fileSupport;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.github.franzli347.foss.entity.Files;
-import io.github.franzli347.foss.service.FilesService;
+import io.github.franzli347.foss.model.entity.Files;
+import io.github.franzli347.foss.web.service.FilesService;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Optional;

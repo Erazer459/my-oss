@@ -1,7 +1,7 @@
 package io.github.franzli347.foss.config;
 
-import io.github.franzli347.foss.Interceptor.MyhandshakeInterceptor;
-import io.github.franzli347.foss.handler.WebSocketHandler;
+import io.github.franzli347.foss.middleware.Interceptor.MyhandshakeInterceptor;
+import io.github.franzli347.foss.middleware.handler.WebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;

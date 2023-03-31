@@ -1,7 +1,7 @@
 package io.github.franzli347.foss.config;
 
-import io.github.franzli347.foss.service.BucketService;
-import io.github.franzli347.foss.service.FilesService;
+import io.github.franzli347.foss.web.service.BucketService;
+import io.github.franzli347.foss.web.service.FilesService;
 import io.github.franzli347.foss.support.fileSupport.CheckFilePostprocessor;
 import io.github.franzli347.foss.support.fileSupport.DbFileUploadPostprocessor;
 import io.github.franzli347.foss.support.fileSupport.FileUploadPostProcessorRegister;

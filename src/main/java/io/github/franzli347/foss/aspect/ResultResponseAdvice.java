@@ -1,8 +1,8 @@
 package io.github.franzli347.foss.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.franzli347.foss.common.Result;
-import io.github.franzli347.foss.common.ResultCode;
+import io.github.franzli347.foss.model.vo.Result;
+import io.github.franzli347.foss.common.constant.ResultCode;
 import org.springframework.boot.json.JsonParseException;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * 统一返回结果切面
  * @author FranzLi
  */
-@RestControllerAdvice(basePackages = "io.github.franzli347.foss.controller")
+@RestControllerAdvice(basePackages = "io.github.franzli347.foss.web.controller")
 
 public class ResultResponseAdvice implements ResponseBodyAdvice<Object> {
     @Override

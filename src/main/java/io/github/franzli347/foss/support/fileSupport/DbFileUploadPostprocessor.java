@@ -1,10 +1,10 @@
 package io.github.franzli347.foss.support.fileSupport;
 
 import cn.hutool.core.util.IdUtil;
-import io.github.franzli347.foss.dto.FileUploadParam;
-import io.github.franzli347.foss.entity.Files;
-import io.github.franzli347.foss.service.BucketService;
-import io.github.franzli347.foss.service.FilesService;
+import io.github.franzli347.foss.model.dto.FileUploadParam;
+import io.github.franzli347.foss.model.entity.Files;
+import io.github.franzli347.foss.web.service.BucketService;
+import io.github.franzli347.foss.web.service.FilesService;
 import lombok.SneakyThrows;
 
 import java.io.File;
