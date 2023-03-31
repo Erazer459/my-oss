@@ -2,10 +2,14 @@ package io.github.franzli347.foss.web.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.github.franzli347.foss.model.entity.BucketPrivilege;
+import io.github.franzli347.foss.model.vo.LoginRecord;
 import io.github.franzli347.foss.web.mapper.BucketPrivilegeMapper;
 import io.github.franzli347.foss.web.service.BucketPrivilegeService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,8 +48,14 @@ public class BucketPrivilegeServiceImpl extends ServiceImpl<BucketPrivilegeMappe
     }
 
     @Override
-    public List<BucketPrivilege> getBucketPrivilegeByBid(int bid, String type, int page, int size) {
-        return baseMapper.getBucketPrivilegeByBid(bid,type,page,size);
+    public IPage<BucketPrivilege> getBucketPrivilegeByBid(int bid, String type, int page, int size) {
+        IPage<BucketPrivilege> p=new Page<>(page,size);
+        if (type==null){
+            page(p,new LambdaQueryWrapper<BucketPrivilege>().eq(BucketPrivilege::getBid,bid));
+            return p;
+        }
+        page(p,new LambdaQueryWrapper<BucketPrivilege>().eq(BucketPrivilege::getBid,bid).eq(BucketPrivilege::getPrivilege,type));
+        return p;
     }
 
     @Override

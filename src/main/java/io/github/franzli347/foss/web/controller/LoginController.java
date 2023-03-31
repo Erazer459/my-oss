@@ -2,6 +2,7 @@ package io.github.franzli347.foss.web.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.cron.TaskExecutor;
 import io.github.franzli347.foss.model.vo.Result;
 import io.github.franzli347.foss.common.constant.ResultCode;
 import io.github.franzli347.foss.model.entity.SysUser;
@@ -13,8 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RestController
@@ -49,7 +52,7 @@ public class LoginController {
     @SneakyThrows
     @PostMapping("/doLogin")
     @Operation(summary = "用户登录")
-    public Result doLogin(@RequestBody SysUser user){
+    public Result doLogin(HttpServletRequest request, @RequestBody SysUser user){
         SysUser sysUser;
         if (Optional.ofNullable(user.getEmail()).isPresent()){
             sysUser=Optional.ofNullable(service.getUserByEmail(user.getEmail())).orElseThrow(()->new RuntimeException("邮箱错误或用户不存在"));
@@ -64,6 +67,7 @@ public class LoginController {
         }
         StpUtil.login(sysUser.getId());
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();//回传token信息
+        service.getIPInfo(request, StpUtil.getLoginIdAsInt());
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("登录成功").data(tokenInfo.getTokenValue()).build();
     }
     @PostMapping("/logout")

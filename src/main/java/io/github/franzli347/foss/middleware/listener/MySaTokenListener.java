@@ -9,6 +9,7 @@ import io.github.franzli347.foss.model.vo.LoginRecord;
 import io.github.franzli347.foss.web.service.UserService;
 import io.github.franzli347.foss.utils.IPUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,16 +31,6 @@ public class MySaTokenListener implements SaTokenListener {
 
     @Override
     public void doLogin(String loginType, Object loginId, String tokenValue, SaLoginModel loginModel) {
-        HttpServletRequest request=(HttpServletRequest)SaHolder.getRequest().getSource();
-        String ip=IPUtil.getIpAddress(request);
-       service.addLoginRecord(LoginRecord.builder()
-               .ip(ip)
-               .time(LocalDateTime.now())
-               .uid((Integer) loginId)
-               .device(UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getOperatingSystem().getName())
-               .city(IPUtil.getCityByIp(restTemplate,ip))
-               .build());
-
     }
     @Override
     public void doLogout(String s, Object o, String s1) {
