@@ -6,7 +6,7 @@ package io.github.franzli347.foss.support.wsSupport;
  * @Date 2022/12/29 17:55
  **/
 
-import io.github.franzli347.foss.common.RedisConstant;
+import io.github.franzli347.foss.common.constant.RedisConstant;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;

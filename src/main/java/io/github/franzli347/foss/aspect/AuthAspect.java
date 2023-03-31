@@ -2,10 +2,9 @@ package io.github.franzli347.foss.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
 import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
-import io.github.franzli347.foss.common.AuthConstant;
-import io.github.franzli347.foss.service.BucketPrivilegeService;
-import io.github.franzli347.foss.service.BucketService;
-import io.github.franzli347.foss.service.FilesService;
+import io.github.franzli347.foss.common.constant.AuthConstant;
+import io.github.franzli347.foss.web.service.BucketPrivilegeService;
+import io.github.franzli347.foss.web.service.FilesService;
 import io.github.franzli347.foss.utils.AuthUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;

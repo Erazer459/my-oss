@@ -1,8 +1,7 @@
 package io.github.franzli347.foss.utils;
 
 import cn.dev33.satoken.stp.StpUtil;
-import io.github.franzli347.foss.common.AuthConstant;
-import io.github.franzli347.foss.entity.BucketPrivilege;
+import io.github.franzli347.foss.common.constant.AuthConstant;
 
 /**
  * @ClassName AuthUtil

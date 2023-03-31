@@ -1,7 +1,7 @@
 package io.github.franzli347.foss.utils;
 
-import io.github.franzli347.foss.common.ProcessInfo;
-import io.github.franzli347.foss.dto.VideoCompressArgs;
+import io.github.franzli347.foss.model.vo.ProcessInfo;
+import io.github.franzli347.foss.model.dto.VideoCompressArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 

@@ -1,7 +1,7 @@
 package io.github.franzli347.foss.support.fileSupport;
 
 import cn.hutool.core.io.FileUtil;
-import io.github.franzli347.foss.dto.FileUploadParam;
+import io.github.franzli347.foss.model.dto.FileUploadParam;
 import lombok.SneakyThrows;
 import org.springframework.util.DigestUtils;
 import java.nio.file.Files;

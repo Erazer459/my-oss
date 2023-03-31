@@ -25,7 +25,7 @@ import java.util.Optional;
 public class WebLogAspect {
     ThreadLocal<Long> startTime = new ThreadLocal<>();
 
-    @Pointcut("execution(public * io.github.franzli347.foss.controller.*.*(..))")
+    @Pointcut("execution(public * io.github.franzli347.foss.web.controller.*.*(..))")
     public void webLog() {
     }
 

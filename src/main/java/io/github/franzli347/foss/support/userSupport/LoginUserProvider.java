@@ -1,7 +1,6 @@
 package io.github.franzli347.foss.support.userSupport;
 
-import io.github.franzli347.foss.entity.SysUser;
-import io.github.franzli347.foss.entity.UserBase;
+import io.github.franzli347.foss.model.entity.SysUser;
 
 public interface LoginUserProvider {
     SysUser getLoginUser();

@@ -1,6 +1,6 @@
 package io.github.franzli347.foss.exception;
 
-import io.github.franzli347.foss.common.WsResult;
+import io.github.franzli347.foss.model.vo.WsResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

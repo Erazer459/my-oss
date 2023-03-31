@@ -1,6 +1,6 @@
 package io.github.franzli347.foss.config;
 
-import io.github.franzli347.foss.service.FilesService;
+import io.github.franzli347.foss.web.service.FilesService;
 import io.github.franzli347.foss.support.fileSupport.DefaultFilePathResolver;
 import io.github.franzli347.foss.support.fileSupport.FilePathResolver;
 import org.springframework.context.annotation.Bean;
