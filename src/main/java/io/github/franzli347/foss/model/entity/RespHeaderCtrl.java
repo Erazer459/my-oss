@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import nonapi.io.github.classgraph.json.Id;
 import org.hibernate.validator.constraints.ScriptAssert;
@@ -21,7 +19,7 @@ import org.hibernate.validator.constraints.ScriptAssert;
 @Data
 @EqualsAndHashCode
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 @AllArgsConstructor
 @TableName("tb_respheader_ctrl")
 public class RespHeaderCtrl {
@@ -31,9 +29,13 @@ public class RespHeaderCtrl {
     @Schema(description = "用户id")
     private  int uid;
     @Schema(description = "响应头名称")
-    private String respHeader;
-    @Schema(description = "响应头")
-    private String arg;
-    @Schema(description = "是否允许重复存在")
-    private boolean allowRepeat;
+    private String respheader;
+    @Schema(description = "响应头值")
+    private String value;
+
+    public RespHeaderCtrl(int loginIdAsInt, String respheader, String value) {
+        this.uid=loginIdAsInt;
+        this.respheader=respheader;
+        this.value=value;
+    }
 }
