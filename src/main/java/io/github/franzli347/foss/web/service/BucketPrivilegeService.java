@@ -3,6 +3,7 @@ package io.github.franzli347.foss.web.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.github.franzli347.foss.model.entity.BucketPrivilege;
+import io.github.franzli347.foss.model.vo.PrivilegeVo;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ public interface BucketPrivilegeService extends IService<BucketPrivilege> {
 
     void checkPrivilegeExist(BucketPrivilege privilege);
     
-   IPage<BucketPrivilege> getBucketPrivilegeByBid(int bid, String type, int page, int size);
+   IPage<PrivilegeVo> getBucketPrivilegeByBid(int bid, String type, int page, int size);
 
     List<BucketPrivilege> getAllPrivilegeInfo(int id);
 

@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.github.franzli347.foss.model.entity.BucketPrivilege;
-import io.github.franzli347.foss.model.vo.LoginRecord;
+import io.github.franzli347.foss.model.vo.PrivilegeVo;
 import io.github.franzli347.foss.web.mapper.BucketPrivilegeMapper;
 import io.github.franzli347.foss.web.service.BucketPrivilegeService;
-import org.apache.commons.lang3.StringUtils;
+import io.github.franzli347.foss.web.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +25,11 @@ import java.util.Optional;
  **/
 @Service
 public class BucketPrivilegeServiceImpl extends ServiceImpl<BucketPrivilegeMapper, BucketPrivilege> implements BucketPrivilegeService {
+    private final UserService userService;
 
+    public BucketPrivilegeServiceImpl(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * @Author AlanC
@@ -48,14 +53,34 @@ public class BucketPrivilegeServiceImpl extends ServiceImpl<BucketPrivilegeMappe
     }
 
     @Override
-    public IPage<BucketPrivilege> getBucketPrivilegeByBid(int bid, String type, int page, int size) {
+    public IPage<PrivilegeVo> getBucketPrivilegeByBid(int bid, String type, int page, int size) {
         IPage<BucketPrivilege> p=new Page<>(page,size);
         if (type==null){
             page(p,new LambdaQueryWrapper<BucketPrivilege>().eq(BucketPrivilege::getBid,bid));
-            return p;
         }
-        page(p,new LambdaQueryWrapper<BucketPrivilege>().eq(BucketPrivilege::getBid,bid).eq(BucketPrivilege::getPrivilege,type));
-        return p;
+        else {
+            page(p,new LambdaQueryWrapper<BucketPrivilege>().eq(BucketPrivilege::getBid,bid).eq(BucketPrivilege::getPrivilege,type));
+        }
+        IPage<PrivilegeVo> privilegeVoIPage=new Page<>();
+        List<PrivilegeVo> records=new ArrayList<>();
+        List<BucketPrivilege> bpr=p.getRecords();
+        for (int i=0;i<p.getRecords().size();i++){
+            BucketPrivilege privilege = bpr.get(i);
+            records.add(PrivilegeVo.builder().id(privilege.getId())
+                            .bid(privilege.getBid())
+                            .uid(privilege.getUid())
+                            .createTime(privilege.getCreateTime())
+                            .updateTime(privilege.getUpdateTime())
+                            .privilege(privilege.getPrivilege())
+                            .username(userService.getById(privilege.getUid()).getUsername())
+                    .build());
+        }
+        privilegeVoIPage.setPages(p.getPages());
+        privilegeVoIPage.setCurrent(p.getCurrent());
+        privilegeVoIPage.setRecords(records);
+        privilegeVoIPage.setTotal(p.getTotal());
+        privilegeVoIPage.setSize(p.getSize());
+        return privilegeVoIPage;
     }
 
     @Override
