@@ -14,7 +14,7 @@
     <artifactId>f-oss</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>f-oss</name>
-    <description>f-oss</description>
+    <description>f`-os`s</description>
 
     <properties>
         <java.version>17</java.version>
@@ -214,5 +214,13 @@
             </plugin>
         </plugins>
     </build>
-
+    <!-- omitted xml -->
+    <distributionManagement>
+        <repository>
+            <!--必须与 settings.xml 的 id 一致-->
+            <id>tcgun-turing-oss-oss</id>
+            <name>oss</name>
+            <url>https://tcgun-maven.pkg.coding.net/repository/turing-oss/oss/</url>
+        </repository>
+    </distributionManagement>
 </project>
