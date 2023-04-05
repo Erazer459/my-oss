@@ -1,6 +1,6 @@
 ## server post config
 server:
-  port: 80
+  port: 10089
 ## spring config
 spring:
   banner:
