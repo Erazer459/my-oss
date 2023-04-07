@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.github.franzli347.foss.common.constant.RedisConstant;
+import io.github.franzli347.foss.exception.FileException;
 import io.github.franzli347.foss.model.entity.Files;
 import io.github.franzli347.foss.web.mapper.FilesMapper;
 import io.github.franzli347.foss.web.service.BucketService;
@@ -14,6 +15,8 @@ import io.github.franzli347.foss.model.vo.FilesVo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @author FranzLi
@@ -38,19 +41,23 @@ public class FilesServiceImpl extends ServiceImpl<FilesMapper, Files> implements
 
     @Override
     public boolean removeFilesById(String id, String bid) {
-        Files f = getById(id);
+        Files f = Optional.ofNullable(getById(id)).orElseThrow(() -> new FileException("文件不存在!"));
         // 删减bucket占用容量
-        bucketService.updateBucketSizeWithFile(f.getBid(), f.getFileSize() * -1);
-        String md5 = f.getMd5();
-        long existFileNum = query().eq("md5", md5).count();
-        if (existFileNum == 1) {
-            // 没有别的桶存在该文件
-            String path = filePath + f.getPath();
-            if (FileUtil.file(path).exists()) {
-                FileUtil.del(path);
+        try {
+            bucketService.updateBucketSizeWithFile(f.getBid(), f.getFileSize() * -1);
+            String md5 = f.getMd5();
+            long existFileNum = query().eq("md5", md5).count();
+            if (existFileNum == 1) {
+                // 没有别的桶存在该文件
+                String path = filePath + f.getPath();
+                if (FileUtil.file(path).exists()) {
+                    FileUtil.del(path);
+                }
+                // 删除md5列表
+                stringRedisTemplate.opsForSet().remove(RedisConstant.FILE_MD5_LIST, f.getMd5());
             }
-            // 删除md5列表
-            stringRedisTemplate.opsForSet().remove(RedisConstant.FILE_MD5_LIST, f.getMd5());
+        }catch (Exception e){
+               log.error("尝试删除一个不存在的文件 | 删除文件出错了!");
         }
         LambdaQueryWrapper<Files> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Files::getId, id);
