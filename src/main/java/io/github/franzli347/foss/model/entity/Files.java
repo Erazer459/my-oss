@@ -24,7 +24,7 @@ public class Files implements Serializable {
 
     @NotNull(message = "文件id不能为空",groups = {ValidatedGroup.Update.class})
     @Schema(description = "文件id")
-    private Long id;
+    private String id;
 
     @Size(max = 255, message = "编码长度不能超过255")
     @Schema(description = "文件名")

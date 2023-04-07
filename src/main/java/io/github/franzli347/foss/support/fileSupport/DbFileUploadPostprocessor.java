@@ -34,7 +34,7 @@ public class DbFileUploadPostprocessor implements FileUploadPostProcessor{
         double fileSize = java.nio.file.Files.size(Path.of(filePath));
         String path = param.getBid() + File.separator + param.getName();
         boolean save = filesService.save(Files.builder()
-                .id(IdUtil.getSnowflakeNextId())
+                .id(String.valueOf(IdUtil.getSnowflakeNextId()))
                 .bid(param.getBid())
                 .fileName(param.getName())
                 .path(path)

@@ -275,7 +275,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         Files files = filesService.query().eq("md5", md5).oneOpt()
                 .orElseThrow(() ->new FileException("saveFileDataToOtherError"));
         files.setBid(Integer.valueOf(targetBid));
-        files.setId(IdUtil.getSnowflakeNextId());
+        files.setId(String.valueOf(IdUtil.getSnowflakeNextId()));
         filesService.save(files);
     }
 

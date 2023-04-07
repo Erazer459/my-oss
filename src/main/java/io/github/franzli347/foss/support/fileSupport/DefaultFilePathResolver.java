@@ -23,7 +23,7 @@ public class DefaultFilePathResolver implements FilePathResolver {
         return downloadAddr + "/download/" + getFileId(fileMd5);
     }
 
-    private Long getFileId(String fileMd5) {
+    private String getFileId(String fileMd5) {
         return Optional
                 .ofNullable(filesService.getOne(new LambdaQueryWrapper<>(Files.class).eq(Files::getMd5, fileMd5)))
                 .orElseThrow(() -> new RuntimeException("文件不存在"))

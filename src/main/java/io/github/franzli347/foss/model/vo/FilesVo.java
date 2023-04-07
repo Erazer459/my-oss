@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class FilesVo {
 
-    private Long id;
+    private String id;
 
     private String fileName;
 
