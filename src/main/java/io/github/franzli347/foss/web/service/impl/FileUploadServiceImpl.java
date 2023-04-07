@@ -148,6 +148,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         }
         String resultPath = getResultPath(bid,name);
         //转存文件
+
         fileTransferResolver.transferFile(file, resultPath);
         //保存文件md5到redis
         stringRedisTemplate.opsForSet().add(RedisConstant.FILE_MD5_LIST, md5);
@@ -273,11 +274,6 @@ public class FileUploadServiceImpl implements FileUploadService {
     private void saveFileDataToOther(final String md5,final String targetBid){
         Files files = filesService.query().eq("md5", md5).oneOpt()
                 .orElseThrow(() ->new FileException("saveFileDataToOtherError"));
-        Bucket bucket = bucketService.getById(targetBid);
-        double freeSize = bucket.getTotalSize() - bucket.getUsedSize();
-        if(freeSize < files.getFileSize()){
-            throw new BucketException("容量不足");
-        }
         files.setBid(Integer.valueOf(targetBid));
         files.setId(IdUtil.getSnowflakeNextId());
         filesService.save(files);

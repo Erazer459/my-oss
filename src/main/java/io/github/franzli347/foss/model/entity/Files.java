@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import io.github.franzli347.foss.common.ValidatedGroup;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;

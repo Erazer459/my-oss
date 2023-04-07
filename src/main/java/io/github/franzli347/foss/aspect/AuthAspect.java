@@ -3,9 +3,10 @@ package io.github.franzli347.foss.aspect;
 import cn.dev33.satoken.stp.StpUtil;
 import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
 import io.github.franzli347.foss.common.constant.AuthConstant;
+import io.github.franzli347.foss.exception.BucketException;
+import io.github.franzli347.foss.utils.AuthUtil;
 import io.github.franzli347.foss.web.service.BucketPrivilegeService;
 import io.github.franzli347.foss.web.service.FilesService;
-import io.github.franzli347.foss.utils.AuthUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,6 +21,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 /**
  * @ClassName AuthAspect
@@ -57,9 +59,9 @@ public class AuthAspect {
             bid=id;
         }
         else if (checkBucketPrivilege.argType().equals(AuthConstant.PRIVILEGE_ID)){
-            bid=privilegeService.getById(id).getBid();
+            bid = Optional.ofNullable(privilegeService.getById(id)).orElseThrow(() -> new BucketException("权限认证失败!")).getBid();
         } else if (checkBucketPrivilege.argType().equals(AuthConstant.FILE_ID)) {
-            bid=filesService.getById(id).getBid();
+            bid= Optional.ofNullable(filesService.getById(id)).orElseThrow(() -> new BucketException("权限认证失败!")).getBid();
         }
         for(int i = 0; i < privilege.length; i++){
             privilege[i]= AuthUtil.bidConcat(bid,privilege[i]);

@@ -16,10 +16,8 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
     @Bean
     public GroupedOpenApi userApi(){
-        String[] paths = { "/**" };
         String[] packagedToMatch = { "io.github.franzli347.foss.web.controller" };
-        return GroupedOpenApi.builder().group("用户模块")
-                .pathsToMatch(paths)
+        return GroupedOpenApi.builder().group("turing oss")
                 .packagesToScan(packagedToMatch).build();
     }
     @Bean

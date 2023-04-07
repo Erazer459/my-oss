@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.controller;
+package io.github.franzli347.foss.web.controller;
 
 import io.github.franzli347.foss.annotation.CheckBucketPrivilege;
 import io.github.franzli347.foss.annotation.FiledExistInTable;
@@ -11,7 +11,6 @@ import io.github.franzli347.foss.web.service.FileUploadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +28,8 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/upload")
-@Tag(name = "文件上传模块")
+@Tag(name = "文件上传")
 @Validated
-@Slf4j
 public class FileUploadController {
 
     private final FileUploadService fileUploadService;

@@ -1,6 +1,6 @@
 ## server post config
 server:
-  port: 10089
+  port: 8899
 ## spring config
 spring:
   banner:
@@ -26,13 +26,15 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+    generator:
+      write-numbers-as-strings: true
 ## log4f config
 logging:
   level:
     web: debug
 ## 存储路径映射
 pathMap:
-  source: E:\files\
+  source: E:\toss\
 ## 临时文件格式
 tmpFilePattern: '%stmp\%s.%d.chunk'
 downloadAddr: http://localhost
