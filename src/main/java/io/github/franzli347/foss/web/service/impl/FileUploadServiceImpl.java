@@ -254,7 +254,8 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     private String getResultPath(int bid, String name) {
-        return "%s%d" + File.separator + "%s".formatted(filePath, bid, name);
+        String fmt = "%s%d" + File.separator + "%s";
+        return fmt.formatted(filePath, bid, name);
     }
 
     @Async("asyncExecutor")
