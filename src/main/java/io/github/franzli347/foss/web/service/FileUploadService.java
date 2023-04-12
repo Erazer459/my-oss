@@ -1,5 +1,7 @@
 package io.github.franzli347.foss.web.service;
 
+import io.github.franzli347.foss.model.vo.Result;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
@@ -42,7 +44,7 @@ public interface FileUploadService {
      * @param file 文件
      * @return 上传结果
      */
-    String uploadChunk(final int uid,
+    Result uploadChunk(final int uid,
                        final int bid,
                        final String name,
                        final int chunks,
@@ -68,4 +70,7 @@ public interface FileUploadService {
     boolean abort(String md5);
 
     boolean smallFileUpload(int uid, int bid, String name, long size, String md5, MultipartFile file);
+
+    @Async("asyncExecutor")
+    void copyFromOtherBucket(int sourceBucketId,int targetBucketId,String fileName);
 }

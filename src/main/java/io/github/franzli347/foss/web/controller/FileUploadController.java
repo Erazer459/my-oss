@@ -5,6 +5,7 @@ import io.github.franzli347.foss.annotation.FiledExistInTable;
 import io.github.franzli347.foss.common.constant.AuthConstant;
 import io.github.franzli347.foss.common.constant.FileConstant;
 import io.github.franzli347.foss.exception.FileException;
+import io.github.franzli347.foss.model.vo.Result;
 import io.github.franzli347.foss.support.userSupport.LoginUserProvider;
 import io.github.franzli347.foss.web.service.BucketService;
 import io.github.franzli347.foss.web.service.FileUploadService;
@@ -49,7 +50,7 @@ public class FileUploadController {
      */
     @PostMapping("/initMultipartUpload")
     @Operation(summary = "文件上传初始化")
-    @CheckBucketPrivilege(spelString = "#{bid}",argType = AuthConstant.BID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
+    @CheckBucketPrivilege(spelString = "#bid",argType = AuthConstant.BID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
     public boolean initMultipartUpload(@Parameter(description = "目标桶id")
                                        @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") Integer bid,
                                        @Parameter(description = "文件名")
@@ -79,7 +80,7 @@ public class FileUploadController {
      */
     @Operation(summary = "上传分块")
     @PostMapping("/uploadChunk")
-    public String uploadChunk(@Parameter(description = "目标桶id")
+    public Result uploadChunk(@Parameter(description = "目标桶id")
                               @FiledExistInTable(colum = "id",serviceClz = BucketService.class,message = "bucket_id不存在") int bid,
                               @Parameter(description = "文件名")
                               @Pattern(regexp = FileConstant.ILLEGAL_FILE_RE,message = FileConstant.FILE_NAME_ILLEGAL_MSG) String name,

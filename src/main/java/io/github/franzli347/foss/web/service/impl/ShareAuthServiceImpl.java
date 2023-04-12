@@ -51,7 +51,7 @@ public class ShareAuthServiceImpl extends ServiceImpl<AuthKeysMapper,AuthKeys> i
         long timestamp = System.currentTimeMillis() / 1000 + expire * 60L;
         Files file=Optional.ofNullable(filesService.getById(fileId)).orElseThrow(()->new RuntimeException("文件不存在"));
         AuthKeys authKeys = baseMapper.selectOne(new LambdaQueryWrapper<AuthKeys>().eq(AuthKeys::getUid, StpUtil.getLoginIdAsInt()));
-        String sign= SaSecureUtil.sha1(authKeys.getAccesskey()+authKeys.getSecretkey()+timestamp+file.getFileName());
+        String sign= SaSecureUtil.sha1(authKeys.getAccesskey()+authKeys.getSecretkey()+timestamp);
         String sharePath=domain+"/download/%s?accesskey=%s&expire=%d&fileName=%s&bid=%d&sign=%s".formatted(file.getFileName(),authKeys.getAccesskey(),timestamp,file.getFileName(),bid,sign);
         return sharePath;
     }

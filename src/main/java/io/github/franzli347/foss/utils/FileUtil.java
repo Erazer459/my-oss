@@ -69,8 +69,7 @@ public class FileUtil {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            throw e;
         }
 
         for (String s : filePath) {

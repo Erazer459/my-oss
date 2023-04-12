@@ -1,30 +1,32 @@
 package io.github.franzli347.foss.web.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.franzli347.foss.common.constant.RedisConstant;
-import io.github.franzli347.foss.model.entity.Bucket;
-import io.github.franzli347.foss.exception.BucketException;
-import io.github.franzli347.foss.web.service.BucketService;
-import io.github.franzli347.foss.utils.StreamUtil;
+import io.github.franzli347.foss.exception.FileException;
 import io.github.franzli347.foss.model.dto.FileUploadParam;
 import io.github.franzli347.foss.model.entity.Files;
-import io.github.franzli347.foss.exception.FileException;
-import io.github.franzli347.foss.web.service.FileUploadService;
-import io.github.franzli347.foss.web.service.FilesService;
+import io.github.franzli347.foss.model.vo.Result;
 import io.github.franzli347.foss.support.fileSupport.ChunkPathResolver;
 import io.github.franzli347.foss.support.fileSupport.FileTransferResolver;
 import io.github.franzli347.foss.support.fileSupport.FileUploadPostProcessor;
 import io.github.franzli347.foss.support.fileSupport.FileUploadPostProcessorRegister;
 import io.github.franzli347.foss.utils.FileUtil;
+import io.github.franzli347.foss.utils.StreamUtil;
+import io.github.franzli347.foss.web.service.BucketService;
+import io.github.franzli347.foss.web.service.FileUploadService;
+import io.github.franzli347.foss.web.service.FilesService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -96,12 +98,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                                       final String md5,
                                       final long size) {
 
-        // 检查bucket容量大小
-        Bucket bucket = bucketService.getById(bid);
-        double freeSize = bucket.getTotalSize() - bucket.getUsedSize();
-        if(freeSize < size){
-            throw new BucketException("容量不足");
-        }
+
         FileUploadParam dt = new FileUploadParam(uid,
                 chunks,
                 size,
@@ -129,7 +126,6 @@ public class FileUploadServiceImpl implements FileUploadService {
     public boolean abort(String md5) {
         // 获取已经上传的分块
         Set<String> members = stringRedisTemplate.opsForSet().members(RedisConstant.FILE_CHUNK_LIST + "_" + md5);
-        removeUploadDataFromRedis(md5);
         //获取已经上传分块的文件路径
         List<String> chunkPaths = chunkPathResolver.getChunkPaths(md5, members);
         //删除已经上传分块
@@ -148,7 +144,6 @@ public class FileUploadServiceImpl implements FileUploadService {
         }
         String resultPath = getResultPath(bid,name);
         //转存文件
-
         fileTransferResolver.transferFile(file, resultPath);
         //保存文件md5到redis
         stringRedisTemplate.opsForSet().add(RedisConstant.FILE_MD5_LIST, md5);
@@ -156,8 +151,6 @@ public class FileUploadServiceImpl implements FileUploadService {
         doFilePostProcessor(resultPath,dt);
         return true;
     }
-
-
 
 
 
@@ -186,7 +179,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     @Override
     @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
-    public String uploadChunk(final int uid,
+    public Result uploadChunk(final int uid,
                               final int bid,
                               final String name,
                               final int chunks,
@@ -194,52 +187,45 @@ public class FileUploadServiceImpl implements FileUploadService {
                               final Long size,
                               final String md5,
                               final MultipartFile file) {
+        Result r = new Result();
         // 检查任务id
         checkTaskStatus(md5);
-        //检查分块是否曾经上传
-        boolean chunkCheckError = Optional.ofNullable(stringRedisTemplate.opsForSet()
-                                .isMember(RedisConstant.FILE_CHUNK_LIST + "_" + md5, String.valueOf(chunk)))
-                                .orElseThrow(() -> new FileException("chunk_check_error"));
-        if(chunkCheckError){
-            return "upload[%s]chunk[%d]success".formatted(name,chunk);
-        }
         // 转存分片 ( 最后path = filepath\tmp\12345.1.chunk
         fileTransferResolver.transferFile(file,tmpFilePattern.formatted(filePath,md5,chunk));
         // 添加上传块数列表
         stringRedisTemplate.opsForSet().add(RedisConstant.FILE_CHUNK_LIST + "_" + md5, String.valueOf(chunk));
-
         Long upLoadChunks = Optional.ofNullable(stringRedisTemplate.opsForSet().size(RedisConstant.FILE_CHUNK_LIST + "_" + md5))
                 .orElseThrow(() -> new FileException("task_not_exist"));
         if (upLoadChunks == chunks) {
             return afterChunksUpload(uid, bid, name, chunks, size, md5);
         }
-        return "upload[%s]chunk[%d]success".formatted(name,chunk);
+        r.setCode(200);
+        r.setMsg("upload[%s]chunk[%d]success".formatted(name,chunk));
+        r.setData(check(md5));
+        return r;
     }
 
 
-    private String afterChunksUpload(int uid, int bid, String name, int chunks, Long size, String md5) throws IOException {
+    private Result afterChunksUpload(int uid, int bid, String name, int chunks, Long size, String md5) throws IOException {
         String resultPath = getResultPath(bid, name);
         List<String> collect = chunkPathResolver.getChunkPaths(md5, chunks);
         boolean merge = FileUtil.mergeFiles(collect.toArray(new String[0]), resultPath);
         if (!merge) {
             throw new FileException("merge_file_error");
         }
-        removeUploadDataFromRedis(md5);
         //  添加 md5 信息到redis
         stringRedisTemplate.opsForSet().add(RedisConstant.FILE_MD5_LIST, md5);
-        stringRedisTemplate.expire(RedisConstant.FILE_MD5_LIST + "_" + md5,RedisConstant.FILE_TASK_EXPIRE, TimeUnit.SECONDS);
-
         // 保存文件信息
         FileUploadParam saveData = new FileUploadParam(uid, chunks, size, bid, name, md5, LocalDateTime.now());
         doFilePostProcessor(resultPath, saveData);
         //返回信息
-        return "Multipart_upload_complete";
+        Result r = new Result();
+        r.setMsg("Multipart_upload_complete");
+        r.setCode(200);
+        r.setData(check(md5));
+        return r;
     }
 
-    private void removeUploadDataFromRedis(String md5) {
-        // 删除redis中的任务信息
-        stringRedisTemplate.delete(List.of(RedisConstant.FILE_CHUNK_LIST + "_" + md5, RedisConstant.FILE_TASK + "_" + md5));
-    }
 
     private void doFilePostProcessor(String resultPath, FileUploadParam saveData) {
         List<FileUploadPostProcessor> fileUploadPostProcessors = fileUploadPostProcessorRegister.getFileUploadPostProcessors();
@@ -268,14 +254,31 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     private String getResultPath(int bid, String name) {
-        return "%s%d/%s".formatted(filePath, bid, name);
+        return "%s%d" + File.separator + "%s".formatted(filePath, bid, name);
     }
 
+    @Async("asyncExecutor")
+    public void copyFromOtherBucket(int sourceBucketId,int targetBucketId,String fileName) {
+        try{
+            java.nio.file.Files.copy(Path.of(getResultPath(sourceBucketId, fileName)), Path.of(getResultPath(targetBucketId, fileName)));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
     private void saveFileDataToOther(final String md5,final String targetBid){
-        Files files = filesService.query().eq("md5", md5).oneOpt()
-                .orElseThrow(() ->new FileException("saveFileDataToOtherError"));
+        LambdaQueryWrapper<Files> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Files::getMd5,md5);
+        Files files = Optional
+                .ofNullable(filesService.list(wrapper))
+                .orElseThrow(() -> new FileException("save file to other but file not exist error"))
+                .get(0);
+        copyFromOtherBucket(files.getBid(),Integer.parseInt(targetBid),files.getFileName());
         files.setBid(Integer.valueOf(targetBid));
         files.setId(String.valueOf(IdUtil.getSnowflakeNextId()));
+        files.setPath(targetBid + File.separator + files.getFileName());
         filesService.save(files);
     }
 
