@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  **/
 @RestController
 @RequestMapping("/respHeaderCtrl")
-@Tag(name="请求头控制模块")
+@Tag(name="响应头控制模块")
 public class RespHeaderCtrlController {
     private final RespHeaderCtrlService service;
 
