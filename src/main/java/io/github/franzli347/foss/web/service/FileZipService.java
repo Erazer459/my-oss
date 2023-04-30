@@ -6,9 +6,9 @@ import io.github.franzli347.foss.exception.AsyncException;
 import java.io.IOException;
 
 public interface FileZipService {
-    void videoCompress(int vid, VideoCompressArgs args, String id) throws AsyncException, IOException;
+    void videoCompress(String vid, VideoCompressArgs args, String uid) throws AsyncException, IOException;
 
-    void imageCompress(int imageId,int quality,String id);
+    void imageCompress(String imageId,int quality,String uid);
 
 
 }

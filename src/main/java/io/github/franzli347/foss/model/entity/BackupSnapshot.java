@@ -25,11 +25,11 @@ import java.util.List;
 @Document("backupSnapshot")
 public class BackupSnapshot implements Serializable {//备份任务执行快照，存储在mongodb
     @MongoId
-    private long id;
+    private String id;
     private Bucket bucketInfo;
     private List<BucketPrivilege> privilegeInfos;
     private List<Files> filesInfo;
-    private long taskId;
+    private String taskId;
     private Date executedTime;
 
 }

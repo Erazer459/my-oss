@@ -22,8 +22,7 @@ import java.util.Date;
 @TableName("tb_backup_task")
 public class BackupTask{
     @Schema(description = "任务id")
-    @Hidden
-    private long id;
+    private String id;
     @Schema(description = "任务名称")
     private String taskName;
     @Schema(description = "bucketId")

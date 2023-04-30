@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.model.job;
+package io.github.franzli347.foss.job;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.Date;
 @Builder
 public class QuartzJob {
 
-    private long jobId;
+    private String jobId;
     /**
      * 任务调用的方法名
      */

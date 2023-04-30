@@ -52,4 +52,8 @@ public class RedisConstant {
     public final static String RECOVER_TASK="RECOVER:TASK";
 
     public final static String RECOVER_TASK_RUNNING="RECOVERING";
+    /**
+     * backup任务就绪
+     **/
+    public final static String BACKUP_TASK_READY="READY";
 }

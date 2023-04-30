@@ -1,4 +1,4 @@
-package io.github.franzli347.foss.model.job;
+package io.github.franzli347.foss.job;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -55,8 +55,8 @@ public class BackupJob implements Job {
     String filePath;
     @SneakyThrows
     @Transactional
-    public void run(long taskId,int bid){
-        log.info("backupJob start,"+bid);
+    public void run(String taskId,int bid){
+        log.info("backup running,"+bid);
         redisTemplate.opsForValue().set(RedisConstant.BACKUP_TASK+":"+taskId,RedisConstant.BACKUP_TASK_RUNNING);
         List<Files> files=filesService.list(new LambdaQueryWrapper<Files>().eq(Files::getBid, bid));
         Bucket bucketInfo = bucketService.getById(bid);
@@ -64,7 +64,7 @@ public class BackupJob implements Job {
         long snapshotId = IdUtil.getSnowflakeNextId();
         mongoTemplate.save(BackupSnapshot.builder()
                 .executedTime(new Date())
-                .id(snapshotId)
+                .id(String.valueOf(snapshotId))
                 .bucketInfo(bucketInfo)
                 .taskId(taskId)
                 .privilegeInfos(bucketPrivilegesInfo)
@@ -73,10 +73,11 @@ public class BackupJob implements Job {
         for(Files file:files){//gRPC传输至备份服务器
             fileTransferClient.upload(snapshotPath+snapshotId+"/"+file.getFileName(),filePath+file.getPath(),snapshotPath+snapshotId+"/");
         }
-        redisTemplate.delete(RedisConstant.BACKUP_TASK+":"+taskId);
+        fileTransferClient.shutdown();
+        redisTemplate.opsForValue().set(RedisConstant.BACKUP_TASK+":"+taskId,RedisConstant.BACKUP_TASK_READY);
     }
     @Override
     public void execute(JobExecutionContext jobExecutionContext){
-        run((Long) jobExecutionContext.getJobDetail().getJobDataMap().get("jobId"),(Integer) jobExecutionContext.getJobDetail().getJobDataMap().get("bid"));
+        run((String)jobExecutionContext.getJobDetail().getJobDataMap().get("jobId"),(Integer) jobExecutionContext.getJobDetail().getJobDataMap().get("bid"));
     }
 }

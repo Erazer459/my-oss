@@ -54,8 +54,6 @@ public class FileTransferClient {
             response = blockingStub.upload(request);
             System.out.println(response.getMsg());
         } catch (StatusRuntimeException ex) {
-        }finally {
-            this.shutdown();
         }
     }
 
@@ -112,8 +110,6 @@ public class FileTransferClient {
             } catch (IOException e) {
                 log.error("Failed to download file.");
                 e.printStackTrace();
-            }finally {
-                this.shutdown();
             }
         } else {
             log.error("Failed to download file.");

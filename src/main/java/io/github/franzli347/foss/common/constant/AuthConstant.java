@@ -23,6 +23,6 @@ public class AuthConstant {
 
     public static final String PRIVILEGE_ID="privilegeId";
 
-
     public static final String FILE_ID = "fileId";
+
 }
