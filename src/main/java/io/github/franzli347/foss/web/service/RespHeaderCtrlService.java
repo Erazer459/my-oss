@@ -7,4 +7,6 @@ import io.github.franzli347.foss.model.entity.RespHeaderCtrl;
 public interface RespHeaderCtrlService extends IService<RespHeaderCtrl> {
     IPage<RespHeaderCtrl> getAll(int page, int size);
     boolean check(String respHeader);
+
+    boolean cover(RespHeaderCtrl respHeaderCtrl);
 }

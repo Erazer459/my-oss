@@ -1,6 +1,7 @@
 package io.github.franzli347.foss.web.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.github.franzli347.foss.model.entity.RespHeaderCtrl;
@@ -29,18 +30,16 @@ public class RespHeaderCtrlController {
 
     @PostMapping("/add")
     @Operation(summary = "添加响应头(填写respHeader,value,allowRepeat)")
-    @Parameter(name = "respHeader",description = "自定义响应头名称(若是选择自定义则需要输入自定义响应头名称,否则从参数列表中选择)")
-    @Parameter(name = "value",description = "响应头值")
     @Parameter(name = "allowRepeat",description = "是否允许重复")
-    public boolean addRespHeader(String respHeader,String value,boolean allowRepeat){
-        if (!service.check(respHeader)){
+    public boolean addRespHeader(@RequestBody RespHeaderCtrl respHeaderCtrl,boolean allowRepeat){
+        if (!service.check(respHeaderCtrl.getRespheader())){
             throw new RuntimeException("响应头名称只能由大小写字母、短划线、数字组成，长度为1到100个字符，每个单词开头必须是大写字母");
         }
-        RespHeaderCtrl respHeaderCtrl = new RespHeaderCtrl(StpUtil.getLoginIdAsInt(),respHeader,value);
+        respHeaderCtrl.setUid(StpUtil.getLoginIdAsInt());
         if (allowRepeat){
            return service.save(respHeaderCtrl);
         }
-       return service.saveOrUpdate(respHeaderCtrl,new LambdaUpdateWrapper<RespHeaderCtrl>().eq(RespHeaderCtrl::getRespheader,respHeaderCtrl.getRespheader()));
+        return  service.cover(respHeaderCtrl);
     }
     @GetMapping("/getAll")
     @Operation(summary = "获取已设置的响应头")
