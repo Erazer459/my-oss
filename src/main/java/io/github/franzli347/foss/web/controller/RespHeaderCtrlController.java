@@ -52,7 +52,7 @@ public class RespHeaderCtrlController {
         return service.removeById(id);
     }
     @PostMapping("/update")
-    @Operation(summary = "更新响应头数据(不需要填写uid)")
+    @Operation(summary = "更新响应头数据")
     public boolean update(@RequestBody RespHeaderCtrl respHeaderCtrl){
         if (!service.check(respHeaderCtrl.getRespheader())){
             throw new RuntimeException("响应头名称只能由大小写字母、短划线、数字组成，长度为1到100个字符，每个单词开头必须是大写字母");
