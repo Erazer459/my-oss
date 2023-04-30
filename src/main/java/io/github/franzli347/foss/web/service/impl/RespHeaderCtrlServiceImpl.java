@@ -10,6 +10,7 @@ import io.github.franzli347.foss.model.vo.LoginRecord;
 import io.github.franzli347.foss.web.mapper.RespheaderCtrlMapper;
 import io.github.franzli347.foss.web.service.RespHeaderCtrlService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,5 +40,12 @@ public class RespHeaderCtrlServiceImpl extends ServiceImpl<RespheaderCtrlMapper,
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(respHeader);
         return matcher.matches();
+    }
+
+    @Override
+    @Transactional
+    public boolean cover(RespHeaderCtrl respHeaderCtrl) {
+        remove(new LambdaQueryWrapper<RespHeaderCtrl>().eq(RespHeaderCtrl::getRespheader,respHeaderCtrl.getRespheader()).eq(RespHeaderCtrl::getUid,respHeaderCtrl.getUid()));//不允许重复则删除其他
+        return save(respHeaderCtrl);
     }
 }

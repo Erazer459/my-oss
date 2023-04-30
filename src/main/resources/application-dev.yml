@@ -3,6 +3,9 @@ server:
   port: 8899
 ## spring config
 spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/toss
   banner:
     location: banner
   redis:
@@ -32,7 +35,13 @@ logging:
     web: debug
 ## 存储路径映射
 pathMap:
-  source: E:\toss\
+  source: E:/toss/
+##gRPC常量配置
+gRPC:
+  Server:
+    HOST: 127.0.0.1
+    Port: 8888
+  backupPath: D:/tmp/
 ## 临时文件格式
 tmpFilePattern: '%stmp\%s.%d.chunk'
 downloadAddr: http://localhost

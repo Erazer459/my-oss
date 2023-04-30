@@ -1,0 +1,23 @@
+syntax = "proto3";
+package fileTransfer;
+service FileTransferService {
+  rpc Upload (Request) returns (Response) {}
+  rpc Download (Request) returns (DownloadResponse) {}
+}
+option java_package = "io.github.franzli347.foss.grpc.file";
+option java_outer_classname = "FileTransfer";
+option java_multiple_files = true;
+message Request{
+  // 定义文件为字节类型
+  bytes file = 1;
+  string name = 2;
+  string snapshotPath = 3;
+}
+
+message Response{
+  int32 code = 1;
+  string msg = 2;
+}
+message DownloadResponse {
+  bytes file = 1;
+}

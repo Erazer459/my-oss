@@ -46,9 +46,8 @@ public class FileZipController {
     @Operation(summary = "视频压缩")
     @PostMapping("/video/{vid}")
     @Parameter(name = "vid",description = "视频文件id",required = true)
-    @Parameter(name = "compressArgs",description = "视频压缩参数",required = false)
     @CheckBucketPrivilege(spelString = "#vid",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
-    public Result videoCompress(@PathVariable int vid, @RequestBody VideoCompressArgs compressArgs){
+    public Result videoCompress(@PathVariable String  vid, @RequestBody VideoCompressArgs compressArgs){
         fileZipService.videoCompress(vid,compressArgs, String.valueOf(loginUserProvider.getLoginUser().getId()));
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("视频压缩任务创建完毕").data(vid).data(compressArgs).build();
     }
@@ -64,7 +63,7 @@ public class FileZipController {
     @Parameter(name = "imageId",description = "图片id",required = true)
     @Parameter(name = "quality",description = "图片质量(无损仅限png为100,其余依次 75,45,10)")
     @CheckBucketPrivilege(spelString = "#imageId",argType = AuthConstant.FILE_ID,privilege = {AuthConstant.OWNER,AuthConstant.READWRITE})
-    public Result imageCompress(@PathVariable int imageId,@PathVariable int quality){
+    public Result imageCompress(@PathVariable String imageId,@PathVariable int quality){
         fileZipService.imageCompress(imageId,quality,String.valueOf(loginUserProvider.getLoginUser().getId()));
         return Result.builder().code(ResultCode.CODE_SUCCESS).msg("图片压缩任务创建完毕").data(imageId).build();
     }

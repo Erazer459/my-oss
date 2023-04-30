@@ -20,7 +20,7 @@ import ws.schild.jave.info.VideoSize;
 @Accessors(chain=true)
 public class VideoCompressArgs {
     @Schema(description = "视频分辨率,宽度*高度,2K:2560*1440或2048*1080 1080P:1920*1080 720P:1280*720 360P:480*360")
-    private VideoSize videoSize;
+    private MyVideoSize videoSize;
     @Schema(description = "视频帧率")
     @Builder.Default
     private float frameRate=25;

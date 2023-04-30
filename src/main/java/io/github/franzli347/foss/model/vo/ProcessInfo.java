@@ -16,7 +16,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ProcessInfo {
     @Schema(description = "文件id")
-    private int id;
+    private String id;
 
     @Schema(description = "源")
     private long source;
