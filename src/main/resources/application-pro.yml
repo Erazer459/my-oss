@@ -9,8 +9,8 @@ spring:
   banner:
     location: banner
   redis:
-    host: 47.113.225.98
-    password: '!tufirewall'
+    host: xxxxxxxxxxxx
+    password: xxxxxxxxxxxxxxxxxxx
   mvc:
     pathmatch:
       # 配置策略
@@ -22,9 +22,9 @@ spring:
   ## mysql 配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://gz-cynosdbmysql-grp-hv910w7l.sql.tencentcdb.com:29773/turingoss
+    url: xxxxxxxxxxxxx
     username: root
-    password: '!Tufirewall123..'
+    password: xxxxxxxx
   ## jackson 配置
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -44,7 +44,7 @@ gRPC:
 ## 临时文件格式
 tmpFilePattern: '%stmp/%s.%d.chunk'
 ## 配置当前服务器ip
-downloadAddr: https://toss.frzli.top
+downloadAddr: xxxxxxxxxxxxxxxxx
 ## mbp
 mybatis-plus:
   global-config:
